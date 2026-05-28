@@ -190,7 +190,7 @@
                                 <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event, 'file')">
                                 <div class="flex flex-col items-center justify-center text-center w-full h-full z-10">
                                     <i data-lucide="upload-cloud" class="w-8 h-8 text-cyan-400 mb-2 group-hover:scale-110 transition-transform"></i>
-                                    <span id="file-status-text" class="text-sm font-medium text-slate-300 mb-1">Chọn file (ZIP, RAR, EXE)</span>
+                                    <span id="file-status-text" class="text-sm font-medium text-slate-300 mb-1">Chọn file (ZIP, RAR, EXE) - Max 5GB</span>
                                 </div>
                             </div>
 
@@ -245,7 +245,7 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Cấu hình Firebase Database (Chỉ lưu link text và icon base64, không lưu file vật lý)
+        // Cấu hình Firebase Database
         const USER_FIREBASE_CONFIG = {
             apiKey: "AIzaSyALT8o8hQtVuSVn6A_hQSE4SvDHsg_y80I",
             authDomain: "khotainguyen-5d8b8.firebaseapp.com",
@@ -503,7 +503,7 @@
             }
         }
 
-        // --- XỬ LÝ GET LINK DIRECT TỪ CATBOX VÀ CÁC NGUỒN KHÁC ĐỂ TẢI XUỐNG ---
+        // --- XỬ LÝ GET LINK DIRECT TỪ NGUỒN KHÁC ĐỂ TẢI XUỐNG ---
         window.handleActionClick = async function(id) {
             const res = resources.find(r => r.id === id);
             if (!res) return;
@@ -519,8 +519,8 @@
                 a.click(); 
                 document.body.removeChild(a);
             } 
-            else if (res.url.includes('catbox.moe') || res.url.endsWith('.exe') || res.url.endsWith('.zip') || res.url.endsWith('.rar')) {
-                // Ép trình duyệt download trực tiếp ngay tại trang (Direct Link 100%)
+            else if (res.url.includes('pixeldrain.com') || res.url.includes('catbox.moe') || res.url.endsWith('.exe') || res.url.endsWith('.zip') || res.url.endsWith('.rar')) {
+                // Ép trình duyệt download trực tiếp ngay tại trang
                 window.location.href = res.url;
             } 
             else {
@@ -594,7 +594,7 @@
             }
         };
 
-        // --- XỬ LÝ LƯU VÀ UPLOAD FILE BẰNG CATBOX.MOE ---
+        // --- XỬ LÝ LƯU VÀ UPLOAD FILE BẰNG PIXELDRAIN (KHÔNG CẤM .EXE, .RAR, TẢI TRỰC TIẾP) ---
         window.handleSaveResource = async function(e) {
             e.preventDefault();
             const id = document.getElementById('res-id').value;
@@ -613,16 +613,15 @@
                     finalUrl = document.getElementById('res-link-val').value;
                 } else {
                     if (selectedFile) {
-                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span id="upload-progress-text">Đang kết nối Đám mây trực tiếp...</span>`;
+                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span id="upload-progress-text">Đang kết nối Máy chủ Lưu trữ...</span>`;
                         lucide.createIcons();
                         
                         try {
                             const formData = new FormData();
-                            formData.append('reqtype', 'fileupload');
-                            formData.append('fileToUpload', selectedFile);
+                            formData.append('file', selectedFile);
 
                             const xhr = new XMLHttpRequest();
-                            xhr.open('POST', 'https://catbox.moe/user/api.php', true);
+                            xhr.open('POST', 'https://pixeldrain.com/api/file', true);
 
                             finalUrl = await new Promise((resolve, reject) => {
                                 xhr.upload.onprogress = (event) => {
@@ -637,11 +636,16 @@
 
                                 xhr.onload = () => {
                                     if (xhr.status >= 200 && xhr.status < 300) {
-                                        const responseText = xhr.responseText.trim();
-                                        if (responseText.startsWith('http')) {
-                                            resolve(responseText); // Trả về link trực tiếp luôn
-                                        } else {
-                                            reject(new Error("Máy chủ từ chối file của bạn."));
+                                        try {
+                                            const res = JSON.parse(xhr.responseText);
+                                            if (res.success) {
+                                                // Thêm ?download để ép trình duyệt tải về dưới dạng tệp tin khi truy cập
+                                                resolve(`https://pixeldrain.com/api/file/${res.id}?download`); 
+                                            } else {
+                                                reject(new Error(res.value || "Máy chủ từ chối file của bạn."));
+                                            }
+                                        } catch(err) {
+                                            reject(new Error("Lỗi đọc dữ liệu từ máy chủ."));
                                         }
                                     } else {
                                         reject(new Error("Lỗi mạng khi tải lên. Vui lòng thử lại."));
@@ -756,7 +760,7 @@
             selectedFile = null; selectedIconFile = null; iconPreviewBase64 = '';
             
             const fileStatusText = document.getElementById('file-status-text');
-            fileStatusText.innerText = 'Chọn file bất kỳ (ZIP, RAR, EXE)';
+            fileStatusText.innerText = 'Chọn file bất kỳ (ZIP, RAR, EXE) - Max 5GB';
             fileStatusText.classList.remove('text-emerald-400', 'font-semibold');
             fileStatusText.classList.add('text-slate-300');
             
