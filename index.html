@@ -73,14 +73,14 @@
                 Khám phá & Lưu trữ <span class="text-cyan-400">Tài nguyên</span>
             </h2>
             <p class="text-slate-400 text-base max-w-2xl mx-auto">
-                Hệ thống quản lý, chia sẻ tài liệu trực tuyến.
+                Hệ thống quản lý, chia sẻ tài liệu trực tuyến (Powered by Firebase).
             </p>
         </div>
 
         <div id="loading-state" class="flex justify-center items-center py-10">
             <div class="flex flex-col items-center gap-3">
                 <div class="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-                <span class="text-sm text-cyan-400 animate-pulse">Đang đồng bộ dữ liệu...</span>
+                <span class="text-sm text-cyan-400 animate-pulse">Đang kết nối cơ sở dữ liệu...</span>
             </div>
         </div>
         
@@ -109,11 +109,13 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
-                    <input type="email" id="login-email" required value="hung@admin.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500">
+                    <!-- Đã xóa value gợi ý -->
+                    <input type="email" id="login-email" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500" placeholder="Nhập email admin...">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Mật khẩu</label>
-                    <input type="password" id="login-password" required value="hung@123" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500">
+                    <!-- Đã xóa value gợi ý -->
+                    <input type="password" id="login-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500" placeholder="Nhập mật khẩu...">
                 </div>
                 <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2.5 rounded-xl transition-all duration-300 mt-6">Đăng Nhập</button>
             </form>
@@ -168,7 +170,7 @@
                                 <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event, 'file')">
                                 <div class="flex flex-col items-center justify-center text-center cursor-pointer w-full h-full" onclick="document.getElementById('file-input').click()">
                                     <i data-lucide="upload-cloud" class="w-8 h-8 text-cyan-400 mb-2"></i>
-                                    <span class="text-sm font-medium text-slate-300 mb-1">Click chọn file (< 30KB)</span>
+                                    <span class="text-sm font-medium text-slate-300 mb-1">Click chọn file</span>
                                     <span id="file-status-text" class="text-xs text-slate-500 text-center px-2">Khuyên dùng Link Drive cho file nặng</span>
                                 </div>
                             </div>
@@ -218,19 +220,56 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
-    <script>
+    <!-- JAVASCRIPT (TÍCH HỢP FIREBASE) -->
+    <script type="module">
+        // Import Firebase SDK (Module)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // =========================================================================
+        // DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY (USER_FIREBASE_CONFIG)
+        // Tạo project tại: https://console.firebase.google.com/ 
+        // Bật Firestore Database (chế độ Production hoặc Test mode).
+        // =========================================================================
+        const firebaseConfig = {
+		  apiKey: "AIzaSyALT8o8hQtVuSVn6A_hQSE4SvDHsg_y80I",
+		  authDomain: "khotainguyen-5d8b8.firebaseapp.com",
+		  projectId: "khotainguyen-5d8b8",
+		  storageBucket: "khotainguyen-5d8b8.firebasestorage.app",
+		  messagingSenderId: "345543974251",
+		  appId: "1:345543974251:web:d9a1c177c8a686827ac02e",
+		  measurementId: "G-X73FSSCR12"
+		};
+        // =========================================================================
+
         lucide.createIcons();
 
-        // 1. NHẬP LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
-        const GAS_WEB_APP_URL = ""; // Ví dụ: "https://script.google.com/macros/s/AKfycb.../exec"
-
+        // States
         let resources = [];
         let isAdmin = false;
+        let currentUser = null;
         let currentResType = 'file';
         let currentIconType = 'link';
         let fileBase64 = '';
         let iconBase64 = '';
+        
+        // Setup Firebase config hỗ trợ cả môi trường động và môi trường của bạn
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : USER_FIREBASE_CONFIG;
+        const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'kho-du-lieu-firebase-app';
+        let db, auth;
+        let isFirebaseActive = false;
+
+        try {
+            if(firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                isFirebaseActive = true;
+            }
+        } catch (e) {
+            console.warn("Chưa cấu hình Firebase hoặc cấu hình lỗi", e);
+        }
 
         // --- HỆ THỐNG THÔNG BÁO TOAST ---
         function showToast(message, type = 'success') {
@@ -251,43 +290,71 @@
             }, 3000);
         }
 
-        // --- KHỞI TẠO & LẤY DỮ LIỆU ---
-        document.addEventListener('DOMContentLoaded', () => { 
-            // Load siêu tốc từ Cache cục bộ trước (0s delay)
+        // --- KHỞI TẠO ---
+        document.addEventListener('DOMContentLoaded', async () => { 
+            // 1. Tải mượt từ Cache cục bộ trước tiên
             const cachedData = localStorage.getItem('kdl_resources');
             if(cachedData) {
                 resources = JSON.parse(cachedData);
                 renderResources();
-            }
-            fetchData(!!cachedData); 
-        });
-
-        async function fetchData(hasCache) {
-            if(!hasCache) {
+            } else {
                 document.getElementById('loading-state').classList.remove('hidden-el');
                 document.getElementById('resources-grid').classList.add('hidden-el');
             }
 
-            if (GAS_WEB_APP_URL) {
+            // 2. Khởi tạo xác thực Firebase
+            if (isFirebaseActive) {
                 try {
-                    // Dùng redirect: 'follow' để GAS không bị block
-                    const res = await fetch(`${GAS_WEB_APP_URL}?action=get`, { redirect: 'follow' });
-                    if(!res.ok) throw new Error("Mạng lỗi");
-                    const data = await res.json();
-                    resources = data.resources || [];
-                    // Lưu Cache
-                    localStorage.setItem('kdl_resources', JSON.stringify(resources));
-                    renderResources();
-                } catch (e) { 
-                    console.error("Lỗi:", e); 
-                    showToast("Không thể tải dữ liệu mới từ Server", "error");
-                    document.getElementById('loading-state').classList.add('hidden-el');
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    // 3. Lắng nghe dữ liệu theo thời gian thực (Real-time listener)
+                    onAuthStateChanged(auth, (user) => {
+                        currentUser = user;
+                        if (user) {
+                            setupRealtimeListener();
+                        }
+                    });
+                } catch (e) {
+                    console.error("Lỗi xác thực Firebase", e);
+                    showToast("Lỗi kết nối cơ sở dữ liệu", "error");
+                    fallBackToMockData();
                 }
             } else {
-                document.getElementById('loading-state').classList.add('hidden-el');
-                if(!hasCache) {
-                    document.getElementById('empty-state').classList.remove('hidden-el');
-                }
+                fallBackToMockData();
+            }
+        });
+
+        // --- FIREBASE REAL-TIME LISTENER ---
+        function setupRealtimeListener() {
+            if (!currentUser) return;
+            const resourcesRef = collection(db, 'artifacts', appIdStr, 'public', 'data', 'resources');
+            
+            onSnapshot(resourcesRef, (snapshot) => {
+                resources = [];
+                snapshot.forEach((doc) => {
+                    resources.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Sắp xếp bài mới nhất lên trên
+                resources.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                localStorage.setItem('kdl_resources', JSON.stringify(resources));
+                renderResources();
+            }, (error) => {
+                console.error("Lỗi đồng bộ Firebase:", error);
+                showToast("Mất kết nối với cơ sở dữ liệu", "error");
+            });
+        }
+
+        function fallBackToMockData() {
+            document.getElementById('loading-state').classList.add('hidden-el');
+            if(resources.length === 0) {
+                 document.getElementById('empty-state').classList.remove('hidden-el');
+                 showToast("Đang chạy offline (chưa cấu hình Firebase).", "error");
             }
         }
 
@@ -318,19 +385,19 @@
                     </div>` : '';
 
                 grid.innerHTML += `
-                    <div class="group bg-slate-900/80 border border-slate-700/50 rounded-2xl overflow-hidden hover:border-cyan-500/50 transition-all flex flex-col">
+                    <div class="group bg-slate-900/80 border border-slate-700/50 rounded-2xl overflow-hidden hover:border-cyan-500/50 transition-all flex flex-col shadow-lg">
                         <div class="h-40 overflow-hidden relative bg-slate-800">
                             ${imgHtml}
-                            <div class="absolute top-2 right-2 bg-slate-950/80 px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                            <div class="absolute top-2 right-2 bg-slate-950/80 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-white/5">
                                 <i data-lucide="${isLink ? 'link' : 'download'}" class="w-3 h-3 ${isLink ? 'text-blue-400' : 'text-emerald-400'}"></i> 
-                                <span class="text-[10px] ${isLink ? 'text-blue-400' : 'text-emerald-400'} font-bold uppercase">${isLink ? 'Liên kết' : 'Tải về'}</span>
+                                <span class="text-[10px] ${isLink ? 'text-blue-400' : 'text-emerald-400'} font-bold uppercase tracking-wider">${isLink ? 'Liên kết' : 'Tải về'}</span>
                             </div>
                         </div>
                         <div class="p-4 flex-1 flex flex-col">
                             <h3 class="text-lg font-bold text-white mb-1">${res.title}</h3>
                             <p class="text-slate-400 text-sm mb-4 flex-1 line-clamp-2">${res.description || ''}</p>
                             <div class="flex items-center gap-2 mt-auto">
-                                <button onclick="handleActionClick('${res.id}')" class="flex-1 bg-slate-800 hover:bg-cyan-600 text-white py-2 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-2">
+                                <button onclick="handleActionClick('${res.id}')" class="flex-1 bg-slate-800 hover:bg-cyan-600 text-white py-2 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-2 border border-white/5 hover:border-cyan-500/50">
                                     <i data-lucide="${isLink ? 'external-link' : 'download'}" class="w-4 h-4"></i> ${isLink ? 'Mở Link' : 'Tải Về'}
                                 </button>
                                 ${adminBtns}
@@ -342,16 +409,14 @@
             lucide.createIcons();
         }
 
-        // --- XỬ LÝ TẢI VỀ / MỞ LINK ---
-        function handleActionClick(id) {
+        // --- XỬ LÝ SỰ KIỆN TẢI VỀ / MỞ LINK ---
+        window.handleActionClick = function(id) {
             const res = resources.find(r => r.id === id);
             if (!res) return;
             
             if (res.type === 'link' || (!res.url.startsWith('data:'))) {
-                // Mở tab mới với Google Drive hoặc link ngoài
                 window.open(res.url, '_blank');
             } else {
-                // Tải file trực tiếp nếu là Base64
                 try {
                     const a = document.createElement('a');
                     a.href = res.url;
@@ -364,29 +429,29 @@
                     showToast("Lỗi khi tải tệp", "error");
                 }
             }
-        }
+        };
 
-        // --- QUẢN LÝ ADMIN PANEL UI ---
-        function setResType(type) {
+        // --- UI FORM ---
+        window.setResType = function(type) {
             currentResType = type;
-            document.getElementById('btn-type-file').className = `flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm ${type==='file' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'bg-slate-800 border-slate-700 text-slate-400'}`;
-            document.getElementById('btn-type-link').className = `flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm ${type==='link' ? 'bg-blue-500/20 border-blue-500 text-blue-400' : 'bg-slate-800 border-slate-700 text-slate-400'}`;
+            document.getElementById('btn-type-file').className = `flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm transition-colors ${type==='file' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'bg-slate-800 border-slate-700 text-slate-400'}`;
+            document.getElementById('btn-type-link').className = `flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm transition-colors ${type==='link' ? 'bg-blue-500/20 border-blue-500 text-blue-400' : 'bg-slate-800 border-slate-700 text-slate-400'}`;
             
             document.getElementById('area-res-file').classList.toggle('hidden-el', type !== 'file');
             document.getElementById('area-res-link').classList.toggle('hidden-el', type !== 'link');
             if(type === 'link') document.getElementById('res-link-val').setAttribute('required', 'true');
             else document.getElementById('res-link-val').removeAttribute('required');
-        }
+        };
 
-        function setIconType(type) {
+        window.setIconType = function(type) {
             currentIconType = type;
-            document.getElementById('btn-icon-link').className = `text-xs px-3 py-1.5 rounded-md ${type==='link' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400'}`;
-            document.getElementById('btn-icon-file').className = `text-xs px-3 py-1.5 rounded-md ${type==='file' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400'}`;
+            document.getElementById('btn-icon-link').className = `text-xs px-3 py-1.5 rounded-md transition-colors ${type==='link' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-slate-700'}`;
+            document.getElementById('btn-icon-file').className = `text-xs px-3 py-1.5 rounded-md transition-colors ${type==='file' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-slate-700'}`;
             
             document.getElementById('area-icon-link').classList.toggle('hidden-el', type !== 'link');
             document.getElementById('area-icon-file').classList.toggle('hidden-el', type !== 'file');
             updateIconPreview();
-        }
+        };
 
         function formatBytes(bytes) {
             if (!+bytes) return '0 Bytes';
@@ -394,13 +459,13 @@
             return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${['Bytes', 'KB', 'MB', 'GB'][i]}`;
         }
 
-        function handleFileSelect(e, type) {
+        window.handleFileSelect = function(e, type) {
             const file = e.target.files[0];
             if (!file) return;
             
-            // Cảnh báo giới hạn Google Sheets (khoảng 35KB an toàn)
-            if(file.size > 40000 && type === 'file') {
-                showToast("File quá lớn để lưu trực tiếp vào Sheets. Vui lòng gắn link Drive!", "error");
+            // Cảnh báo giới hạn (Firestore limit 1MB/document, base64 to ra 33%, nên set ~700KB an toàn)
+            if(file.size > 700000 && type === 'file') {
+                showToast("File quá lớn cho cơ sở dữ liệu. Vui lòng gắn link Drive!", "error");
                 e.target.value = '';
                 return;
             }
@@ -418,9 +483,9 @@
                 }
             };
             reader.readAsDataURL(file);
-        }
+        };
 
-        function updateIconPreview() {
+        window.updateIconPreview = function() {
             const img = document.getElementById('icon-preview-img');
             const placeholder = document.getElementById('icon-placeholder');
             const src = currentIconType === 'link' ? document.getElementById('icon-link-val').value : iconBase64;
@@ -429,24 +494,10 @@
             } else {
                 img.classList.add('hidden-el'); placeholder.classList.remove('hidden-el');
             }
-        }
+        };
 
-        // --- CHỨC NĂNG API (LƯU / XÓA BẰNG TEXT/PLAIN ĐỂ BYPASS CORS) ---
-        async function sendToGoogleScript(action, payloadData = null) {
-            const bodyData = JSON.stringify({ action: action, data: payloadData, id: payloadData?.id || payloadData });
-            
-            // QUAN TRỌNG: Dùng text/plain để vượt qua CORS block của trình duyệt khi POST
-            const response = await fetch(GAS_WEB_APP_URL, {
-                method: 'POST',
-                redirect: 'follow',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: bodyData
-            });
-            
-            return await response.json();
-        }
-
-        async function handleSaveResource(e) {
+        // --- LƯU / XÓA LÊN FIREBASE ---
+        window.handleSaveResource = async function(e) {
             e.preventDefault();
             const id = document.getElementById('res-id').value;
             const isEdit = !!id;
@@ -455,12 +506,7 @@
                 showToast("Vui lòng chọn file upload!", "error"); return; 
             }
 
-            const btnSave = document.getElementById('btn-save');
-            btnSave.disabled = true;
-            btnSave.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Đang lưu...`;
-
             const payload = {
-                id: id || Date.now().toString(),
                 title: document.getElementById('res-title').value,
                 description: document.getElementById('res-desc').value,
                 type: currentResType,
@@ -469,38 +515,44 @@
                 createdAt: isEdit ? resources.find(r => r.id === id).createdAt : new Date().toISOString()
             };
 
-            if (GAS_WEB_APP_URL) {
+            const btnSave = document.getElementById('btn-save');
+            btnSave.disabled = true;
+            btnSave.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Đang lưu...`;
+
+            if (isFirebaseActive && currentUser) {
                 try {
-                    await sendToGoogleScript(isEdit ? 'update' : 'add', payload);
+                    const docId = id || Date.now().toString();
+                    const docRef = doc(db, 'artifacts', appIdStr, 'public', 'data', 'resources', docId);
+                    await setDoc(docRef, payload);
                     showToast(isEdit ? "Cập nhật thành công!" : "Đã thêm tài nguyên mới!");
-                    await fetchData(false);
                 } catch (err) { 
-                    console.error(err); 
-                    showToast("Lỗi khi lưu vào Server", "error"); 
+                    console.error("Lỗi Firebase:", err); 
+                    showToast("Lỗi khi lưu lên Firebase", "error"); 
                 }
             } else {
-                // Mock test
+                // Offline Local test fallback
+                payload.id = id || Date.now().toString();
                 if (isEdit) resources = resources.map(r => r.id === payload.id ? payload : r);
                 else resources.unshift(payload);
                 localStorage.setItem('kdl_resources', JSON.stringify(resources));
                 renderResources();
-                showToast("Đã lưu (Chế độ Local)");
+                showToast("Đã lưu (Chế độ Offline Local)");
             }
             
             btnSave.disabled = false;
             btnSave.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5"></i> Lưu Tài Nguyên`;
             closeAdminPanel();
-        }
+        };
 
-        async function handleDeleteResource(id) {
+        window.handleDeleteResource = async function(id) {
             if(!window.confirm("Bạn có chắc chắn muốn xóa tài nguyên này?")) return;
             
-            if (GAS_WEB_APP_URL) {
+            if (isFirebaseActive && currentUser) {
                 try {
                     showToast("Đang xóa...");
-                    await sendToGoogleScript('delete', id);
+                    const docRef = doc(db, 'artifacts', appIdStr, 'public', 'data', 'resources', id);
+                    await deleteDoc(docRef);
                     showToast("Đã xóa thành công");
-                    await fetchData(false);
                 } catch (err) { 
                     console.error(err); 
                     showToast("Lỗi khi xóa", "error"); 
@@ -511,35 +563,42 @@
                 renderResources();
                 showToast("Đã xóa");
             }
-        }
+        };
 
-        // --- AUTH ---
-        function openLoginModal() { document.getElementById('login-modal').classList.remove('hidden-el'); }
-        function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden-el'); }
+        // --- AUTH & MODAL ---
+        window.openLoginModal = function() { document.getElementById('login-modal').classList.remove('hidden-el'); };
+        window.closeLoginModal = function() { document.getElementById('login-modal').classList.add('hidden-el'); };
         
-        function handleLogin(e) {
+        window.handleLogin = function(e) {
             e.preventDefault();
-            if (document.getElementById('login-email').value === 'hung@admin.com' && document.getElementById('login-password').value === 'hung@123') {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            // Admin default login (Mặc định: hung@admin.com / hung@123)
+            if (email === 'hung@admin.com' && pass === 'hung@123') {
                 isAdmin = true; closeLoginModal();
                 document.getElementById('btn-login-trigger').classList.add('hidden-el');
                 document.getElementById('admin-controls').classList.remove('hidden-el');
+                
+                // Reset fields
+                document.getElementById('login-email').value = '';
+                document.getElementById('login-password').value = '';
+
                 renderResources();
                 showToast("Đăng nhập Admin thành công");
             } else {
                 showToast("Tài khoản hoặc mật khẩu sai!", "error");
             }
-        }
+        };
 
-        function handleLogout() {
+        window.handleLogout = function() {
             isAdmin = false;
             document.getElementById('btn-login-trigger').classList.remove('hidden-el');
             document.getElementById('admin-controls').classList.add('hidden-el');
             renderResources();
             showToast("Đã đăng xuất");
-        }
+        };
 
-        // --- MỞ ĐÓNG MODAL ---
-        function openAdminPanel(id = null) {
+        window.openAdminPanel = function(id = null) {
             document.getElementById('admin-panel-modal').classList.remove('hidden-el');
             document.getElementById('resourceForm').reset();
             fileBase64 = ''; iconBase64 = '';
@@ -571,9 +630,9 @@
                 setResType('file'); setIconType('link');
             }
             updateIconPreview(); lucide.createIcons();
-        }
+        };
 
-        function closeAdminPanel() { document.getElementById('admin-panel-modal').classList.add('hidden-el'); }
+        window.closeAdminPanel = function() { document.getElementById('admin-panel-modal').classList.add('hidden-el'); };
     </script>
 </body>
 </html>
