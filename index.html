@@ -109,12 +109,10 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
-                    <!-- Đã xóa value gợi ý -->
                     <input type="email" id="login-email" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500" placeholder="Nhập email admin...">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">Mật khẩu</label>
-                    <!-- Đã xóa value gợi ý -->
                     <input type="password" id="login-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500" placeholder="Nhập mật khẩu...">
                 </div>
                 <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2.5 rounded-xl transition-all duration-300 mt-6">Đăng Nhập</button>
@@ -228,19 +226,17 @@
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // =========================================================================
-        // DÁN CẤU HÌNH FIREBASE CỦA BẠN VÀO ĐÂY (USER_FIREBASE_CONFIG)
-        // Tạo project tại: https://console.firebase.google.com/ 
-        // Bật Firestore Database (chế độ Production hoặc Test mode).
+        // ĐÃ TÍCH HỢP CẤU HÌNH FIREBASE TỪ ẢNH BẠN GỬI
         // =========================================================================
-        const firebaseConfig = {
-		  apiKey: "AIzaSyALT8o8hQtVuSVn6A_hQSE4SvDHsg_y80I",
-		  authDomain: "khotainguyen-5d8b8.firebaseapp.com",
-		  projectId: "khotainguyen-5d8b8",
-		  storageBucket: "khotainguyen-5d8b8.firebasestorage.app",
-		  messagingSenderId: "345543974251",
-		  appId: "1:345543974251:web:d9a1c177c8a686827ac02e",
-		  measurementId: "G-X73FSSCR12"
-		};
+        const USER_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyALT8o8hQtVuSVn6A_hQSE4SvDHsg_y80I",
+            authDomain: "khotainguyen-5d8b8.firebaseapp.com",
+            projectId: "khotainguyen-5d8b8",
+            storageBucket: "khotainguyen-5d8b8.firebasestorage.app",
+            messagingSenderId: "345543974251",
+            appId: "1:345543974251:web:d9a1c177c8a686827ac02e",
+            measurementId: "G-X73FSSCR12"
+        };
         // =========================================================================
 
         lucide.createIcons();
@@ -254,7 +250,7 @@
         let fileBase64 = '';
         let iconBase64 = '';
         
-        // Setup Firebase config hỗ trợ cả môi trường động và môi trường của bạn
+        // Setup Firebase config 
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : USER_FIREBASE_CONFIG;
         const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'kho-du-lieu-firebase-app';
         let db, auth;
@@ -305,13 +301,14 @@
             // 2. Khởi tạo xác thực Firebase
             if (isFirebaseActive) {
                 try {
+                    // Cố gắng đăng nhập ẩn danh
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
                         await signInAnonymously(auth);
                     }
 
-                    // 3. Lắng nghe dữ liệu theo thời gian thực (Real-time listener)
+                    // 3. Lắng nghe dữ liệu theo thời gian thực 
                     onAuthStateChanged(auth, (user) => {
                         currentUser = user;
                         if (user) {
@@ -320,7 +317,7 @@
                     });
                 } catch (e) {
                     console.error("Lỗi xác thực Firebase", e);
-                    showToast("Lỗi kết nối cơ sở dữ liệu", "error");
+                    showToast("Bạn cần Bật tính năng Đăng nhập Ẩn Danh trên Firebase", "error");
                     fallBackToMockData();
                 }
             } else {
@@ -345,8 +342,13 @@
                 localStorage.setItem('kdl_resources', JSON.stringify(resources));
                 renderResources();
             }, (error) => {
-                console.error("Lỗi đồng bộ Firebase:", error);
-                showToast("Mất kết nối với cơ sở dữ liệu", "error");
+                console.error("Lỗi đồng bộ Firebase (Thiếu Rules):", error);
+                
+                // ĐÃ SỬA LỖI Ở ĐÂY: Xóa loading ngay lập tức nếu bị Firebase từ chối truy cập
+                document.getElementById('loading-state').classList.add('hidden-el');
+                document.getElementById('empty-state').classList.remove('hidden-el');
+                
+                showToast("Lỗi Database: Vui lòng sửa lại Firestore Rules!", "error");
             });
         }
 
@@ -354,7 +356,6 @@
             document.getElementById('loading-state').classList.add('hidden-el');
             if(resources.length === 0) {
                  document.getElementById('empty-state').classList.remove('hidden-el');
-                 showToast("Đang chạy offline (chưa cấu hình Firebase).", "error");
             }
         }
 
@@ -463,7 +464,7 @@
             const file = e.target.files[0];
             if (!file) return;
             
-            // Cảnh báo giới hạn (Firestore limit 1MB/document, base64 to ra 33%, nên set ~700KB an toàn)
+            // Cảnh báo giới hạn (Firestore limit 1MB/document)
             if(file.size > 700000 && type === 'file') {
                 showToast("File quá lớn cho cơ sở dữ liệu. Vui lòng gắn link Drive!", "error");
                 e.target.value = '';
