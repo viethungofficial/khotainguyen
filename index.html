@@ -179,7 +179,7 @@
                             </h3>
                             <div class="grid grid-cols-2 gap-2 mb-4">
                                 <button type="button" onclick="setResType('file')" id="btn-type-file" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border bg-cyan-500/20 border-cyan-500 text-cyan-400 text-sm transition-colors">
-                                    <i data-lucide="upload-cloud" class="w-4 h-4"></i> Upload Từ PC
+                                    <i data-lucide="upload-cloud" class="w-4 h-4"></i> Upload Trực Tiếp
                                 </button>
                                 <button type="button" onclick="setResType('link')" id="btn-type-link" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border bg-slate-800 border-slate-700 text-slate-400 text-sm transition-colors">
                                     <i data-lucide="link" class="w-4 h-4"></i> Gắn Link Drive
@@ -190,7 +190,7 @@
                                 <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event, 'file')">
                                 <div class="flex flex-col items-center justify-center text-center w-full h-full z-10">
                                     <i data-lucide="upload-cloud" class="w-8 h-8 text-cyan-400 mb-2 group-hover:scale-110 transition-transform"></i>
-                                    <span id="file-status-text" class="text-sm font-medium text-slate-300 mb-1">Chọn file bất kỳ (ZIP, RAR, EXE)</span>
+                                    <span id="file-status-text" class="text-sm font-medium text-slate-300 mb-1">Chọn file (ZIP, RAR, EXE)</span>
                                 </div>
                             </div>
 
@@ -245,9 +245,7 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Cấu hình GoFile API Token (Dành cho việc Lấy link trực tiếp và Upload)
-        const GOFILE_TOKEN = "P05BBN2c7r6elhBumKrpoVAj3X0k32ir";
-
+        // Cấu hình Firebase Database (Chỉ lưu link text và icon base64, không lưu file vật lý)
         const USER_FIREBASE_CONFIG = {
             apiKey: "AIzaSyALT8o8hQtVuSVn6A_hQSE4SvDHsg_y80I",
             authDomain: "khotainguyen-5d8b8.firebaseapp.com",
@@ -265,7 +263,7 @@
         let filteredResources = [];
         let searchQuery = '';
         let currentPage = 1;
-        const itemsPerPage = 8; // Số tool tối đa trên 1 trang
+        const itemsPerPage = 8; 
 
         let isAdmin = false;
         let currentUser = null;
@@ -479,10 +477,8 @@
                 pagination.classList.remove('hidden-el');
                 let pagesHtml = '';
 
-                // Nút Prev
                 pagesHtml += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="p-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>`;
 
-                // Render số trang (Rút gọn nếu quá nhiều trang)
                 let startP = Math.max(1, currentPage - 2);
                 let endP = Math.min(totalPages, currentPage + 2);
                 
@@ -498,7 +494,6 @@
 
                 if(endP < totalPages) pagesHtml += `<span class="text-slate-500 px-1">...</span>`;
 
-                // Nút Next
                 pagesHtml += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="p-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>`;
 
                 pagination.innerHTML = pagesHtml;
@@ -508,45 +503,14 @@
             }
         }
 
-        // --- XỬ LÝ GET LINK DIRECT GOFILE VÀ TẢI XUỐNG ---
+        // --- XỬ LÝ GET LINK DIRECT TỪ CATBOX VÀ CÁC NGUỒN KHÁC ĐỂ TẢI XUỐNG ---
         window.handleActionClick = async function(id) {
             const res = resources.find(r => r.id === id);
             if (!res) return;
             
-            // Xử lý Giải mã link Gofile lấy Direct Link để tải trực tiếp (Bỏ qua màn hình Gofile)
-            if (res.url.includes('gofile.io/d/')) {
-                showToast("Đang trích xuất liên kết tải trực tiếp...");
-                try {
-                    const folderId = res.url.split('/').pop(); // Lấy ID thư mục từ link
-                    
-                    // Dùng Token của bạn để gọi API nội bộ của Gofile lấy danh sách file
-                    const apiRes = await fetch(`https://api.gofile.io/contents/${folderId}?token=${GOFILE_TOKEN}`);
-                    const data = await apiRes.json();
-                    
-                    if (data.status === 'ok') {
-                        // Thường folder chỉ chứa 1 file tool bạn vừa up
-                        const children = data.data.children;
-                        const firstFileId = Object.keys(children)[0];
-                        
-                        if(firstFileId && children[firstFileId].link) {
-                            const directLink = children[firstFileId].link;
-                            
-                            // ĐÃ SỬA TẠI ĐÂY: Dùng window.location.href thay vì thẻ a
-                            // Trình duyệt sẽ nhận diện file đính kèm và tự động tải xuống
-                            // mà không nhảy sang tab khác hay bị chặn bởi trình duyệt
-                            window.location.href = directLink;
-                            
-                            showToast("Đã bắt đầu tải về máy!");
-                            return;
-                        }
-                    }
-                } catch (e) {
-                    console.error("Lỗi khi bóc tách Direct Link Gofile:", e);
-                }
-                // Fallback: Mở trang Gofile nếu trích xuất Direct Link thất bại
-                window.open(res.url, '_blank');
-            } 
-            else if (res.url.startsWith('data:')) {
+            showToast("Đang tải xuống tài nguyên...");
+
+            if (res.url.startsWith('data:')) {
                 // Tải trực tiếp file Base64 nhỏ
                 const a = document.createElement('a');
                 a.href = res.url;
@@ -554,8 +518,12 @@
                 document.body.appendChild(a); 
                 a.click(); 
                 document.body.removeChild(a);
-                showToast("Đã bắt đầu tải về máy!");
-            } else {
+            } 
+            else if (res.url.includes('catbox.moe') || res.url.endsWith('.exe') || res.url.endsWith('.zip') || res.url.endsWith('.rar')) {
+                // Ép trình duyệt download trực tiếp ngay tại trang (Direct Link 100%)
+                window.location.href = res.url;
+            } 
+            else {
                 // Mở link Google Drive, Mega,... qua Tab mới
                 window.open(res.url, '_blank');
             }
@@ -626,7 +594,7 @@
             }
         };
 
-        // --- XỬ LÝ LƯU VÀ UPLOAD FILE QUA MÁY CHỦ GOFILE ---
+        // --- XỬ LÝ LƯU VÀ UPLOAD FILE BẰNG CATBOX.MOE ---
         window.handleSaveResource = async function(e) {
             e.preventDefault();
             const id = document.getElementById('res-id').value;
@@ -645,22 +613,18 @@
                     finalUrl = document.getElementById('res-link-val').value;
                 } else {
                     if (selectedFile) {
-                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span id="upload-progress-text">Đang kết nối Gofile...</span>`;
+                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span id="upload-progress-text">Đang kết nối Đám mây trực tiếp...</span>`;
                         lucide.createIcons();
                         
                         try {
-                            const serverRes = await fetch('https://api.gofile.io/servers');
-                            const serverData = await serverRes.json();
-                            const server = serverData.data.servers[0].name;
+                            const formData = new FormData();
+                            formData.append('reqtype', 'fileupload');
+                            formData.append('fileToUpload', selectedFile);
+
+                            const xhr = new XMLHttpRequest();
+                            xhr.open('POST', 'https://catbox.moe/user/api.php', true);
 
                             finalUrl = await new Promise((resolve, reject) => {
-                                const formData = new FormData();
-                                formData.append('file', selectedFile);
-                                formData.append('token', GOFILE_TOKEN);
-
-                                const xhr = new XMLHttpRequest();
-                                xhr.open('POST', `https://${server}.gofile.io/contents/uploadfile`, true);
-
                                 xhr.upload.onprogress = (event) => {
                                     if (event.lengthComputable) {
                                         const percentComplete = Math.round((event.loaded / event.total) * 100);
@@ -673,14 +637,12 @@
 
                                 xhr.onload = () => {
                                     if (xhr.status >= 200 && xhr.status < 300) {
-                                        try {
-                                            const res = JSON.parse(xhr.responseText);
-                                            if (res.status === 'ok') {
-                                                resolve(res.data.downloadPage); 
-                                            } else {
-                                                reject(new Error("Gofile từ chối: " + (res.status || 'Lỗi không xác định')));
-                                            }
-                                        } catch(e) { reject(e); }
+                                        const responseText = xhr.responseText.trim();
+                                        if (responseText.startsWith('http')) {
+                                            resolve(responseText); // Trả về link trực tiếp luôn
+                                        } else {
+                                            reject(new Error("Máy chủ từ chối file của bạn."));
+                                        }
                                     } else {
                                         reject(new Error("Lỗi mạng khi tải lên. Vui lòng thử lại."));
                                     }
@@ -813,7 +775,7 @@
                 if (res.type === 'link') { 
                     document.getElementById('res-link-val').value = res.url; 
                 } else { 
-                    fileStatusText.innerText = '✅ File đã nằm trên Đám mây (Click để thay thế file mới)'; 
+                    fileStatusText.innerText = '✅ File đã nằm trên Đám mây trực tiếp (Click để thay thế file mới)'; 
                     fileStatusText.classList.remove('text-slate-300');
                     fileStatusText.classList.add('text-emerald-400', 'font-semibold');
                     areaFile.classList.add('border-emerald-500', 'bg-emerald-500/10');
