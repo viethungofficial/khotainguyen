@@ -335,9 +335,20 @@
                 localStorage.setItem('kdl_resources', JSON.stringify(resources));
                 renderResources();
             }, (error) => {
+                console.error("Lỗi Firebase:", error);
+                
+                // Tắt vòng xoay loading
                 document.getElementById('loading-state').classList.add('hidden-el');
-                document.getElementById('empty-state').classList.remove('hidden-el');
-                showToast("Vui lòng mở quyền truy cập Database (Rules)!", "error");
+                showToast("Lỗi Database: Chưa cấp quyền (Rules) trên Firebase!", "error");
+                
+                // Cố gắng hiển thị lại dữ liệu cũ nếu Database bị chặn
+                const cachedData = localStorage.getItem('kdl_resources');
+                if(cachedData && JSON.parse(cachedData).length > 0) {
+                    resources = JSON.parse(cachedData);
+                    renderResources();
+                } else {
+                    document.getElementById('empty-state').classList.remove('hidden-el');
+                }
             });
         }
 
