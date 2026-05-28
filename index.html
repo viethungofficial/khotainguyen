@@ -501,7 +501,7 @@
                     finalUrl = document.getElementById('res-link-val').value;
                 } else {
                     if (selectedFile) {
-                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang up file lên Đám mây (Vui lòng chờ)...`;
+                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span id="upload-progress-text">Đang kết nối Gofile...</span>`;
                         lucide.createIcons();
                         
                         try {
@@ -510,24 +510,48 @@
                             const serverData = await serverRes.json();
                             const server = serverData.data.servers[0].name;
 
-                            // 2. Upload file nặng của bạn lên Gofile Cloud
-                            const formData = new FormData();
-                            formData.append('file', selectedFile);
+                            // 2. Upload file bằng XHR để theo dõi tiến độ % tốc độ thực (Lưu thẳng vào TK Cá nhân)
+                            finalUrl = await new Promise((resolve, reject) => {
+                                const formData = new FormData();
+                                formData.append('file', selectedFile);
+                                formData.append('token', 'P05BBN2c7r6elhBumKrpoVAj3X0k32ir'); // Cấu hình Token của bạn
+                                // Ghi chú: Account ID a922682f-aebc-45fe-8497-a723c3650700 đã được định danh tự động qua token này
 
-                            const uploadRes = await fetch(`https://${server}.gofile.io/contents/uploadfile`, {
-                                method: 'POST',
-                                body: formData
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', `https://${server}.gofile.io/contents/uploadfile`, true);
+
+                                // Lắng nghe tiến trình Upload (Hiển thị phần trăm %)
+                                xhr.upload.onprogress = (event) => {
+                                    if (event.lengthComputable) {
+                                        const percentComplete = Math.round((event.loaded / event.total) * 100);
+                                        const progressText = document.getElementById('upload-progress-text');
+                                        if (progressText) {
+                                            progressText.innerText = `Đang tải lên... ${percentComplete}%`;
+                                        }
+                                    }
+                                };
+
+                                xhr.onload = () => {
+                                    if (xhr.status >= 200 && xhr.status < 300) {
+                                        try {
+                                            const res = JSON.parse(xhr.responseText);
+                                            if (res.status === 'ok') {
+                                                resolve(res.data.downloadPage); // Lấy link tải về
+                                            } else {
+                                                reject(new Error("Gofile từ chối: " + (res.status || 'Lỗi không xác định')));
+                                            }
+                                        } catch(e) { reject(e); }
+                                    } else {
+                                        reject(new Error("Lỗi mạng khi tải lên. Vui lòng thử lại."));
+                                    }
+                                };
+
+                                xhr.onerror = () => reject(new Error("Lỗi Upload máy chủ! Mẹo: Hãy up file lên Google Drive và dán Link vào."));
+                                xhr.send(formData);
                             });
-                            const uploadData = await uploadRes.json();
-                            
-                            if(uploadData.status === 'ok') {
-                                finalUrl = uploadData.data.downloadPage; // Link tải về miễn phí
-                            } else {
-                                throw new Error("Gofile từ chối nhận file.");
-                            }
                         } catch(apiErr) {
                             console.error(apiErr);
-                            throw new Error("Lỗi Upload máy chủ! Mẹo: Bạn hãy up file lên Google Drive và dán Link vào.");
+                            throw new Error(apiErr.message || "Lỗi Upload máy chủ! Mẹo: Bạn hãy up file lên Google Drive và dán Link vào.");
                         }
                     } else if (isEdit) {
                         finalUrl = resources.find(r => r.id === id).url; 
