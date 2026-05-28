@@ -3,806 +3,831 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kho Dữ Liệu</title>
-    <!-- Favicon SVG -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306b6d4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3v11'/><path d='M8 7l4-4 4 4'/><path d='M12 21V10'/><path d='M8 17l4 4 4-4'/><path d='M4 12h2'/><path d='M18 12h2'/></svg>">
+    <title>Kho Dữ Liệu - Khám phá & Lưu trữ</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- LocalForage cho Database cực nhẹ (IndexedDB) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#090e17',
+                        panelbg: '#111827',
+                        inputbg: '#1f2937',
+                        primary: '#06b6d4', // Cyan
+                        primary_hover: '#0891b2',
+                        accent: '#3b82f6', // Blue
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
-        .hidden-el { display: none !important; }
+        /* Base Dark Theme & Glow */
+        body {
+            background-color: #090e17;
+            color: #e2e8f0;
+            background-image: radial-gradient(circle at 50% -20%, #152238, #090e17 60%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
         
-        /* Hiệu ứng Toast */
-        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
-        .toast-exit { animation: slideOut 0.3s ease-in forwards; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        /* Chỉ phát sáng khung viền khi hover */
+        .glow-effect {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glow-effect:hover {
+            border-color: rgba(6, 182, 212, 0.8);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4), inset 0 0 10px rgba(6, 182, 212, 0.1);
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #090e17; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #374151; }
+        
+        /* Hide scrollbar for form modal to look cleaner */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500/30 min-h-screen relative overflow-x-hidden">
+<body class="antialiased">
 
-    <!-- Background glow -->
-    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-cyan-600/20 blur-[120px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[120px]"></div>
-    </div>
-
-    <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
-    <!-- HEADER -->
-    <header class="relative z-40 border-b border-white/10 bg-slate-900/80 backdrop-blur-md sticky top-0">
+    <!-- Header -->
+    <header class="border-b border-gray-800/60 sticky top-0 z-40 bg-[#090e17]/80 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="relative group flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 shadow-[0_0_20px_rgba(6,182,212,0.5)] transition-all duration-300 hover:shadow-[0_0_30px_rgba(6,182,212,0.8)] hover:scale-105">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 drop-shadow-md">
-                        <path d="M12 3v11"></path><path d="M8 7l4-4 4 4"></path><path d="M12 21V10"></path><path d="M8 17l4 4 4-4"></path><path d="M4 12h2"></path><path d="M18 12h2"></path>
+                <!-- Logo -->
+                <div class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg shadow-[0_0_10px_rgba(6,182,212,0.4)]">
+                    <svg viewBox="0 0 24 24" class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 11V3m0 0L3 7m4-4l4 4" />
+                        <path d="M17 13v8m0 0l-4-4m4 4l4-4" />
                     </svg>
                 </div>
-                <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 tracking-wide cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <h1 class="text-xl font-bold text-white tracking-wide">
                     Kho Dữ Liệu
                 </h1>
             </div>
-
-            <div id="auth-container">
-                <button onclick="openLoginModal()" id="btn-login-trigger" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-colors text-sm">
-                    <i data-lucide="shield-check" class="w-4 h-4"></i> Admin
+            <div class="flex items-center gap-4">
+                <!-- Nút Thêm Tài Nguyên (Chỉ hiện khi là Admin) -->
+                <button id="btn-open-add-modal" class="hidden flex items-center gap-2 text-sm font-medium bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg transition-colors shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Thêm Mới
                 </button>
                 
-                <div id="admin-controls" class="hidden-el flex items-center gap-3">
-                    <button onclick="openAdminPanel()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition-all text-sm font-medium shadow-[0_0_10px_rgba(6,182,212,0.2)]">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Thêm Tài Nguyên
-                    </button>
-                    <button onclick="handleLogout()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors text-sm">
-                        <i data-lucide="log-out" class="w-4 h-4"></i> Thoát
-                    </button>
-                </div>
+                <button id="btn-login-modal" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.965 11.965 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    Admin
+                </button>
+                <button id="btn-logout" class="hidden flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors">
+                    Đăng xuất
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Banner & Search -->
-        <div class="text-center mb-10">
-            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-3 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-                Khám phá & Lưu trữ <span class="text-cyan-400">Tài nguyên</span>
-            </h2>
-            <p class="text-slate-400 text-base max-w-2xl mx-auto mb-8">
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- Hero Section & Search -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
+                Khám phá & Lưu trữ <span class="text-cyan-400 glow-text">Tài nguyên</span>
+            </h1>
+            <p class="text-gray-400 text-sm md:text-base mb-8">
                 Hệ thống quản lý, chia sẻ Tool và Tài liệu trực tuyến siêu tốc.
             </p>
-
-            <!-- Thanh tìm kiếm (Search Bar) -->
-            <div class="max-w-2xl mx-auto relative group">
+            
+            <!-- Search Bar -->
+            <div class="max-w-2xl mx-auto relative">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i data-lucide="search" class="w-5 h-5 text-slate-400 group-focus-within:text-cyan-400 transition-colors"></i>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
-                <input type="text" id="search-input" oninput="handleSearch(event)" class="w-full bg-slate-900/60 border border-slate-700/50 rounded-2xl py-3.5 pl-12 pr-12 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 backdrop-blur-sm transition-all shadow-[0_0_15px_rgba(0,0,0,0.3)] hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] placeholder:text-slate-500" placeholder="Tìm kiếm tài nguyên, công cụ...">
-                <button id="clear-search-btn" onclick="clearSearch()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-white hidden-el">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
+                <input type="text" id="search-input" class="w-full bg-[#111827] border border-gray-700/50 rounded-xl py-3.5 pl-12 pr-4 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors shadow-lg" placeholder="Tìm kiếm tài nguyên, công cụ...">
             </div>
         </div>
 
-        <!-- Trạng thái Loading -->
-        <div id="loading-state" class="flex justify-center items-center py-10">
-            <div class="flex flex-col items-center gap-3">
-                <div class="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-                <span class="text-sm text-cyan-400 animate-pulse">Đang kết nối cơ sở dữ liệu...</span>
+        <!-- Resources Area -->
+        <section>
+            <!-- Loading -->
+            <div id="loading" class="flex justify-center py-20">
+                <div class="w-10 h-10 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
             </div>
-        </div>
-        
-        <!-- Trạng thái Trống -->
-        <div id="empty-state" class="hidden-el text-center py-20 flex flex-col items-center opacity-70 bg-slate-900/30 rounded-3xl border border-slate-800/50">
-            <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-4">
-                <i data-lucide="search-x" class="w-10 h-10 text-slate-500"></i>
+
+            <!-- Empty State (No results) -->
+            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-16 bg-[#111827]/40 rounded-2xl border border-gray-800/50">
+                <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.5 9.5l3 3m0-3l-3 3"></path></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-200 mb-1">Không tìm thấy tài nguyên</h3>
+                <p class="text-sm text-gray-500">Thử tìm với một từ khóa khác hoặc chưa có dữ liệu nào được tải lên.</p>
             </div>
-            <p class="text-xl font-semibold text-white mb-1">Không tìm thấy tài nguyên</p>
-            <p class="text-slate-400">Thử tìm với một từ khóa khác hoặc chưa có dữ liệu nào được tải lên.</p>
-        </div>
 
-        <!-- Lưới Dữ Liệu -->
-        <div id="resources-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 hidden-el">
-            <!-- Dữ liệu render tại đây -->
-        </div>
-
-        <!-- Phân trang (Pagination) -->
-        <div id="pagination-controls" class="flex justify-center items-center gap-2 mt-12 hidden-el">
-            <!-- Dữ liệu phân trang render tại đây -->
-        </div>
+            <!-- Grid -->
+            <div id="resources-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Dữ liệu render tại đây -->
+            </div>
+        </section>
     </main>
 
-    <!-- MODAL LOGIN -->
-    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden-el">
-        <div class="bg-slate-900 border border-slate-700/50 rounded-2xl w-full max-w-md p-8 relative shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-                    <i data-lucide="shield-check" class="w-8 h-8 text-white"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white">Admin Login</h2>
+    <!-- Modal: Thêm/Sửa Tài Nguyên -->
+    <div id="resource-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#05080f]/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 p-4">
+        <div class="bg-panelbg border border-gray-700 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto no-scrollbar shadow-[0_10px_40px_rgba(0,0,0,0.5)] transform scale-95 transition-transform duration-300" id="resource-modal-content">
+            
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center px-6 py-4 border-b border-gray-800">
+                <h3 id="form-title" class="text-lg font-semibold text-white flex items-center gap-2">
+                    <span class="text-cyan-400 text-xl font-light">+</span> Thêm Tài Nguyên Mới
+                </h3>
+                <button id="btn-close-res-modal" class="text-gray-400 hover:text-white transition-colors bg-gray-800 hover:bg-gray-700 p-1 rounded-md">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
-            <form onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
-                    <input type="email" id="login-email" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500" placeholder="Nhập email admin...">
+
+            <!-- Modal Body (Form) -->
+            <form id="resource-form" class="p-6 space-y-6">
+                <input type="hidden" id="edit-id">
+                
+                <!-- Info Section -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Tên tài nguyên (Tool/File) <span class="text-red-500">*</span></label>
+                        <input type="text" id="res-title" required class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Ví dụ: Tool Crack VIP">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-1">Mô tả ngắn</label>
+                        <input type="text" id="res-desc" class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Nhập một đoạn mô tả ngắn gọn...">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 mb-1">Mật khẩu</label>
-                    <input type="password" id="login-password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500" placeholder="Nhập mật khẩu...">
+
+                <!-- Split Section (Nguồn & Ảnh) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Nguồn Tài Nguyên -->
+                    <div class="bg-[#151f32] rounded-xl p-5 border border-gray-700/50 flex flex-col">
+                        <h4 class="text-sm font-medium text-white mb-4 flex items-center gap-2">
+                            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                            Nguồn Tài Nguyên
+                        </h4>
+                        
+                        <!-- Toggle Buttons -->
+                        <div class="flex p-1 bg-[#0f172a] rounded-lg mb-4 border border-gray-800">
+                            <button type="button" id="tab-res-file" class="flex-1 py-1.5 text-sm font-medium rounded-md bg-cyan-600 text-white transition-all">Upload Trực Tiếp</button>
+                            <button type="button" id="tab-res-link" class="flex-1 py-1.5 text-sm font-medium rounded-md text-gray-400 hover:text-white transition-all">Gắn Link Drive</button>
+                        </div>
+                        <input type="hidden" id="res-type-val" value="file">
+
+                        <!-- Content Nguồn -->
+                        <div class="flex-1 flex flex-col justify-center">
+                            <!-- Dropzone File -->
+                            <div id="res-file-zone" class="border-2 border-dashed border-gray-600 hover:border-cyan-500 rounded-xl p-6 text-center cursor-pointer transition-colors h-32 flex flex-col items-center justify-center bg-[#0f172a]/50" onclick="document.getElementById('res-file').click()">
+                                <svg class="w-8 h-8 text-cyan-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                <p id="res-file-name" class="text-xs text-gray-400 font-medium px-2 truncate w-full">Chọn file (ZIP, RAR, EXE) - Max 200MB</p>
+                            </div>
+                            <input type="file" id="res-file" class="hidden">
+                            
+                            <!-- Link Input -->
+                            <div id="res-link-zone" class="hidden h-32 flex flex-col justify-center">
+                                <input type="url" id="res-url" class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Dán link Google Drive, Fshare...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ảnh Đại Diện -->
+                    <div class="bg-[#151f32] rounded-xl p-5 border border-gray-700/50 flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-sm font-medium text-white flex items-center gap-2">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Ảnh Đại Diện
+                            </h4>
+                            
+                            <!-- Toggle Buttons (Mini) -->
+                            <div class="flex p-0.5 bg-[#0f172a] rounded-md border border-gray-800 text-xs">
+                                <button type="button" id="tab-icon-link" class="px-3 py-1 rounded bg-gray-700 text-white transition-all">Dán Link</button>
+                                <button type="button" id="tab-icon-file" class="px-3 py-1 rounded text-gray-400 hover:text-white transition-all">Tải Lên</button>
+                            </div>
+                            <input type="hidden" id="icon-type-val" value="link">
+                        </div>
+
+                        <!-- Content Ảnh -->
+                        <div class="flex gap-4 flex-1 items-center">
+                            <div class="flex-1">
+                                <!-- Link Input -->
+                                <input type="url" id="icon-url" class="w-full bg-inputbg border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Nhập link ảnh...">
+                                
+                                <!-- File Input Zone -->
+                                <div id="icon-file-zone" class="hidden border border-dashed border-gray-600 rounded-lg p-2 text-center cursor-pointer hover:border-cyan-500 transition-colors text-xs text-gray-400 bg-[#0f172a]/50 h-10 flex items-center justify-center truncate px-2" onclick="document.getElementById('icon-file').click()">
+                                    <span id="icon-file-name">Bấm để chọn ảnh...</span>
+                                </div>
+                                <input type="file" id="icon-file" accept="image/*" class="hidden">
+                            </div>
+                            
+                            <!-- Preview Box -->
+                            <div class="w-16 h-16 rounded-xl border border-gray-700 bg-gray-800 flex items-center justify-center overflow-hidden shrink-0">
+                                <img id="icon-preview" src="" class="w-full h-full object-cover hidden">
+                                <svg id="icon-placeholder" class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-3 rounded-xl transition-all duration-300 mt-6 shadow-[0_0_15px_rgba(6,182,212,0.4)]">Đăng Nhập</button>
+
+                <!-- Footer Actions -->
+                <div class="flex justify-end gap-4 pt-4 border-t border-gray-800">
+                    <button type="button" id="btn-cancel-modal" class="px-5 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-colors">Hủy Bỏ</button>
+                    <button type="submit" id="btn-submit" class="px-6 py-2 rounded-lg bg-accent hover:bg-blue-600 text-white text-sm font-medium transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        Lưu Tài Nguyên
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL ADMIN THÊM/SỬA -->
-    <div id="admin-panel-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm hidden-el overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-700/50 rounded-2xl w-full max-w-4xl my-8 relative shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col max-h-[90vh]">
-            <div class="flex items-center justify-between p-5 border-b border-white/5">
-                <h2 id="modal-title" class="text-xl font-bold text-white flex items-center gap-2">
-                    <i data-lucide="plus" class="text-cyan-400 w-5 h-5"></i> Thêm Tài Nguyên Mới
-                </h2>
-                <button type="button" onclick="closeAdminPanel()" class="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-lg hover:bg-slate-700">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#05080f]/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 p-4">
+        <div class="bg-panelbg p-8 rounded-2xl w-full max-w-sm border border-gray-700 transform scale-95 transition-transform duration-300 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    Xác Thực Admin
+                </h3>
+                <button id="btn-close-login" class="text-gray-500 hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             </div>
-
-            <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
-                <form id="resourceForm" onsubmit="handleSaveResource(event)">
-                    <input type="hidden" id="res-id">
-                    
-                    <div class="space-y-4 mb-6">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-1">Tên tài nguyên (Tool/File) <span class="text-red-400">*</span></label>
-                            <input type="text" id="res-title" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500" placeholder="Ví dụ: Tool Crack VIP">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300 mb-1">Mô tả ngắn</label>
-                            <textarea id="res-desc" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500 resize-none"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="h-px bg-white/5 w-full mb-6"></div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Cột Trái: Tài Nguyên -->
-                        <div class="bg-slate-800/30 p-5 rounded-2xl border border-white/5">
-                            <h3 class="text-base font-semibold text-white mb-4 flex items-center gap-2">
-                                <i data-lucide="file-box" class="w-5 h-5 text-cyan-400"></i> Nguồn Tài Nguyên
-                            </h3>
-                            <div class="grid grid-cols-2 gap-2 mb-4">
-                                <button type="button" onclick="setResType('file')" id="btn-type-file" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border bg-cyan-500/20 border-cyan-500 text-cyan-400 text-sm transition-colors">
-                                    <i data-lucide="upload-cloud" class="w-4 h-4"></i> Upload Trực Tiếp
-                                </button>
-                                <button type="button" onclick="setResType('link')" id="btn-type-link" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border bg-slate-800 border-slate-700 text-slate-400 text-sm transition-colors">
-                                    <i data-lucide="link" class="w-4 h-4"></i> Gắn Link Drive
-                                </button>
-                            </div>
-
-                            <div id="area-res-file" class="p-6 border-2 border-dashed border-slate-600 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition-all duration-300 h-[120px] flex items-center justify-center relative overflow-hidden group cursor-pointer" onclick="document.getElementById('file-input').click()">
-                                <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event, 'file')">
-                                <div class="flex flex-col items-center justify-center text-center w-full h-full z-10">
-                                    <i data-lucide="upload-cloud" class="w-8 h-8 text-cyan-400 mb-2 group-hover:scale-110 transition-transform"></i>
-                                    <span id="file-status-text" class="text-sm font-medium text-slate-300 mb-1">Chọn file (ZIP, RAR, EXE) - Max 500MB</span>
-                                </div>
-                            </div>
-
-                            <div id="area-res-link" class="hidden-el h-[120px]">
-                                <label class="block text-sm text-slate-400 mb-2">Đường dẫn tải về:</label>
-                                <input type="url" id="res-link-val" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500" placeholder="https://...">
-                            </div>
-                        </div>
-
-                        <!-- Cột Phải: Icon -->
-                        <div class="bg-slate-800/30 p-5 rounded-2xl border border-white/5">
-                             <h3 class="text-base font-semibold text-white mb-4 flex items-center justify-between">
-                                <div class="flex items-center gap-2"><i data-lucide="image" class="w-5 h-5 text-emerald-400"></i> Ảnh Đại Diện</div>
-                                <div class="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
-                                    <button type="button" onclick="setIconType('link')" id="btn-icon-link" class="text-xs px-3 py-1.5 rounded-md bg-cyan-500/20 text-cyan-400 transition-colors">Dán Link</button>
-                                    <button type="button" onclick="setIconType('file')" id="btn-icon-file" class="text-xs px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-700 transition-colors">Tải Ảnh Lên</button>
-                                </div>
-                            </h3>
-                            <div class="flex gap-4">
-                                <div class="flex-1 flex flex-col justify-center">
-                                    <div id="area-icon-link">
-                                        <input type="text" id="icon-link-val" oninput="updateIconPreview()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm" placeholder="Nhập link ảnh...">
-                                    </div>
-                                    <div id="area-icon-file" class="hidden-el">
-                                        <input type="file" accept="image/*" id="icon-file-input" class="hidden" onchange="handleFileSelect(event, 'icon')">
-                                        <button type="button" onclick="document.getElementById('icon-file-input').click()" class="w-full bg-slate-800 border border-slate-700 border-dashed rounded-xl py-3.5 flex items-center justify-center gap-2 text-slate-400 text-sm hover:text-cyan-400 transition-colors">
-                                            <i data-lucide="image-plus" class="w-4 h-4"></i> Chọn ảnh (<500KB)
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="w-24 h-24 rounded-xl bg-slate-900 border border-slate-700 overflow-hidden flex-shrink-0 flex items-center justify-center shadow-inner relative">
-                                    <i data-lucide="image" id="icon-placeholder" class="w-8 h-8 text-slate-600"></i>
-                                    <img id="icon-preview-img" src="" class="w-full h-full object-cover absolute inset-0 hidden-el" onerror="this.classList.add('hidden-el'); document.getElementById('icon-placeholder').classList.remove('hidden-el');">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="p-5 border-t border-white/5 bg-slate-900/50 rounded-b-2xl flex justify-end gap-3">
-                <button type="button" onclick="closeAdminPanel()" class="px-5 py-2.5 rounded-xl font-medium text-slate-300 hover:bg-slate-800 transition-colors">Hủy Bỏ</button>
-                <button id="btn-save" form="resourceForm" type="submit" class="px-6 py-2.5 rounded-xl font-medium text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 flex items-center gap-2 transition-all">
-                    <i data-lucide="check-circle-2" class="w-5 h-5"></i> Lưu Tài Nguyên
-                </button>
-            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <input type="email" id="login-email" class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm focus:border-cyan-500 focus:outline-none placeholder-gray-500" placeholder="Email" required>
+                </div>
+                <div>
+                    <input type="password" id="login-pass" class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm focus:border-cyan-500 focus:outline-none placeholder-gray-500" placeholder="Mật khẩu" required>
+                </div>
+                <p id="login-error" class="text-red-400 text-xs hidden">Sai tài khoản hoặc mật khẩu!</p>
+                <button type="submit" class="w-full py-2.5 mt-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium transition-colors">Đăng Nhập</button>
+            </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- Message Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 z-[200] bg-panelbg px-5 py-3 rounded-xl border border-gray-700 shadow-2xl flex items-center gap-3">
+        <span id="toast-icon">✅</span>
+        <span id="toast-msg" class="text-white text-sm font-medium">Thành công</span>
+    </div>
 
-        // Cấu hình Firebase Database
-        const USER_FIREBASE_CONFIG = {
-            apiKey: "AIzaSyALT8o8hQtVuSVn6A_hQSE4SvDHsg_y80I",
-            authDomain: "khotainguyen-5d8b8.firebaseapp.com",
-            projectId: "khotainguyen-5d8b8",
-            storageBucket: "khotainguyen-5d8b8.firebasestorage.app",
-            messagingSenderId: "345543974251",
-            appId: "1:345543974251:web:d9a1c177c8a686827ac02e",
-            measurementId: "G-X73FSSCR12"
+    <script>
+        // Cấu hình Database an toàn
+        try {
+            if (typeof localforage !== 'undefined') {
+                localforage.config({
+                    name: 'KhoDuLieuDB',
+                    storeName: 'resources'
+                });
+            } else {
+                console.warn("Thư viện lưu trữ chưa tải xong, dữ liệu sẽ được dùng tạm trên RAM.");
+            }
+        } catch(e) {
+            console.error("Lỗi khởi tạo Database:", e);
+        }
+
+        // --- Trạng thái Ứng dụng ---
+        let state = {
+            isAdmin: false,
+            resources: [], // Toàn bộ data
+            filteredResources: [], // Data hiển thị sau tìm kiếm
+            editingId: null
         };
 
-        lucide.createIcons();
-
-        // States quản lý Data và Pagination
-        let resources = [];
-        let filteredResources = [];
-        let searchQuery = '';
-        let currentPage = 1;
-        const itemsPerPage = 8; 
-
-        let isAdmin = false;
-        let currentUser = null;
-        let currentResType = 'file'; 
-        let currentIconType = 'link';
-        
-        let selectedFile = null;
-        let selectedIconFile = null;
-        let iconPreviewBase64 = '';
-        
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : USER_FIREBASE_CONFIG;
-        const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'kho-du-lieu-firebase-app';
-        let db, auth;
-        let isFirebaseActive = false;
-
-        try {
-            if(firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                isFirebaseActive = true;
-            }
-        } catch (e) {
-            console.warn("Chưa cấu hình Firebase", e);
-        }
-
-        // --- TOAST NOTIFICATION ---
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const colors = type === 'success' ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' : 'bg-red-500/20 border-red-500/50 text-red-400';
-            const icon = type === 'success' ? 'check-circle' : 'alert-circle';
+        const ui = {
+            // General
+            resourcesGrid: document.getElementById('resources-grid'),
+            loading: document.getElementById('loading'),
+            emptyState: document.getElementById('empty-state'),
+            searchInput: document.getElementById('search-input'),
+            toast: document.getElementById('toast'),
+            toastMsg: document.getElementById('toast-msg'),
+            toastIcon: document.getElementById('toast-icon'),
             
-            toast.className = `toast-enter flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-lg pointer-events-auto ${colors}`;
-            toast.innerHTML = `<i data-lucide="${icon}" class="w-5 h-5"></i><span class="font-medium text-sm">${message}</span>`;
+            // Header Buttons
+            btnLoginModal: document.getElementById('btn-login-modal'),
+            btnLogout: document.getElementById('btn-logout'),
+            btnOpenAddModal: document.getElementById('btn-open-add-modal'),
             
-            container.appendChild(toast);
-            lucide.createIcons();
+            // Login Modal
+            loginModal: document.getElementById('login-modal'),
+            loginModalContent: document.querySelector('#login-modal > div'),
+            btnCloseLogin: document.getElementById('btn-close-login'),
+            loginForm: document.getElementById('login-form'),
+            loginError: document.getElementById('login-error'),
+            
+            // Resource Form Modal
+            resModal: document.getElementById('resource-modal'),
+            resModalContent: document.getElementById('resource-modal-content'),
+            btnCloseResModal: document.getElementById('btn-close-res-modal'),
+            btnCancelModal: document.getElementById('btn-cancel-modal'),
+            form: document.getElementById('resource-form'),
+            formTitle: document.getElementById('form-title'),
+            btnSubmit: document.getElementById('btn-submit'),
+            
+            // Form Inputs
+            resTitle: document.getElementById('res-title'),
+            resDesc: document.getElementById('res-desc'),
+            
+            // Tabs & Zones: Nguồn Tài Nguyên
+            tabResFile: document.getElementById('tab-res-file'),
+            tabResLink: document.getElementById('tab-res-link'),
+            resTypeVal: document.getElementById('res-type-val'),
+            resFileZone: document.getElementById('res-file-zone'),
+            resLinkZone: document.getElementById('res-link-zone'),
+            resFile: document.getElementById('res-file'),
+            resFileName: document.getElementById('res-file-name'),
+            resUrl: document.getElementById('res-url'),
+            
+            // Tabs & Zones: Ảnh Đại Diện
+            tabIconLink: document.getElementById('tab-icon-link'),
+            tabIconFile: document.getElementById('tab-icon-file'),
+            iconTypeVal: document.getElementById('icon-type-val'),
+            iconUrl: document.getElementById('icon-url'),
+            iconFileZone: document.getElementById('icon-file-zone'),
+            iconFile: document.getElementById('icon-file'),
+            iconFileName: document.getElementById('icon-file-name'),
+            iconPreview: document.getElementById('icon-preview'),
+            iconPlaceholder: document.getElementById('icon-placeholder'),
+        };
 
-            setTimeout(() => {
-                toast.classList.replace('toast-enter', 'toast-exit');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
+        const showToast = (msg, type = 'success') => {
+            ui.toastMsg.textContent = msg;
+            ui.toastIcon.textContent = type === 'success' ? '✅' : '❌';
+            ui.toast.className = `fixed bottom-5 right-5 z-[200] bg-panelbg px-5 py-3 rounded-xl border border-gray-700 shadow-2xl flex items-center gap-3 transition-all duration-300`;
+            ui.toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => ui.toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+        };
 
-        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+        // Đọc file -> Base64 (cho icon)
+        const readIconAsDataURL = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.readAsDataURL(file);
             reader.onload = () => resolve(reader.result);
             reader.onerror = error => reject(error);
+            reader.readAsDataURL(file);
+        });
+        
+        // Hàm chuyển đổi size (Bytes sang KB, MB)
+        const formatSize = (bytes) => {
+            if (!bytes || bytes === 0) return '0 Byte';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        };
+
+        // --- UI Logic: Chuyển đổi Tab trong Modal ---
+        const setResTab = (type) => {
+            ui.resTypeVal.value = type;
+            if(type === 'file') {
+                ui.tabResFile.className = "flex-1 py-1.5 text-sm font-medium rounded-md bg-cyan-600 text-white transition-all";
+                ui.tabResLink.className = "flex-1 py-1.5 text-sm font-medium rounded-md text-gray-400 hover:text-white transition-all";
+                ui.resFileZone.classList.remove('hidden');
+                ui.resLinkZone.classList.add('hidden');
+            } else {
+                ui.tabResLink.className = "flex-1 py-1.5 text-sm font-medium rounded-md bg-cyan-600 text-white transition-all";
+                ui.tabResFile.className = "flex-1 py-1.5 text-sm font-medium rounded-md text-gray-400 hover:text-white transition-all";
+                ui.resLinkZone.classList.remove('hidden');
+                ui.resFileZone.classList.add('hidden');
+            }
+        };
+
+        const setIconTab = (type) => {
+            ui.iconTypeVal.value = type;
+            if(type === 'link') {
+                ui.tabIconLink.className = "px-3 py-1 rounded bg-gray-700 text-white transition-all";
+                ui.tabIconFile.className = "px-3 py-1 rounded text-gray-400 hover:text-white transition-all";
+                ui.iconUrl.classList.remove('hidden');
+                ui.iconFileZone.classList.add('hidden');
+            } else {
+                ui.tabIconFile.className = "px-3 py-1 rounded bg-gray-700 text-white transition-all";
+                ui.tabIconLink.className = "px-3 py-1 rounded text-gray-400 hover:text-white transition-all";
+                ui.iconFileZone.classList.remove('hidden');
+                ui.iconUrl.classList.add('hidden');
+            }
+        };
+
+        ui.tabResFile.addEventListener('click', () => setResTab('file'));
+        ui.tabResLink.addEventListener('click', () => setResTab('link'));
+        ui.tabIconLink.addEventListener('click', () => setIconTab('link'));
+        ui.tabIconFile.addEventListener('click', () => setIconTab('file'));
+
+        // Cập nhật tên file khi chọn
+        ui.resFile.addEventListener('change', (e) => {
+            if(e.target.files.length > 0) {
+                const f = e.target.files[0];
+                ui.resFileName.textContent = `${f.name} (${formatSize(f.size)})`;
+                ui.resFileName.classList.add('text-white');
+                ui.resFileName.classList.remove('text-gray-400');
+            } else {
+                ui.resFileName.textContent = "Chọn file (ZIP, RAR, EXE) - Max 200MB";
+                ui.resFileName.classList.add('text-gray-400');
+                ui.resFileName.classList.remove('text-white');
+            }
         });
 
-        document.addEventListener('DOMContentLoaded', async () => { 
-            const cachedData = localStorage.getItem('kdl_resources');
-            if(cachedData) {
-                resources = JSON.parse(cachedData);
-                renderResources();
+        ui.iconFile.addEventListener('change', async (e) => {
+            if(e.target.files.length > 0) {
+                ui.iconFileName.textContent = e.target.files[0].name;
+                const dataUrl = await readIconAsDataURL(e.target.files[0]);
+                updateIconPreview(dataUrl);
             } else {
-                document.getElementById('loading-state').classList.remove('hidden-el');
-                document.getElementById('resources-grid').classList.add('hidden-el');
-            }
-
-            if (isFirebaseActive) {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-
-                    onAuthStateChanged(auth, (user) => {
-                        currentUser = user;
-                        if (user) setupRealtimeListener();
-                    });
-                } catch (e) {
-                    showToast("Lỗi xác thực Firebase", "error");
-                    fallBackToMockData();
-                }
-            } else {
-                fallBackToMockData();
+                ui.iconFileName.textContent = "Bấm để chọn ảnh...";
             }
         });
 
-        function setupRealtimeListener() {
-            if (!currentUser) return;
-            const resourcesRef = collection(db, 'artifacts', appIdStr, 'public', 'data', 'resources');
-            onSnapshot(resourcesRef, (snapshot) => {
-                resources = [];
-                snapshot.forEach((doc) => resources.push({ id: doc.id, ...doc.data() }));
-                resources.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                localStorage.setItem('kdl_resources', JSON.stringify(resources));
-                renderResources();
-            }, (error) => {
-                document.getElementById('loading-state').classList.add('hidden-el');
-                const cachedData = localStorage.getItem('kdl_resources');
-                if(cachedData && JSON.parse(cachedData).length > 0) {
-                    showToast("Mất kết nối DB. Đang hiện dữ liệu offline.", "error");
-                } else {
-                    document.getElementById('empty-state').classList.remove('hidden-el');
-                }
-            });
-        }
+        ui.iconUrl.addEventListener('input', (e) => {
+            updateIconPreview(e.target.value);
+        });
 
-        function fallBackToMockData() {
-            document.getElementById('loading-state').classList.add('hidden-el');
-            if(resources.length === 0) document.getElementById('empty-state').classList.remove('hidden-el');
-        }
+        const updateIconPreview = (src) => {
+            if(src && src.trim() !== '') {
+                ui.iconPreview.src = src;
+                ui.iconPreview.classList.remove('hidden');
+                ui.iconPlaceholder.classList.add('hidden');
+            } else {
+                ui.iconPreview.classList.add('hidden');
+                ui.iconPlaceholder.classList.remove('hidden');
+            }
+        };
 
-        // --- XỬ LÝ TÌM KIẾM ---
-        window.handleSearch = function(e) {
-            searchQuery = e.target.value.toLowerCase().trim();
-            currentPage = 1; // Reset về trang 1 khi search
-            
-            const clearBtn = document.getElementById('clear-search-btn');
-            if(searchQuery.length > 0) clearBtn.classList.remove('hidden-el');
-            else clearBtn.classList.add('hidden-el');
-            
+        // --- Quản lý Modal & Trạng thái ---
+        const toggleAdminMode = (isAdmin) => {
+            state.isAdmin = isAdmin;
+            if (isAdmin) {
+                ui.btnOpenAddModal.classList.remove('hidden');
+                ui.btnLoginModal.classList.add('hidden');
+                ui.btnLogout.classList.remove('hidden');
+                showToast('Đăng nhập quản trị thành công!');
+            } else {
+                ui.btnOpenAddModal.classList.add('hidden');
+                ui.btnLoginModal.classList.remove('hidden');
+                ui.btnLogout.classList.add('hidden');
+            }
             renderResources();
         };
 
-        window.clearSearch = function() {
-            const searchInput = document.getElementById('search-input');
-            searchInput.value = '';
-            searchQuery = '';
-            currentPage = 1;
-            document.getElementById('clear-search-btn').classList.add('hidden-el');
-            renderResources();
+        // Login Modal
+        const openLoginModal = () => {
+            ui.loginModal.classList.remove('hidden'); 
+            setTimeout(() => { ui.loginModal.classList.remove('opacity-0'); ui.loginModalContent.classList.remove('scale-95'); }, 10);
+        };
+        const closeLoginModal = () => {
+            ui.loginModal.classList.add('opacity-0'); ui.loginModalContent.classList.add('scale-95');
+            setTimeout(() => ui.loginModal.classList.add('hidden'), 300); 
+            ui.loginError.classList.add('hidden'); ui.loginForm.reset();
         };
 
-        // --- XỬ LÝ PHÂN TRANG (PAGINATION) ---
-        window.changePage = function(page) {
-            currentPage = page;
-            renderResources();
-            // Cuộn mượt mà lên đầu danh sách
-            document.getElementById('resources-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        ui.btnLoginModal.addEventListener('click', openLoginModal);
+        ui.btnCloseLogin.addEventListener('click', closeLoginModal);
+        
+        ui.loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (document.getElementById('login-email').value === 'hung@admin.com' && document.getElementById('login-pass').value === 'hung@123') {
+                closeLoginModal(); toggleAdminMode(true);
+            } else { ui.loginError.classList.remove('hidden'); }
+        });
+
+        ui.btnLogout.addEventListener('click', () => { toggleAdminMode(false); showToast('Đã đăng xuất'); });
+
+        // Resource Form Modal
+        const openResModal = (isEdit = false) => {
+            ui.resModal.classList.remove('hidden');
+            setTimeout(() => { ui.resModal.classList.remove('opacity-0'); ui.resModalContent.classList.remove('scale-95'); }, 10);
+            if(!isEdit) resetForm();
+        };
+        
+        const closeResModal = () => {
+            ui.resModal.classList.add('opacity-0'); ui.resModalContent.classList.add('scale-95');
+            setTimeout(() => ui.resModal.classList.add('hidden'), 300);
         };
 
-        // --- RENDER DỮ LIỆU & PHÂN TRANG ---
-        function renderResources() {
-            document.getElementById('loading-state').classList.add('hidden-el');
-            const grid = document.getElementById('resources-grid');
-            const pagination = document.getElementById('pagination-controls');
+        ui.btnOpenAddModal.addEventListener('click', () => openResModal(false));
+        ui.btnCloseResModal.addEventListener('click', closeResModal);
+        ui.btnCancelModal.addEventListener('click', closeResModal);
+
+        const resetForm = () => {
+            ui.form.reset(); state.editingId = null;
+            ui.formTitle.innerHTML = `<span class="text-cyan-400 text-xl font-light">+</span> Thêm Tài Nguyên Mới`;
+            ui.btnSubmit.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Lưu Tài Nguyên`;
             
-            // 1. Áp dụng bộ lọc tìm kiếm
-            filteredResources = resources;
-            if (searchQuery) {
-                filteredResources = resources.filter(r => 
-                    r.title.toLowerCase().includes(searchQuery) || 
-                    (r.description && r.description.toLowerCase().includes(searchQuery))
+            // Reset Tabs & UI
+            setResTab('file');
+            setIconTab('link');
+            ui.resFileName.textContent = "Chọn file (ZIP, RAR, EXE) - Max 200MB";
+            ui.resFileName.classList.add('text-gray-400');
+            ui.iconFileName.textContent = "Bấm để chọn ảnh...";
+            updateIconPreview('');
+        };
+
+
+        // --- Tìm kiếm & Lọc ---
+        ui.searchInput.addEventListener('input', (e) => {
+            const keyword = e.target.value.toLowerCase().trim();
+            if(keyword === '') {
+                state.filteredResources = [...state.resources];
+            } else {
+                state.filteredResources = state.resources.filter(r => 
+                    r.title.toLowerCase().includes(keyword) || 
+                    (r.description && r.description.toLowerCase().includes(keyword))
                 );
             }
+            renderResources();
+        });
 
-            // Xử lý Empty State
-            if (filteredResources.length === 0) {
-                document.getElementById('empty-state').classList.remove('hidden-el');
-                grid.classList.add('hidden-el');
-                pagination.classList.add('hidden-el');
+        // --- Logic Database (LocalForage) ---
+        const fetchResources = async () => {
+            ui.loading.classList.remove('hidden');
+            ui.emptyState.classList.add('hidden');
+            ui.resourcesGrid.classList.add('hidden');
+            
+            try {
+                let data = [];
+                if (typeof localforage !== 'undefined') {
+                    data = await localforage.getItem('all_resources');
+                }
+                
+                state.resources = data || [];
+                // Sort by newest
+                state.resources.sort((a, b) => b.createdAt - a.createdAt);
+            } catch (err) {
+                console.error("Lỗi lấy dữ liệu Database:", err);
+                showToast('Lỗi truy xuất dữ liệu', 'error');
+                state.resources = [];
+            } finally {
+                ui.loading.classList.add('hidden');
+                ui.resourcesGrid.classList.remove('hidden');
+                
+                // Khởi tạo filter bằng bộ dữ liệu vừa lấy
+                state.filteredResources = [...state.resources];
+                
+                // Kích hoạt render lại Grid
+                ui.searchInput.dispatchEvent(new Event('input')); 
+            }
+        };
+
+        const renderResources = () => {
+            ui.resourcesGrid.innerHTML = '';
+            
+            if (state.filteredResources.length === 0) {
+                ui.emptyState.classList.remove('hidden');
                 return;
+            } else {
+                ui.emptyState.classList.add('hidden');
             }
 
-            document.getElementById('empty-state').classList.add('hidden-el');
-            grid.classList.remove('hidden-el');
+            state.filteredResources.forEach(res => {
+                const isLink = res.resType === 'link';
+                const actionText = isLink ? 'Mở Link' : 'Tải Về';
+                const actionIcon = isLink 
+                    ? `<svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`
+                    : `<svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>`;
 
-            // 2. Tính toán phân trang
-            const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
-            if (currentPage > totalPages) currentPage = totalPages;
-            if (currentPage < 1) currentPage = 1;
+                const card = document.createElement('div');
+                // Tinh chỉnh padding từ p-5 xuống p-4 để thu nhỏ khoảng trắng viền thẻ
+                card.className = "glow-effect glass-panel rounded-xl p-4 flex flex-col justify-between group h-full relative"; 
+                
+                const iconSrc = res.iconData || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjIxIDE1IDE2IDEw NSA1IDE2IDIxIDIyIj48L3BvbHlsaW5lPjwvc3ZnPg==';
 
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const paginatedItems = filteredResources.slice(startIndex, startIndex + itemsPerPage);
-
-            // 3. Render Lưới Dữ Liệu
-            grid.innerHTML = '';
-            paginatedItems.forEach(res => {
-                const imgHtml = res.icon 
-                    ? `<img src="${res.icon}" alt="${res.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">`
-                    : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="file-box" class="w-12 h-12 text-slate-600"></i></div>`;
-
-                let adminBtns = isAdmin ? `
-                    <div class="flex gap-2">
-                        <button onclick="openAdminPanel('${res.id}')" class="p-2 bg-slate-800 rounded-lg hover:text-amber-400 transition-colors border border-slate-700 hover:border-amber-500/50"><i data-lucide="edit" class="w-4 h-4"></i></button>
-                        <button onclick="handleDeleteResource('${res.id}')" class="p-2 bg-slate-800 rounded-lg hover:text-red-400 transition-colors border border-slate-700 hover:border-red-500/50"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                let adminActions = state.isAdmin ? `
+                    <div class="absolute top-4 right-4 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        <button onclick="window.editResource('${res.id}')" class="p-1.5 bg-blue-600/90 hover:bg-blue-500 rounded text-white shadow-md"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                        <button onclick="window.deleteResource('${res.id}')" class="p-1.5 bg-red-600/90 hover:bg-red-500 rounded text-white shadow-md"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                     </div>` : '';
 
-                grid.innerHTML += `
-                    <div class="group bg-slate-900/80 border border-slate-700/50 rounded-2xl overflow-hidden hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all flex flex-col shadow-lg">
-                        <div class="h-44 overflow-hidden relative bg-slate-800">
-                            ${imgHtml}
-                            <div class="absolute top-2 right-2 bg-slate-950/80 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-white/10 backdrop-blur-sm">
-                                <i data-lucide="download" class="w-3 h-3 text-emerald-400"></i> 
-                                <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Tải về</span>
-                            </div>
+                // Bố cục lại Huy hiệu (Badge) Dung lượng làm thành cục ngang hàng Nút Tải
+                let sizeBadge = '';
+                if (isLink) {
+                     sizeBadge = `<div class="text-[11px] px-2.5 py-1.5 rounded-lg flex items-center gap-1 bg-[#1f2937] text-cyan-400 border border-gray-700 font-medium shrink-0" title="Dạng Link Tải"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg> Link</div>`;
+                } else {
+                     let calculatedSize = res.fileSize || (res.resData && res.resData.size ? res.resData.size : null);
+                     const fSize = calculatedSize ? formatSize(calculatedSize) : 'File';
+                     sizeBadge = `<div class="text-[11px] px-2.5 py-1.5 rounded-lg flex items-center gap-1 bg-[#1f2937] text-blue-400 border border-gray-700 font-medium shrink-0" title="Dung lượng File"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> ${fSize}</div>`;
+                }
+
+                card.innerHTML = `
+                    ${adminActions}
+                    <div class="relative flex-1 flex flex-col">
+                        <!-- Giảm mb-5 xuống mb-3 để khít hơn, kích thước icon là w-16 h-16 (to nhưng không chiếm lấn) -->
+                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/60 p-2.5 mb-3 flex items-center justify-center shrink-0 shadow-[inset_0_2px_10px_rgba(0,0,0,0.3)]">
+                            <img src="${iconSrc}" alt="" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMTYgMjEgMjIiPjwvc3ZnPg=='" class="max-w-full max-h-full object-contain drop-shadow-md">
                         </div>
-                        <div class="p-5 flex-1 flex flex-col">
-                            <h3 class="text-lg font-bold text-white mb-1.5 group-hover:text-cyan-400 transition-colors">${res.title}</h3>
-                            <p class="text-slate-400 text-sm mb-5 flex-1 line-clamp-2">${res.description || ''}</p>
-                            <div class="flex items-center gap-2 mt-auto">
-                                <button onclick="handleActionClick('${res.id}')" class="flex-1 bg-gradient-to-r from-slate-800 to-slate-800 hover:from-cyan-600 hover:to-blue-600 text-white py-2.5 rounded-xl text-sm font-medium transition-all duration-300 flex items-center justify-center gap-2 border border-slate-700 hover:border-transparent hover:shadow-[0_0_15px_rgba(6,182,212,0.4)]">
-                                    <i data-lucide="download" class="w-4 h-4"></i> Tải Trực Tiếp
-                                </button>
-                                ${adminBtns}
-                            </div>
-                        </div>
+                        
+                        <!-- Tiêu đề & Mô tả: Giảm mb để sát vào nhau -->
+                        <h3 class="text-base font-bold text-gray-100 mb-1 line-clamp-2" title="${res.title}">${res.title}</h3>
+                        <p class="text-[13px] text-gray-400 mb-3 line-clamp-2 flex-1">${res.description || 'Không có mô tả'}</p>
+                    </div>
+                    
+                    <!-- Footer: Thu gọn pt-4 thành pt-3, thu gap (khoảng cách giữa nút) -->
+                    <div class="flex items-center gap-2 pt-3 border-t border-gray-700/50 mt-auto">
+                        ${sizeBadge}
+                        <button onclick="window.downloadResource('${res.id}')" class="flex-1 py-1.5 rounded-lg text-sm font-semibold flex items-center justify-center transition-all ${isLink ? 'bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500 hover:text-white border border-cyan-500/50' : 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-900/20'}">
+                            ${actionText}
+                            ${actionIcon}
+                        </button>
                     </div>
                 `;
+                ui.resourcesGrid.appendChild(card);
             });
-            lucide.createIcons();
+        };
 
-            // 4. Render Nút Phân Trang
-            if (totalPages > 1) {
-                pagination.classList.remove('hidden-el');
-                let pagesHtml = '';
-
-                pagesHtml += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="p-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>`;
-
-                let startP = Math.max(1, currentPage - 2);
-                let endP = Math.min(totalPages, currentPage + 2);
-                
-                if(startP > 1) pagesHtml += `<span class="text-slate-500 px-1">...</span>`;
-
-                for (let i = startP; i <= endP; i++) {
-                    if (i === currentPage) {
-                        pagesHtml += `<button class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white font-bold shadow-[0_0_15px_rgba(6,182,212,0.5)] border border-cyan-400/50">${i}</button>`;
-                    } else {
-                        pagesHtml += `<button onclick="changePage(${i})" class="w-10 h-10 rounded-xl border border-slate-700 bg-slate-800/80 text-slate-400 hover:text-white hover:border-cyan-500/50 transition-colors">${i}</button>`;
-                    }
-                }
-
-                if(endP < totalPages) pagesHtml += `<span class="text-slate-500 px-1">...</span>`;
-
-                pagesHtml += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="p-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>`;
-
-                pagination.innerHTML = pagesHtml;
-                lucide.createIcons();
-            } else {
-                pagination.classList.add('hidden-el');
-            }
-        }
-
-        // --- XỬ LÝ GET LINK DIRECT ĐỂ TẢI XUỐNG ---
-        window.handleActionClick = async function(id) {
-            const res = resources.find(r => r.id === id);
+        window.downloadResource = (id) => {
+            const res = state.resources.find(r => r.id === id); 
             if (!res) return;
-            
-            showToast("Đang tải xuống tài nguyên...");
 
-            if (res.url.startsWith('data:')) {
-                // Tải trực tiếp file Base64 nhỏ
-                const a = document.createElement('a');
-                a.href = res.url;
-                a.download = res.title;
-                document.body.appendChild(a); 
-                a.click(); 
-                document.body.removeChild(a);
-            } 
-            else if (res.url.includes('lain.la') || res.url.includes('catbox.moe') || res.url.endsWith('.exe') || res.url.endsWith('.zip') || res.url.endsWith('.rar')) {
-                // Ép trình duyệt download trực tiếp ngay tại trang mà không chuyển hướng
-                window.location.href = res.url;
-            } 
-            else {
-                // Mở link Google Drive, Mega,... qua Tab mới
-                window.open(res.url, '_blank');
-            }
-        };
-
-        window.setResType = function(type) {
-            currentResType = type;
-            document.getElementById('btn-type-file').className = `flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm transition-colors ${type==='file' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'bg-slate-800 border-slate-700 text-slate-400'}`;
-            document.getElementById('btn-type-link').className = `flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm transition-colors ${type==='link' ? 'bg-blue-500/20 border-blue-500 text-blue-400' : 'bg-slate-800 border-slate-700 text-slate-400'}`;
-            
-            document.getElementById('area-res-file').classList.toggle('hidden-el', type !== 'file');
-            document.getElementById('area-res-link').classList.toggle('hidden-el', type !== 'link');
-            if(type === 'link') document.getElementById('res-link-val').setAttribute('required', 'true');
-            else document.getElementById('res-link-val').removeAttribute('required');
-        };
-
-        window.setIconType = function(type) {
-            currentIconType = type;
-            document.getElementById('btn-icon-link').className = `text-xs px-3 py-1.5 rounded-md transition-colors ${type==='link' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-slate-700'}`;
-            document.getElementById('btn-icon-file').className = `text-xs px-3 py-1.5 rounded-md transition-colors ${type==='file' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-slate-700'}`;
-            
-            document.getElementById('area-icon-link').classList.toggle('hidden-el', type !== 'link');
-            document.getElementById('area-icon-file').classList.toggle('hidden-el', type !== 'file');
-            updateIconPreview();
-        };
-
-        function formatBytes(bytes) {
-            if (!+bytes) return '0 Bytes';
-            const k = 1024, i = Math.floor(Math.log(bytes) / Math.log(k));
-            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${['Bytes', 'KB', 'MB', 'GB'][i]}`;
-        }
-
-        // --- NHẬN DIỆN FILE CỤC BỘ ---
-        window.handleFileSelect = function(e, type) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            if (type === 'file') {
-                if (file.size > 500000000) { // 500MB
-                    showToast("File quá lớn (Tối đa 500MB). Vui lòng dùng Gắn Link Drive!", "error");
-                    e.target.value = '';
-                    return;
-                }
-                
-                selectedFile = file; 
-                const statusText = document.getElementById('file-status-text');
-                statusText.innerText = `✅ Đã chọn: ${file.name} (${formatBytes(file.size)})`;
-                statusText.classList.remove('text-slate-300');
-                statusText.classList.add('text-emerald-400', 'font-semibold');
-                
-                const area = document.getElementById('area-res-file');
-                area.classList.remove('border-slate-600', 'bg-slate-800/50');
-                area.classList.add('border-emerald-500', 'bg-emerald-500/10');
-            } else if (type === 'icon') {
-                if(file.size > 500000) {
-                    showToast("Ảnh icon tải lên quá nặng (> 500KB). Vui lòng chọn ảnh nhẹ hơn!", "error");
-                    e.target.value = '';
-                    return;
-                }
-                selectedIconFile = file;
-                iconPreviewBase64 = URL.createObjectURL(file); 
-                updateIconPreview();
-            }
-        };
-
-        window.updateIconPreview = function() {
-            const img = document.getElementById('icon-preview-img');
-            const placeholder = document.getElementById('icon-placeholder');
-            const src = currentIconType === 'link' ? document.getElementById('icon-link-val').value : iconPreviewBase64;
-            if (src) {
-                img.src = src; img.classList.remove('hidden-el'); placeholder.classList.add('hidden-el');
+            if (res.resType === 'link') { 
+                window.open(res.resData, '_blank'); 
             } else {
-                img.classList.add('hidden-el'); placeholder.classList.remove('hidden-el');
+                if (res.resData) {
+                    showToast('Đang chuẩn bị file tải xuống...');
+                    const url = window.URL.createObjectURL(res.resData);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = res.fileName || `tainguyen_${id}`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 1000);
+                } else { 
+                    showToast('File không tồn tại hoặc bị lỗi!', 'error'); 
+                }
             }
         };
 
-        // --- XỬ LÝ LƯU VÀ UPLOAD FILE TRỰC TIẾP LÊN MÁY CHỦ BÊN THỨ 3 (POMF API) ---
-        window.handleSaveResource = async function(e) {
+        // Submit Form Add/Edit
+        ui.form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const id = document.getElementById('res-id').value;
-            const isEdit = !!id;
+            if(!state.isAdmin) return;
             
-            if (currentResType === 'file' && !selectedFile && !isEdit) { 
-                showToast("Bạn chưa chọn file Tool/Zip để upload!", "error"); return; 
-            }
-
-            const btnSave = document.getElementById('btn-save');
-            btnSave.disabled = true;
+            ui.btnSubmit.disabled = true;
+            const originalBtnHtml = ui.btnSubmit.innerHTML;
+            ui.btnSubmit.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Đang xử lý...`;
 
             try {
-                let finalUrl = '';
-                if (currentResType === 'link') {
-                    finalUrl = document.getElementById('res-link-val').value;
+                const title = ui.resTitle.value.trim();
+                const description = ui.resDesc.value.trim();
+                const iconType = ui.iconTypeVal.value;
+                const resType = ui.resTypeVal.value;
+                
+                let iconData = ''; 
+                let resData = ''; 
+                let fileName = ''; 
+                let fileSize = null;
+
+                // Xử lý Icon
+                if (iconType === 'link') { 
+                    iconData = ui.iconUrl.value; 
+                } else { 
+                    const file = ui.iconFile.files[0]; 
+                    if (file) iconData = await readIconAsDataURL(file); 
+                }
+
+                // Xử lý File/Link Nguồn
+                if (resType === 'link') { 
+                    resData = ui.resUrl.value;
+                    if(!resData) throw new Error("Missing link");
                 } else {
-                    if (selectedFile) {
-                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> <span id="upload-progress-text">Đang kết nối Máy chủ Lưu trữ...</span>`;
-                        lucide.createIcons();
-                        
-                        try {
-                            const formData = new FormData();
-                            formData.append('files[]', selectedFile);
-
-                            const xhr = new XMLHttpRequest();
-                            // API hỗ trợ up tool mượt mà, trả trực tiếp Direct Link
-                            xhr.open('POST', 'https://pomf2.lain.la/upload.php', true);
-
-                            finalUrl = await new Promise((resolve, reject) => {
-                                xhr.upload.onprogress = (event) => {
-                                    if (event.lengthComputable) {
-                                        const percentComplete = Math.round((event.loaded / event.total) * 100);
-                                        const progressText = document.getElementById('upload-progress-text');
-                                        if (progressText) {
-                                            progressText.innerText = `Đang tải lên... ${percentComplete}%`;
-                                        }
-                                    }
-                                };
-
-                                xhr.onload = () => {
-                                    if (xhr.status >= 200 && xhr.status < 300) {
-                                        try {
-                                            const res = JSON.parse(xhr.responseText);
-                                            if (res.success && res.files && res.files.length > 0) {
-                                                resolve(res.files[0].url); // Link tải về trực tiếp luôn
-                                            } else {
-                                                reject(new Error("Máy chủ từ chối file của bạn."));
-                                            }
-                                        } catch(err) {
-                                            reject(new Error("Lỗi đọc dữ liệu từ máy chủ."));
-                                        }
-                                    } else {
-                                        reject(new Error("Lỗi mạng khi tải lên. Vui lòng thử lại."));
-                                    }
-                                };
-                                xhr.onerror = () => reject(new Error("Lỗi Upload! Mẹo: Hãy up file > 500MB lên Google Drive và dán Link."));
-                                xhr.send(formData);
-                            });
-                        } catch(apiErr) {
-                            console.error(apiErr);
-                            throw new Error(apiErr.message || "Lỗi Upload máy chủ!");
+                    const file = ui.resFile.files[0];
+                    if (file) {
+                        if (file.size > 200000 * 1024) { 
+                            showToast('File quá lớn! Vui lòng chọn file < 200MB', 'error'); 
+                            throw new Error('Size limit'); 
                         }
-                    } else if (isEdit) {
-                        finalUrl = resources.find(r => r.id === id).url; 
+                        resData = file; 
+                        fileName = file.name;
+                        fileSize = file.size; // Lưu lại dung lượng
+                    } else if (!state.editingId) {
+                        // Bắt buộc chọn file nếu là thêm mới
+                        showToast('Vui lòng chọn file upload!', 'error');
+                        throw new Error('Missing file');
                     }
                 }
 
-                let finalIcon = '';
-                if (currentIconType === 'link') {
-                    finalIcon = document.getElementById('icon-link-val').value;
-                } else {
-                    if (selectedIconFile) finalIcon = await fileToBase64(selectedIconFile);
-                    else if (isEdit) finalIcon = resources.find(r => r.id === id).icon; 
-                }
-
-                const payload = {
-                    title: document.getElementById('res-title').value,
-                    description: document.getElementById('res-desc').value,
-                    type: currentResType,
-                    url: finalUrl,
-                    icon: finalIcon,
-                    createdAt: isEdit ? resources.find(r => r.id === id).createdAt : new Date().toISOString()
+                const resourceObj = { 
+                    id: state.editingId || 'res_' + Date.now().toString(36),
+                    title, 
+                    description,
+                    iconData: iconData || (state.editingId ? state.resources.find(r=>r.id===state.editingId).iconData : null), 
+                    resType, 
+                    resData: resData || (state.editingId ? state.resources.find(r=>r.id===state.editingId).resData : ''),
+                    fileName: fileName || (state.editingId ? state.resources.find(r=>r.id===state.editingId).fileName : ''),
+                    fileSize: fileSize || (state.editingId ? state.resources.find(r=>r.id===state.editingId).fileSize : null),
+                    createdAt: state.editingId ? state.resources.find(r => r.id === state.editingId).createdAt : Date.now()
                 };
 
-                btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang lưu Database...`;
-                lucide.createIcons();
-
-                if (isFirebaseActive && currentUser) {
-                    const docId = id || Date.now().toString();
-                    const docRef = doc(db, 'artifacts', appIdStr, 'public', 'data', 'resources', docId);
-                    await setDoc(docRef, payload);
+                let updatedResources;
+                if (state.editingId) {
+                    updatedResources = state.resources.map(r => r.id === state.editingId ? resourceObj : r);
+                    showToast('Cập nhật thành công!');
                 } else {
-                    payload.id = id || Date.now().toString();
-                    if (isEdit) resources = resources.map(r => r.id === payload.id ? payload : r);
-                    else resources.unshift(payload);
-                    localStorage.setItem('kdl_resources', JSON.stringify(resources));
-                    renderResources();
+                    updatedResources = [...state.resources, resourceObj];
+                    showToast('Đã thêm tài nguyên mới!');
                 }
 
-                showToast(isEdit ? "Cập nhật thành công!" : "Đã upload tài nguyên mới!");
-                closeAdminPanel();
-            } catch (err) { 
-                console.error("Lỗi hoàn thành Save:", err); 
-                showToast(err.message || "Có lỗi xảy ra khi xử lý dữ liệu!", "error"); 
+                // Cập nhật State trực tiếp giúp giao diện load siêu mượt
+                state.resources = updatedResources;
+
+                if (typeof localforage !== 'undefined') {
+                    await localforage.setItem('all_resources', updatedResources);
+                }
+
+                closeResModal();
+                ui.searchInput.dispatchEvent(new Event('input')); // Vẽ lại giao diện mà không cần đọc lại DB
+
+            } catch (error) {
+                console.error("Lỗi:", error);
+                if (error.message !== 'Size limit' && error.message !== 'Missing file' && error.message !== 'Missing link') {
+                    showToast('Có lỗi xảy ra khi lưu!', 'error');
+                }
             } finally {
-                btnSave.disabled = false;
-                btnSave.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5"></i> Lưu Tài Nguyên`;
-                lucide.createIcons();
+                ui.btnSubmit.disabled = false;
+                ui.btnSubmit.innerHTML = originalBtnHtml;
             }
+        });
+
+        // Nút Edit góc Card
+        window.editResource = (id) => {
+            const res = state.resources.find(r => r.id === id);
+            if (!res) return;
+
+            openResModal(true);
+            state.editingId = id;
+            ui.formTitle.innerHTML = `<span class="text-yellow-400 text-xl font-light">✎</span> Cập Nhật Tài Nguyên`;
+            ui.btnSubmit.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Cập Nhật Lại`;
+            
+            ui.resTitle.value = res.title;
+            ui.resDesc.value = res.description || '';
+
+            // Set Resource Type Tab
+            setResTab(res.resType);
+            if (res.resType === 'link') {
+                ui.resUrl.value = res.resData;
+            } else {
+                let calculatedSize = res.fileSize || (res.resData && res.resData.size ? res.resData.size : null);
+                let fSizeDisplay = calculatedSize ? ` (${formatSize(calculatedSize)})` : '';
+                
+                ui.resFileName.textContent = res.fileName ? (res.fileName + fSizeDisplay) : "Chọn lại file để thay thế";
+                ui.resFileName.classList.remove('text-gray-400');
+                ui.resFileName.classList.add('text-white');
+            }
+
+            // Set Icon Tab (Mặc định cứ chuyển về link cho gọn)
+            setIconTab('link');
+            if (res.iconData && res.iconData.startsWith('http')) {
+                ui.iconUrl.value = res.iconData;
+            } else {
+                ui.iconUrl.value = '';
+            }
+            updateIconPreview(res.iconData);
         };
 
-        window.handleDeleteResource = async function(id) {
-            if(!window.confirm("Bạn có chắc chắn muốn xóa tài nguyên này?")) return;
-            
-            if (isFirebaseActive && currentUser) {
+        window.deleteResource = async (id) => {
+            if(confirm('Bạn có chắc chắn muốn xóa tài nguyên này vĩnh viễn?')) {
                 try {
-                    showToast("Đang xóa...");
-                    const docRef = doc(db, 'artifacts', appIdStr, 'public', 'data', 'resources', id);
-                    await deleteDoc(docRef);
-                    showToast("Đã xóa thành công");
-                } catch (err) { 
-                    console.error(err); 
-                    showToast("Lỗi khi xóa", "error"); 
+                    const updatedResources = state.resources.filter(r => r.id !== id);
+                    state.resources = updatedResources;
+                    
+                    if (typeof localforage !== 'undefined') {
+                        await localforage.setItem('all_resources', updatedResources);
+                    }
+                    
+                    showToast('Đã xóa tài nguyên.');
+                    ui.searchInput.dispatchEvent(new Event('input')); // Kích hoạt vẽ lại
+                } catch(error) {
+                    console.error(error); showToast('Xóa thất bại!', 'error');
                 }
-            } else {
-                resources = resources.filter(r => r.id !== id); 
-                localStorage.setItem('kdl_resources', JSON.stringify(resources));
-                renderResources();
-                showToast("Đã xóa");
             }
         };
 
-        window.openLoginModal = function() { document.getElementById('login-modal').classList.remove('hidden-el'); };
-        window.closeLoginModal = function() { document.getElementById('login-modal').classList.add('hidden-el'); };
-        
-        window.handleLogin = function(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-            if (email === 'hung@admin.com' && pass === 'hung@123') {
-                isAdmin = true; closeLoginModal();
-                document.getElementById('btn-login-trigger').classList.add('hidden-el');
-                document.getElementById('admin-controls').classList.remove('hidden-el');
-                
-                document.getElementById('login-email').value = '';
-                document.getElementById('login-password').value = '';
-                renderResources(); showToast("Đăng nhập Admin thành công");
-            } else { showToast("Tài khoản hoặc mật khẩu sai!", "error"); }
+        const initApp = async () => {
+            await fetchResources();
         };
 
-        window.handleLogout = function() {
-            isAdmin = false;
-            document.getElementById('btn-login-trigger').classList.remove('hidden-el');
-            document.getElementById('admin-controls').classList.add('hidden-el');
-            renderResources(); showToast("Đã đăng xuất");
-        };
+        // --- KHỞI ĐỘNG AN TOÀN ---
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
 
-        window.openAdminPanel = function(id = null) {
-            document.getElementById('admin-panel-modal').classList.remove('hidden-el');
-            document.getElementById('resourceForm').reset();
-            
-            selectedFile = null; selectedIconFile = null; iconPreviewBase64 = '';
-            
-            const fileStatusText = document.getElementById('file-status-text');
-            fileStatusText.innerText = 'Chọn file (ZIP, RAR, EXE) - Max 500MB';
-            fileStatusText.classList.remove('text-emerald-400', 'font-semibold');
-            fileStatusText.classList.add('text-slate-300');
-            
-            const areaFile = document.getElementById('area-res-file');
-            areaFile.classList.remove('border-emerald-500', 'bg-emerald-500/10');
-            areaFile.classList.add('border-slate-600', 'bg-slate-800/50');
-            
-            if (id) {
-                const res = resources.find(r => r.id === id);
-                document.getElementById('modal-title').innerHTML = '<i data-lucide="edit" class="text-cyan-400 w-5 h-5"></i> Sửa Tài Nguyên';
-                document.getElementById('res-id').value = res.id;
-                document.getElementById('res-title').value = res.title;
-                document.getElementById('res-desc').value = res.description;
-                
-                setResType(res.type);
-                if (res.type === 'link') { 
-                    document.getElementById('res-link-val').value = res.url; 
-                } else { 
-                    fileStatusText.innerText = '✅ File đã nằm trên Đám mây (Click để thay thế file mới)'; 
-                    fileStatusText.classList.remove('text-slate-300');
-                    fileStatusText.classList.add('text-emerald-400', 'font-semibold');
-                    areaFile.classList.add('border-emerald-500', 'bg-emerald-500/10');
-                    areaFile.classList.remove('border-slate-600', 'bg-slate-800/50');
-                }
-
-                if (res.icon && res.icon.startsWith('data:')) { setIconType('file'); } 
-                else { setIconType('link'); document.getElementById('icon-link-val').value = res.icon || ''; }
-            } else {
-                document.getElementById('modal-title').innerHTML = '<i data-lucide="plus" class="text-cyan-400 w-5 h-5"></i> Thêm Tài Nguyên Mới';
-                document.getElementById('res-id').value = '';
-                setResType('file'); setIconType('link');
-            }
-            updateIconPreview(); lucide.createIcons();
-        };
-
-        window.closeAdminPanel = function() { document.getElementById('admin-panel-modal').classList.add('hidden-el'); };
     </script>
 </body>
 </html>
