@@ -219,25 +219,9 @@
 
     <!-- JAVASCRIPT (TÍCH HỢP FIREBASE) -->
     <script type="module">
-        // =========================================================================
-        // ⚠️ QUAN TRỌNG: ĐỂ UPLOAD ĐƯỢC FILE LÊN FIREBASE BẠN PHẢI BẬT STORAGE ⚠️
-        // 1. Vào Firebase Console -> Chọn mục "Storage" ở bên trái -> Bấm "Get Started".
-        // 2. Chọn tab "Rules" (Quy tắc) của Storage và dán cấu hình này vào để mở quyền:
-        // 
-        // rules_version = '2';
-        // service firebase.storage {
-        //   match /b/{bucket}/o {
-        //     match /{allPaths=**} {
-        //       allow read, write: if true;
-        //     }
-        //   }
-        // }
-        // =========================================================================
-        
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        // Bổ sung import Storage để hỗ trợ tải file nặng không giới hạn
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
         const USER_FIREBASE_CONFIG = {
@@ -258,7 +242,6 @@
         let currentResType = 'file';
         let currentIconType = 'link';
         
-        // Quản lý file (Đã đổi sang lưu File object trực tiếp để đẩy lên Firebase Storage)
         let selectedFile = null;
         let selectedIconFile = null;
         let iconPreviewBase64 = '';
@@ -273,7 +256,12 @@
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
-                storage = getStorage(app); // Khởi tạo Storage
+                // Bọc trong try-catch để phòng trường hợp lỗi thiết lập Storage Bucket
+                try {
+                    storage = getStorage(app); 
+                } catch(e) {
+                    console.warn("Storage chưa được kích hoạt chuẩn", e);
+                }
                 isFirebaseActive = true;
             }
         } catch (e) {
@@ -299,7 +287,6 @@
             }, 3000);
         }
 
-        // Helper đổi file ra Base64 nếu chạy Offline
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -416,7 +403,6 @@
             if (!res) return;
             
             showToast("Đang mở tài nguyên...");
-            // Link Drive hay link Firebase Storage đều mở qua Tab mới để tải một cách an toàn nhất
             window.open(res.url, '_blank');
         };
 
@@ -454,9 +440,8 @@
             if (!file) return;
 
             if (type === 'file') {
-                selectedFile = file; // Lưu trữ Object File thực sự
+                selectedFile = file; 
                 
-                // Trực quan hóa khi nhận diện được file
                 const statusText = document.getElementById('file-status-text');
                 statusText.innerText = `✅ Đã chọn: ${file.name} (${formatBytes(file.size)})`;
                 statusText.classList.remove('text-slate-300');
@@ -469,7 +454,7 @@
                 showToast(`Đã nhận diện file: ${file.name}`);
             } else if (type === 'icon') {
                 selectedIconFile = file;
-                iconPreviewBase64 = URL.createObjectURL(file); // Dựng preview ảnh ngay lập tức
+                iconPreviewBase64 = URL.createObjectURL(file); 
                 updateIconPreview();
             }
         };
@@ -485,13 +470,12 @@
             }
         };
 
-        // --- TẢI LÊN FIREBASE STORAGE & LƯU FIRESTORE ---
+        // --- TẢI LÊN FIREBASE MẠNH MẼ (KÈM FALLBACK BASE64) ---
         window.handleSaveResource = async function(e) {
             e.preventDefault();
             const id = document.getElementById('res-id').value;
             const isEdit = !!id;
             
-            // Xử lý báo lỗi nếu thiếu file
             if (currentResType === 'file' && !selectedFile && !isEdit) { 
                 showToast("Bạn chưa chọn file để upload!", "error"); return; 
             }
@@ -504,18 +488,26 @@
                 if (currentResType === 'link') {
                     finalUrl = document.getElementById('res-link-val').value;
                 } else {
-                    // Upload File lên Firebase Storage
-                    if (isFirebaseActive && currentUser && selectedFile) {
-                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang tải file lên...`;
-                        lucide.createIcons();
-                        const fileRef = ref(storage, `resources/${Date.now()}_${selectedFile.name}`);
-                        await uploadBytes(fileRef, selectedFile);
-                        finalUrl = await getDownloadURL(fileRef);
-                    } else if (selectedFile) {
-                        // Offline mode fallback
-                        finalUrl = await fileToBase64(selectedFile); 
+                    if (selectedFile) {
+                        if (isFirebaseActive && currentUser && storage) {
+                            try {
+                                btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang tải file lên...`;
+                                lucide.createIcons();
+                                const fileRef = ref(storage, `resources/${Date.now()}_${selectedFile.name}`);
+                                await uploadBytes(fileRef, selectedFile);
+                                finalUrl = await getDownloadURL(fileRef);
+                            } catch(storageErr) {
+                                console.error("Lỗi Firebase Storage:", storageErr);
+                                throw new Error("Tải file thất bại! Bạn chưa cấu hình Storage Rules.");
+                            }
+                        } else {
+                            if (selectedFile.size > 5000000) {
+                                throw new Error("Chế độ Offline chỉ hỗ trợ file < 5MB. Hãy kết nối Firebase!");
+                            }
+                            finalUrl = await fileToBase64(selectedFile); 
+                        }
                     } else if (isEdit) {
-                        finalUrl = resources.find(r => r.id === id).url; // Giữ link cũ
+                        finalUrl = resources.find(r => r.id === id).url; 
                     }
                 }
 
@@ -523,17 +515,23 @@
                 if (currentIconType === 'link') {
                     finalIcon = document.getElementById('icon-link-val').value;
                 } else {
-                    // Upload Icon
-                    if (isFirebaseActive && currentUser && selectedIconFile) {
-                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang tải ảnh lên...`;
-                        lucide.createIcons();
-                        const iconRef = ref(storage, `icons/${Date.now()}_${selectedIconFile.name}`);
-                        await uploadBytes(iconRef, selectedIconFile);
-                        finalIcon = await getDownloadURL(iconRef);
-                    } else if (selectedIconFile) {
-                        finalIcon = await fileToBase64(selectedIconFile);
+                    if (selectedIconFile) {
+                        if (isFirebaseActive && currentUser && storage) {
+                            try {
+                                btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang tải ảnh lên...`;
+                                lucide.createIcons();
+                                const iconRef = ref(storage, `icons/${Date.now()}_${selectedIconFile.name}`);
+                                await uploadBytes(iconRef, selectedIconFile);
+                                finalIcon = await getDownloadURL(iconRef);
+                            } catch(storageErr) {
+                                console.warn("Lỗi Firebase Storage (Icon), chuyển sang lưu Base64:", storageErr);
+                                finalIcon = await fileToBase64(selectedIconFile);
+                            }
+                        } else {
+                            finalIcon = await fileToBase64(selectedIconFile);
+                        }
                     } else if (isEdit) {
-                        finalIcon = resources.find(r => r.id === id).icon; // Giữ icon cũ
+                        finalIcon = resources.find(r => r.id === id).icon; 
                     }
                 }
 
@@ -546,7 +544,7 @@
                     createdAt: isEdit ? resources.find(r => r.id === id).createdAt : new Date().toISOString()
                 };
 
-                btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang lưu dữ liệu...`;
+                btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang lưu lên web...`;
                 lucide.createIcons();
 
                 if (isFirebaseActive && currentUser) {
@@ -564,8 +562,8 @@
                 showToast(isEdit ? "Cập nhật thành công!" : "Đã thêm tài nguyên mới!");
                 closeAdminPanel();
             } catch (err) { 
-                console.error("Lỗi:", err); 
-                showToast("Lỗi tải lên! Hãy chắc chắn bạn đã cấu hình Storage Rules.", "error"); 
+                console.error("Lỗi hoàn thành Save:", err); 
+                showToast(err.message || "Có lỗi xảy ra khi đồng bộ Database!", "error"); 
             } finally {
                 btnSave.disabled = false;
                 btnSave.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5"></i> Lưu Tài Nguyên`;
@@ -624,10 +622,8 @@
             document.getElementById('admin-panel-modal').classList.remove('hidden-el');
             document.getElementById('resourceForm').reset();
             
-            // Xóa rỗng các biến chứa file tạm thời
             selectedFile = null; selectedIconFile = null; iconPreviewBase64 = '';
             
-            // Khôi phục giao diện mặc định cho vùng upload file
             const fileStatusText = document.getElementById('file-status-text');
             fileStatusText.innerText = 'Click chọn file bất kỳ';
             fileStatusText.classList.remove('text-emerald-400', 'font-semibold');
