@@ -127,7 +127,7 @@
                 <h2 id="modal-title" class="text-xl font-bold text-white flex items-center gap-2">
                     <i data-lucide="plus" class="text-cyan-400 w-5 h-5"></i> Thêm Tài Nguyên Mới
                 </h2>
-                <button onclick="closeAdminPanel()" class="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-lg hover:bg-slate-700">
+                <button type="button" onclick="closeAdminPanel()" class="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-lg hover:bg-slate-700">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -156,25 +156,24 @@
                                 <i data-lucide="file-box" class="w-5 h-5 text-cyan-400"></i> Nguồn Tài Nguyên
                             </h3>
                             <div class="grid grid-cols-2 gap-2 mb-4">
-                                <button type="button" onclick="setResType('file')" id="btn-type-file" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border bg-cyan-500/20 border-cyan-500 text-cyan-400 text-sm">
+                                <button type="button" onclick="setResType('file')" id="btn-type-file" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border bg-cyan-500/20 border-cyan-500 text-cyan-400 text-sm transition-colors">
                                     <i data-lucide="upload-cloud" class="w-4 h-4"></i> Upload File
                                 </button>
-                                <button type="button" onclick="setResType('link')" id="btn-type-link" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border bg-slate-800 border-slate-700 text-slate-400 text-sm">
+                                <button type="button" onclick="setResType('link')" id="btn-type-link" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border bg-slate-800 border-slate-700 text-slate-400 text-sm transition-colors">
                                     <i data-lucide="link" class="w-4 h-4"></i> Gắn Link
                                 </button>
                             </div>
 
-                            <div id="area-res-file" class="p-6 border-2 border-dashed border-slate-600 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition-colors h-[120px] flex items-center justify-center">
+                            <div id="area-res-file" class="p-6 border-2 border-dashed border-slate-600 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition-all duration-300 h-[120px] flex items-center justify-center relative overflow-hidden group">
                                 <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event, 'file')">
-                                <div class="flex flex-col items-center justify-center text-center cursor-pointer w-full h-full" onclick="document.getElementById('file-input').click()">
-                                    <i data-lucide="upload-cloud" class="w-8 h-8 text-cyan-400 mb-2"></i>
-                                    <span class="text-sm font-medium text-slate-300 mb-1">Click chọn file</span>
-                                    <span id="file-status-text" class="text-xs text-slate-500 text-center px-2">Khuyên dùng Link Drive cho file nặng</span>
+                                <div class="flex flex-col items-center justify-center text-center cursor-pointer w-full h-full z-10" onclick="document.getElementById('file-input').click()">
+                                    <i data-lucide="upload-cloud" class="w-8 h-8 text-cyan-400 mb-2 group-hover:scale-110 transition-transform"></i>
+                                    <span id="file-status-text" class="text-sm font-medium text-slate-300 mb-1">Click chọn file bất kỳ</span>
                                 </div>
                             </div>
 
                             <div id="area-res-link" class="hidden-el h-[120px]">
-                                <label class="block text-sm text-slate-400 mb-2">Đường dẫn Google Drive / Mega:</label>
+                                <label class="block text-sm text-slate-400 mb-2">Đường dẫn Google Drive / Web:</label>
                                 <input type="url" id="res-link-val" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500" placeholder="https://...">
                             </div>
                         </div>
@@ -184,8 +183,8 @@
                              <h3 class="text-base font-semibold text-white mb-4 flex items-center justify-between">
                                 <div class="flex items-center gap-2"><i data-lucide="image" class="w-5 h-5 text-emerald-400"></i> Ảnh Đại Diện</div>
                                 <div class="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
-                                    <button type="button" onclick="setIconType('link')" id="btn-icon-link" class="text-xs px-3 py-1.5 rounded-md bg-cyan-500/20 text-cyan-400">Dán Link</button>
-                                    <button type="button" onclick="setIconType('file')" id="btn-icon-file" class="text-xs px-3 py-1.5 rounded-md text-slate-400">Tải Lên</button>
+                                    <button type="button" onclick="setIconType('link')" id="btn-icon-link" class="text-xs px-3 py-1.5 rounded-md bg-cyan-500/20 text-cyan-400 transition-colors">Dán Link</button>
+                                    <button type="button" onclick="setIconType('file')" id="btn-icon-file" class="text-xs px-3 py-1.5 rounded-md text-slate-400 hover:bg-slate-700 transition-colors">Tải Lên</button>
                                 </div>
                             </h3>
                             <div class="flex gap-4">
@@ -195,7 +194,7 @@
                                     </div>
                                     <div id="area-icon-file" class="hidden-el">
                                         <input type="file" accept="image/*" id="icon-file-input" class="hidden" onchange="handleFileSelect(event, 'icon')">
-                                        <button type="button" onclick="document.getElementById('icon-file-input').click()" class="w-full bg-slate-800 border border-slate-700 border-dashed rounded-xl py-3.5 flex items-center justify-center gap-2 text-slate-400 text-sm hover:text-cyan-400">
+                                        <button type="button" onclick="document.getElementById('icon-file-input').click()" class="w-full bg-slate-800 border border-slate-700 border-dashed rounded-xl py-3.5 flex items-center justify-center gap-2 text-slate-400 text-sm hover:text-cyan-400 transition-colors">
                                             <i data-lucide="image-plus" class="w-4 h-4"></i> Chọn ảnh
                                         </button>
                                     </div>
@@ -210,8 +209,8 @@
                 </form>
             </div>
             <div class="p-5 border-t border-white/5 bg-slate-900/50 rounded-b-2xl flex justify-end gap-3">
-                <button type="button" onclick="closeAdminPanel()" class="px-5 py-2.5 rounded-xl font-medium text-slate-300 hover:bg-slate-800">Hủy Bỏ</button>
-                <button id="btn-save" form="resourceForm" type="submit" class="px-6 py-2.5 rounded-xl font-medium text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 flex items-center gap-2">
+                <button type="button" onclick="closeAdminPanel()" class="px-5 py-2.5 rounded-xl font-medium text-slate-300 hover:bg-slate-800 transition-colors">Hủy Bỏ</button>
+                <button id="btn-save" form="resourceForm" type="submit" class="px-6 py-2.5 rounded-xl font-medium text-white bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 flex items-center gap-2 transition-all">
                     <i data-lucide="check-circle-2" class="w-5 h-5"></i> Lưu Tài Nguyên
                 </button>
             </div>
@@ -220,14 +219,27 @@
 
     <!-- JAVASCRIPT (TÍCH HỢP FIREBASE) -->
     <script type="module">
-        // Import Firebase SDK (Module)
+        // =========================================================================
+        // ⚠️ QUAN TRỌNG: ĐỂ UPLOAD ĐƯỢC FILE LÊN FIREBASE BẠN PHẢI BẬT STORAGE ⚠️
+        // 1. Vào Firebase Console -> Chọn mục "Storage" ở bên trái -> Bấm "Get Started".
+        // 2. Chọn tab "Rules" (Quy tắc) của Storage và dán cấu hình này vào để mở quyền:
+        // 
+        // rules_version = '2';
+        // service firebase.storage {
+        //   match /b/{bucket}/o {
+        //     match /{allPaths=**} {
+        //       allow read, write: if true;
+        //     }
+        //   }
+        // }
+        // =========================================================================
+        
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Bổ sung import Storage để hỗ trợ tải file nặng không giới hạn
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
-        // =========================================================================
-        // ĐÃ TÍCH HỢP CẤU HÌNH FIREBASE TỪ ẢNH BẠN GỬI
-        // =========================================================================
         const USER_FIREBASE_CONFIG = {
             apiKey: "AIzaSyALT8o8hQtVuSVn6A_hQSE4SvDHsg_y80I",
             authDomain: "khotainguyen-5d8b8.firebaseapp.com",
@@ -237,23 +249,23 @@
             appId: "1:345543974251:web:d9a1c177c8a686827ac02e",
             measurementId: "G-X73FSSCR12"
         };
-        // =========================================================================
 
         lucide.createIcons();
 
-        // States
         let resources = [];
         let isAdmin = false;
         let currentUser = null;
         let currentResType = 'file';
         let currentIconType = 'link';
-        let fileBase64 = '';
-        let iconBase64 = '';
         
-        // Setup Firebase config 
+        // Quản lý file (Đã đổi sang lưu File object trực tiếp để đẩy lên Firebase Storage)
+        let selectedFile = null;
+        let selectedIconFile = null;
+        let iconPreviewBase64 = '';
+        
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : USER_FIREBASE_CONFIG;
         const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'kho-du-lieu-firebase-app';
-        let db, auth;
+        let db, auth, storage;
         let isFirebaseActive = false;
 
         try {
@@ -261,13 +273,14 @@
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
+                storage = getStorage(app); // Khởi tạo Storage
                 isFirebaseActive = true;
             }
         } catch (e) {
-            console.warn("Chưa cấu hình Firebase hoặc cấu hình lỗi", e);
+            console.warn("Chưa cấu hình Firebase", e);
         }
 
-        // --- HỆ THỐNG THÔNG BÁO TOAST ---
+        // --- TOAST NOTIFICATION ---
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -286,9 +299,15 @@
             }, 3000);
         }
 
-        // --- KHỞI TẠO ---
+        // Helper đổi file ra Base64 nếu chạy Offline
+        const fileToBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
         document.addEventListener('DOMContentLoaded', async () => { 
-            // 1. Tải mượt từ Cache cục bộ trước tiên
             const cachedData = localStorage.getItem('kdl_resources');
             if(cachedData) {
                 resources = JSON.parse(cachedData);
@@ -298,26 +317,20 @@
                 document.getElementById('resources-grid').classList.add('hidden-el');
             }
 
-            // 2. Khởi tạo xác thực Firebase
             if (isFirebaseActive) {
                 try {
-                    // Cố gắng đăng nhập ẩn danh
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
                         await signInAnonymously(auth);
                     }
 
-                    // 3. Lắng nghe dữ liệu theo thời gian thực 
                     onAuthStateChanged(auth, (user) => {
                         currentUser = user;
-                        if (user) {
-                            setupRealtimeListener();
-                        }
+                        if (user) setupRealtimeListener();
                     });
                 } catch (e) {
-                    console.error("Lỗi xác thực Firebase", e);
-                    showToast("Bạn cần Bật tính năng Đăng nhập Ẩn Danh trên Firebase", "error");
+                    showToast("Bạn cần bật Đăng nhập Ẩn Danh trên Firebase", "error");
                     fallBackToMockData();
                 }
             } else {
@@ -325,37 +338,25 @@
             }
         });
 
-        // --- FIREBASE REAL-TIME LISTENER ---
         function setupRealtimeListener() {
             if (!currentUser) return;
             const resourcesRef = collection(db, 'artifacts', appIdStr, 'public', 'data', 'resources');
-            
             onSnapshot(resourcesRef, (snapshot) => {
                 resources = [];
-                snapshot.forEach((doc) => {
-                    resources.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Sắp xếp bài mới nhất lên trên
+                snapshot.forEach((doc) => resources.push({ id: doc.id, ...doc.data() }));
                 resources.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                
                 localStorage.setItem('kdl_resources', JSON.stringify(resources));
                 renderResources();
             }, (error) => {
-                console.error("Lỗi đồng bộ Firebase (Thiếu Rules):", error);
-                
                 document.getElementById('loading-state').classList.add('hidden-el');
                 document.getElementById('empty-state').classList.remove('hidden-el');
-                
-                showToast("Lỗi Database: Vui lòng sửa lại Firestore Rules!", "error");
+                showToast("Vui lòng mở quyền truy cập Database (Rules)!", "error");
             });
         }
 
         function fallBackToMockData() {
             document.getElementById('loading-state').classList.add('hidden-el');
-            if(resources.length === 0) {
-                 document.getElementById('empty-state').classList.remove('hidden-el');
-            }
+            if(resources.length === 0) document.getElementById('empty-state').classList.remove('hidden-el');
         }
 
         function renderResources() {
@@ -373,7 +374,6 @@
             grid.innerHTML = '';
 
             resources.forEach(res => {
-                const isLink = res.type === 'link';
                 const imgHtml = res.icon 
                     ? `<img src="${res.icon}" alt="${res.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100">`
                     : `<div class="w-full h-full flex items-center justify-center"><i data-lucide="file-box" class="w-12 h-12 text-slate-600"></i></div>`;
@@ -384,14 +384,14 @@
                         <button onclick="handleDeleteResource('${res.id}')" class="p-2 bg-slate-800 rounded-lg hover:text-red-400 transition-colors border border-slate-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>` : '';
 
-                // ĐÃ SỬA: Nút tải về luôn hiển thị chữ "Tải Về" kèm Icon tải xuống bất kể dạng link hay dạng file
+                // TOÀN BỘ NÚT VÀ HUY HIỆU ĐỀU LÀ "TẢI VỀ" KÈM ICON DOWNLOAD
                 grid.innerHTML += `
                     <div class="group bg-slate-900/80 border border-slate-700/50 rounded-2xl overflow-hidden hover:border-cyan-500/50 transition-all flex flex-col shadow-lg">
                         <div class="h-40 overflow-hidden relative bg-slate-800">
                             ${imgHtml}
                             <div class="absolute top-2 right-2 bg-slate-950/80 px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-white/5">
-                                <i data-lucide="${isLink ? 'link' : 'download'}" class="w-3 h-3 ${isLink ? 'text-blue-400' : 'text-emerald-400'}"></i> 
-                                <span class="text-[10px] ${isLink ? 'text-blue-400' : 'text-emerald-400'} font-bold uppercase tracking-wider">${isLink ? 'Liên kết' : 'Tải về'}</span>
+                                <i data-lucide="download" class="w-3 h-3 text-emerald-400"></i> 
+                                <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Tải về</span>
                             </div>
                         </div>
                         <div class="p-4 flex-1 flex flex-col">
@@ -410,26 +410,14 @@
             lucide.createIcons();
         }
 
-        // --- XỬ LÝ SỰ KIỆN TẢI VỀ / MỞ LINK ---
+        // --- XỬ LÝ MỞ FILE / TẢI VỀ ---
         window.handleActionClick = function(id) {
             const res = resources.find(r => r.id === id);
             if (!res) return;
             
-            if (res.type === 'link' || (!res.url.startsWith('data:'))) {
-                window.open(res.url, '_blank');
-            } else {
-                try {
-                    const a = document.createElement('a');
-                    a.href = res.url;
-                    a.download = res.title;
-                    document.body.appendChild(a); 
-                    a.click(); 
-                    document.body.removeChild(a);
-                    showToast("Bắt đầu tải tệp tin");
-                } catch(e) {
-                    showToast("Lỗi khi tải tệp", "error");
-                }
-            }
+            showToast("Đang mở tài nguyên...");
+            // Link Drive hay link Firebase Storage đều mở qua Tab mới để tải một cách an toàn nhất
+            window.open(res.url, '_blank');
         };
 
         // --- UI FORM ---
@@ -460,36 +448,36 @@
             return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${['Bytes', 'KB', 'MB', 'GB'][i]}`;
         }
 
+        // --- NHẬN DIỆN FILE CỤC BỘ TRƯỚC KHI TẢI LÊN ---
         window.handleFileSelect = function(e, type) {
             const file = e.target.files[0];
             if (!file) return;
-            
-            // Cảnh báo giới hạn (Firestore limit 1MB/document) - Ngăn không cho load nếu quá 700KB
-            if(file.size > 700000 && type === 'file') {
-                showToast("File quá lớn (Tối đa 700KB). Vui lòng dùng Gắn Link!", "error");
-                e.target.value = '';
-                return;
-            }
 
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                if (type === 'file') {
-                    fileBase64 = event.target.result;
-                    const statusText = document.getElementById('file-status-text');
-                    statusText.innerText = `Đã chọn: ${file.name} (${formatBytes(file.size)})`;
-                    statusText.classList.add('text-emerald-400');
-                } else if (type === 'icon') {
-                    iconBase64 = event.target.result;
-                    updateIconPreview();
-                }
-            };
-            reader.readAsDataURL(file);
+            if (type === 'file') {
+                selectedFile = file; // Lưu trữ Object File thực sự
+                
+                // Trực quan hóa khi nhận diện được file
+                const statusText = document.getElementById('file-status-text');
+                statusText.innerText = `✅ Đã chọn: ${file.name} (${formatBytes(file.size)})`;
+                statusText.classList.remove('text-slate-300');
+                statusText.classList.add('text-emerald-400', 'font-semibold');
+                
+                const area = document.getElementById('area-res-file');
+                area.classList.remove('border-slate-600', 'bg-slate-800/50');
+                area.classList.add('border-emerald-500', 'bg-emerald-500/10');
+                
+                showToast(`Đã nhận diện file: ${file.name}`);
+            } else if (type === 'icon') {
+                selectedIconFile = file;
+                iconPreviewBase64 = URL.createObjectURL(file); // Dựng preview ảnh ngay lập tức
+                updateIconPreview();
+            }
         };
 
         window.updateIconPreview = function() {
             const img = document.getElementById('icon-preview-img');
             const placeholder = document.getElementById('icon-placeholder');
-            const src = currentIconType === 'link' ? document.getElementById('icon-link-val').value : iconBase64;
+            const src = currentIconType === 'link' ? document.getElementById('icon-link-val').value : iconPreviewBase64;
             if (src) {
                 img.src = src; img.classList.remove('hidden-el'); placeholder.classList.add('hidden-el');
             } else {
@@ -497,69 +485,92 @@
             }
         };
 
-        // --- LƯU / XÓA LÊN FIREBASE ---
+        // --- TẢI LÊN FIREBASE STORAGE & LƯU FIRESTORE ---
         window.handleSaveResource = async function(e) {
             e.preventDefault();
             const id = document.getElementById('res-id').value;
             const isEdit = !!id;
             
-            // ĐÃ SỬA: Kiểm tra kĩ logic khi thêm mới hoặc sửa
-            if (currentResType === 'file' && !fileBase64 && !isEdit) { 
-                showToast("Vui lòng chọn file upload!", "error"); return; 
+            // Xử lý báo lỗi nếu thiếu file
+            if (currentResType === 'file' && !selectedFile && !isEdit) { 
+                showToast("Bạn chưa chọn file để upload!", "error"); return; 
             }
-
-            // Xử lý giữ lại link file cũ nếu sửa mà không chọn file mới
-            let finalUrl = '';
-            if (currentResType === 'link') {
-                finalUrl = document.getElementById('res-link-val').value;
-            } else {
-                finalUrl = fileBase64 ? fileBase64 : (isEdit ? resources.find(r => r.id === id).url : '');
-            }
-
-            // Xử lý giữ lại icon cũ nếu sửa mà không chọn/nhập icon mới
-            let finalIcon = '';
-            if (currentIconType === 'link') {
-                finalIcon = document.getElementById('icon-link-val').value;
-            } else {
-                finalIcon = iconBase64 ? iconBase64 : (isEdit ? resources.find(r => r.id === id).icon : '');
-            }
-
-            const payload = {
-                title: document.getElementById('res-title').value,
-                description: document.getElementById('res-desc').value,
-                type: currentResType,
-                url: finalUrl,
-                icon: finalIcon,
-                createdAt: isEdit ? resources.find(r => r.id === id).createdAt : new Date().toISOString()
-            };
 
             const btnSave = document.getElementById('btn-save');
             btnSave.disabled = true;
-            btnSave.innerHTML = `<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Đang lưu...`;
 
-            if (isFirebaseActive && currentUser) {
-                try {
+            try {
+                let finalUrl = '';
+                if (currentResType === 'link') {
+                    finalUrl = document.getElementById('res-link-val').value;
+                } else {
+                    // Upload File lên Firebase Storage
+                    if (isFirebaseActive && currentUser && selectedFile) {
+                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang tải file lên...`;
+                        lucide.createIcons();
+                        const fileRef = ref(storage, `resources/${Date.now()}_${selectedFile.name}`);
+                        await uploadBytes(fileRef, selectedFile);
+                        finalUrl = await getDownloadURL(fileRef);
+                    } else if (selectedFile) {
+                        // Offline mode fallback
+                        finalUrl = await fileToBase64(selectedFile); 
+                    } else if (isEdit) {
+                        finalUrl = resources.find(r => r.id === id).url; // Giữ link cũ
+                    }
+                }
+
+                let finalIcon = '';
+                if (currentIconType === 'link') {
+                    finalIcon = document.getElementById('icon-link-val').value;
+                } else {
+                    // Upload Icon
+                    if (isFirebaseActive && currentUser && selectedIconFile) {
+                        btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang tải ảnh lên...`;
+                        lucide.createIcons();
+                        const iconRef = ref(storage, `icons/${Date.now()}_${selectedIconFile.name}`);
+                        await uploadBytes(iconRef, selectedIconFile);
+                        finalIcon = await getDownloadURL(iconRef);
+                    } else if (selectedIconFile) {
+                        finalIcon = await fileToBase64(selectedIconFile);
+                    } else if (isEdit) {
+                        finalIcon = resources.find(r => r.id === id).icon; // Giữ icon cũ
+                    }
+                }
+
+                const payload = {
+                    title: document.getElementById('res-title').value,
+                    description: document.getElementById('res-desc').value,
+                    type: currentResType,
+                    url: finalUrl,
+                    icon: finalIcon,
+                    createdAt: isEdit ? resources.find(r => r.id === id).createdAt : new Date().toISOString()
+                };
+
+                btnSave.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Đang lưu dữ liệu...`;
+                lucide.createIcons();
+
+                if (isFirebaseActive && currentUser) {
                     const docId = id || Date.now().toString();
                     const docRef = doc(db, 'artifacts', appIdStr, 'public', 'data', 'resources', docId);
                     await setDoc(docRef, payload);
-                    showToast(isEdit ? "Cập nhật thành công!" : "Đã thêm tài nguyên mới!");
-                } catch (err) { 
-                    console.error("Lỗi Firebase:", err); 
-                    showToast("Lỗi khi lưu lên Firebase (Kích thước file quá lớn)", "error"); 
+                } else {
+                    payload.id = id || Date.now().toString();
+                    if (isEdit) resources = resources.map(r => r.id === payload.id ? payload : r);
+                    else resources.unshift(payload);
+                    localStorage.setItem('kdl_resources', JSON.stringify(resources));
+                    renderResources();
                 }
-            } else {
-                // Offline Local test fallback
-                payload.id = id || Date.now().toString();
-                if (isEdit) resources = resources.map(r => r.id === payload.id ? payload : r);
-                else resources.unshift(payload);
-                localStorage.setItem('kdl_resources', JSON.stringify(resources));
-                renderResources();
-                showToast("Đã lưu (Chế độ Offline Local)");
+
+                showToast(isEdit ? "Cập nhật thành công!" : "Đã thêm tài nguyên mới!");
+                closeAdminPanel();
+            } catch (err) { 
+                console.error("Lỗi:", err); 
+                showToast("Lỗi tải lên! Hãy chắc chắn bạn đã cấu hình Storage Rules.", "error"); 
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5"></i> Lưu Tài Nguyên`;
+                lucide.createIcons();
             }
-            
-            btnSave.disabled = false;
-            btnSave.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5"></i> Lưu Tài Nguyên`;
-            closeAdminPanel();
         };
 
         window.handleDeleteResource = async function(id) {
@@ -583,7 +594,7 @@
             }
         };
 
-        // --- AUTH & MODAL ---
+        // --- AUTH & RESET MODAL UI ---
         window.openLoginModal = function() { document.getElementById('login-modal').classList.remove('hidden-el'); };
         window.closeLoginModal = function() { document.getElementById('login-modal').classList.add('hidden-el'); };
         
@@ -591,39 +602,40 @@
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-password').value;
-            // Admin default login (Mặc định: hung@admin.com / hung@123)
             if (email === 'hung@admin.com' && pass === 'hung@123') {
                 isAdmin = true; closeLoginModal();
                 document.getElementById('btn-login-trigger').classList.add('hidden-el');
                 document.getElementById('admin-controls').classList.remove('hidden-el');
                 
-                // Reset fields
                 document.getElementById('login-email').value = '';
                 document.getElementById('login-password').value = '';
-
-                renderResources();
-                showToast("Đăng nhập Admin thành công");
-            } else {
-                showToast("Tài khoản hoặc mật khẩu sai!", "error");
-            }
+                renderResources(); showToast("Đăng nhập Admin thành công");
+            } else { showToast("Tài khoản hoặc mật khẩu sai!", "error"); }
         };
 
         window.handleLogout = function() {
             isAdmin = false;
             document.getElementById('btn-login-trigger').classList.remove('hidden-el');
             document.getElementById('admin-controls').classList.add('hidden-el');
-            renderResources();
-            showToast("Đã đăng xuất");
+            renderResources(); showToast("Đã đăng xuất");
         };
 
         window.openAdminPanel = function(id = null) {
             document.getElementById('admin-panel-modal').classList.remove('hidden-el');
             document.getElementById('resourceForm').reset();
-            fileBase64 = ''; iconBase64 = '';
             
+            // Xóa rỗng các biến chứa file tạm thời
+            selectedFile = null; selectedIconFile = null; iconPreviewBase64 = '';
+            
+            // Khôi phục giao diện mặc định cho vùng upload file
             const fileStatusText = document.getElementById('file-status-text');
-            fileStatusText.innerText = 'Khuyên dùng Link Drive cho file nặng';
-            fileStatusText.className = 'text-xs text-slate-500 text-center px-2';
+            fileStatusText.innerText = 'Click chọn file bất kỳ';
+            fileStatusText.classList.remove('text-emerald-400', 'font-semibold');
+            fileStatusText.classList.add('text-slate-300');
+            
+            const areaFile = document.getElementById('area-res-file');
+            areaFile.classList.remove('border-emerald-500', 'bg-emerald-500/10');
+            areaFile.classList.add('border-slate-600', 'bg-slate-800/50');
             
             if (id) {
                 const res = resources.find(r => r.id === id);
@@ -633,13 +645,16 @@
                 document.getElementById('res-desc').value = res.description;
                 
                 setResType(res.type);
-                if (res.type === 'link') { document.getElementById('res-link-val').value = res.url; } 
-                else { 
-                    fileStatusText.innerText = '✅ Đã có file lưu sẵn'; 
-                    fileStatusText.className = 'text-xs text-emerald-400 text-center px-2';
+                if (res.type === 'link') { 
+                    document.getElementById('res-link-val').value = res.url; 
+                } else { 
+                    fileStatusText.innerText = '✅ Đã có file lưu sẵn trên server (Click để tải lên file mới)'; 
+                    fileStatusText.classList.remove('text-slate-300');
+                    fileStatusText.classList.add('text-emerald-400', 'font-semibold');
+                    areaFile.classList.add('border-emerald-500', 'bg-emerald-500/10');
+                    areaFile.classList.remove('border-slate-600', 'bg-slate-800/50');
                 }
 
-                // Không reset biến nếu đã có icon/file Base64
                 if (res.icon && res.icon.startsWith('data:')) { setIconType('file'); } 
                 else { setIconType('link'); document.getElementById('icon-link-val').value = res.icon || ''; }
             } else {
