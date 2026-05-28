@@ -530,13 +530,12 @@
                         
                         if(firstFileId && children[firstFileId].link) {
                             const directLink = children[firstFileId].link;
-                            // Ép trình duyệt tự động tải xuống bằng thẻ a ẩn
-                            const a = document.createElement('a');
-                            a.href = directLink;
-                            a.target = '_self'; 
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
+                            
+                            // ĐÃ SỬA TẠI ĐÂY: Dùng window.location.href thay vì thẻ a
+                            // Trình duyệt sẽ nhận diện file đính kèm và tự động tải xuống
+                            // mà không nhảy sang tab khác hay bị chặn bởi trình duyệt
+                            window.location.href = directLink;
+                            
                             showToast("Đã bắt đầu tải về máy!");
                             return;
                         }
