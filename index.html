@@ -37,7 +37,7 @@
 
   <!-- Custom CSS for Animations & Marquee -->
   <style>
-    /* Prevent layout shifting by keeping scrollbar space allocated permanently */
+    /* Ngăn chặn xê dịch màn hình bằng cách giữ cố định thanh cuộn trình duyệt */
     html {
       scrollbar-gutter: stable !important;
       overflow-y: scroll !important;
@@ -49,7 +49,7 @@
       overflow-x: hidden;
     }
     
-    /* Custom Scrollbar */
+    /* Tùy biến thanh cuộn đẹp mắt */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -65,7 +65,7 @@
       background: #3b82f6;
     }
 
-    /* Double speed (15s) marquee that does not pause on hover */
+    /* Hiệu ứng chạy chữ nhanh gấp đôi và không bị dừng lại khi di chuột */
     @keyframes marquee {
       0% { transform: translateX(0%); }
       100% { transform: translateX(-50%); }
@@ -76,7 +76,7 @@
       animation: marquee 15s linear infinite;
     }
 
-    /* Prevent horizontal scroll layout shifting */
+    /* Ẩn thanh cuộn ngang của danh mục */
     .scrollbar-none::-webkit-scrollbar {
       display: none !important;
     }
@@ -85,7 +85,7 @@
       scrollbar-width: none !important;
     }
 
-    /* Premium Light Glassmorphism utility */
+    /* Giao diện Glassmorphism trên nền sáng */
     .glassmorphism {
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(12px);
@@ -105,7 +105,7 @@
       outline: none;
     }
 
-    /* Soft light ambient glow backgrounds */
+    /* Phủ sáng dịu xung quanh trang web */
     .glow-bg-1 {
       position: absolute;
       width: 400px;
@@ -132,16 +132,16 @@
 
   <div id="root"></div>
 
-  <!-- React Application Logic -->
+  <!-- Logic Ứng dụng React -->
   <script type="text/babel">
     
-    // Constant GoFile User Credentials Config
+    // Cấu hình thông tin tài khoản GoFile từ hình ảnh của bạn
     const GOFILE_ACCOUNT_ID = "a922682f-aebc-45fe-8497-a723c3650700";
     const GOFILE_ACCOUNT_TOKEN = "P05BBN2c7r6elhBumKrpoVAj3X0k32ir";
 
-    // SVG Icons Helper for high efficiency and crisp display
+    // Bộ Helper Icon phẳng SVG
     const Icons = {
-      Search: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>,
+      Search: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>,
       Download: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>,
       Admin: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
       Home: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>,
@@ -151,7 +151,7 @@
       Eye: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>,
       EyeOff: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>,
       Star: ({ filled }) => <svg className={`w-3.5 h-3.5 ${filled ? 'text-amber-400 fill-current' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.582 1.833l-3.978 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.88a1 1 0 00-1.176 0l-3.976 2.88c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.978-2.89c-.77-.581-.371-1.833.582-1.833h4.907a1 1 0 00.95-.69l1.519-4.674z"/></svg>,
-      Fire: () => <svg className="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
+      Fire: () => <svg className="w-3.5 h-3.5 text-orange-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
       Close: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>,
       Lock: () => <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>,
       Plus: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>,
@@ -168,7 +168,7 @@
       )
     };
 
-    // Helper to render type icons inside form
+    // Chỉ báo loại tệp tải lên
     const FileTypeIcon = ({ type }) => {
       const baseClass = "w-4 h-4 mr-1.5 inline-block align-middle";
       if (type === 'file') return <svg className={`${baseClass} text-blue-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>;
@@ -177,7 +177,7 @@
       return null;
     };
 
-    // Default static initial database
+    // Dữ liệu giả lập ban đầu (chỉ dùng khi chưa đồng bộ GoFile lần nào)
     const INITIAL_TOOLS = [
       {
         id: "capcut-pc",
@@ -212,23 +212,6 @@
         createdAt: Date.now() - 172800000,
         updatedAt: Date.now(),
         rating: 4.9
-      },
-      {
-        id: "dev-code-pro",
-        name: "DevTool Code Inspector Pro",
-        description: "Tiện ích bổ trợ lập trình viên kiểm thử bảo mật và tối ưu chất lượng mã nguồn hệ thống thời gian thực.",
-        category: "Developer",
-        version: "v3.1.2",
-        size: "45 MB",
-        iconUrl: "https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=120&q=80",
-        fileUrl: "https://gofile.io/d/devtool-inspector",
-        previewImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
-        downloads: 654,
-        featured: false,
-        hidden: false,
-        createdAt: Date.now() - 259200000,
-        updatedAt: Date.now(),
-        rating: 4.6
       }
     ];
 
@@ -237,34 +220,34 @@
       const [categories, setCategories] = React.useState([]);
       const [currentTab, setCurrentTab] = React.useState("Home");
       
-      // Filter & Search states
+      // Bộ lọc và thanh tìm kiếm
       const [selectedCategory, setSelectedCategory] = React.useState("Tất cả");
       const [searchQuery, setSearchQuery] = React.useState("");
       const [sortBy, setSortBy] = React.useState("newest");
       
-      // Active database configuration from GoFile
+      // Mã GoFile chứa Cấu hình Database
       const [currentDbCode, setCurrentDbCode] = React.useState("");
       const [shareableUrl, setShareableUrl] = React.useState("");
       const [syncLoading, setSyncLoading] = React.useState(false);
 
-      // Admin auth state
+      // Trạng thái Quản trị
       const [isAdmin, setIsAdmin] = React.useState(false);
       const [showLoginModal, setShowLoginModal] = React.useState(false);
       const [adminEmail, setAdminEmail] = React.useState("");
       const [adminPassword, setAdminPassword] = React.useState("");
       
-      // Feedback toast
+      // Hộp thoại phản hồi Toast
       const [activeNotification, setActiveNotification] = React.useState(null);
 
-      // Custom Delete Confirmation Modal state
+      // Hộp thoại xác nhận xóa tài nguyên
       const [itemToDelete, setItemToDelete] = React.useState(null);
       
-      // Category CRUD
+      // Quản lý danh mục động
       const [newCategoryName, setNewCategoryName] = React.useState("");
       const [editingCategory, setEditingCategory] = React.useState(null);
       const [editCategoryInputValue, setEditCategoryInputValue] = React.useState("");
 
-      // Tool form
+      // Biểu mẫu chỉnh sửa tệp tin tài nguyên
       const [isEditing, setIsEditing] = React.useState(false);
       const [editToolId, setEditToolId] = React.useState(null);
       const [toolForm, setToolForm] = React.useState({
@@ -297,49 +280,64 @@
         setTimeout(() => setActiveNotification(null), 4000);
       };
 
-      // Real synchronization download from GoFile Folder Code
-      const fetchAndSyncFromGoFile = async (code) => {
+      // ĐỌC VÀ ĐỒNG BỘ HOÀN TOÀN TỪ GOFILE ĐÁM MÂY
+      const fetchAndSyncFromGoFile = React.useCallback(async (code) => {
+        if (!code) return;
         setSyncLoading(true);
         try {
+          // Bước 1: Lấy thông tin thư mục (folder) bằng mã chia sẻ GoFile
           const res = await fetch(`https://api.gofile.io/contents/${code}?token=${GOFILE_ACCOUNT_TOKEN}`);
-          if (!res.ok) throw new Error("GoFile API Error");
+          if (!res.ok) throw new Error("Mã database GoFile không khả dụng");
           const json = await res.json();
+          
           if (json.status === "ok" && json.data.children) {
             const childrenList = Object.values(json.data.children);
+            // Tìm tệp cấu hình database.json bên trong thư mục
             const dbFile = childrenList.find(f => f.name === "database.json");
+            
             if (dbFile && dbFile.link) {
+              // Tải trực tiếp tệp JSON cấu hình về
               const fileRes = await fetch(dbFile.link);
-              if (!fileRes.ok) throw new Error("CORS or network error reading file");
-              const importedTools = await fileRes.json();
-              if (Array.isArray(importedTools)) {
-                setTools(importedTools);
-                localStorage.setItem("godownload_tools", JSON.stringify(importedTools));
+              if (!fileRes.ok) throw new Error("Không thể đọc tệp cấu hình trên GoFile");
+              const importedData = await fileRes.json();
+              
+              if (importedData && typeof importedData === 'object') {
+                // Nạp tệp tin ứng dụng
+                if (Array.isArray(importedData.tools)) {
+                  setTools(importedData.tools);
+                  localStorage.setItem("godownload_tools", JSON.stringify(importedData.tools));
+                }
+                // Nạp danh mục động
+                if (Array.isArray(importedData.categories)) {
+                  setCategories(importedData.categories);
+                  localStorage.setItem("godownload_categories", JSON.stringify(importedData.categories));
+                }
+                
                 setCurrentDbCode(code);
                 localStorage.setItem("godownload_active_db", code);
-                // Update shareable link
+                
+                // Đồng bộ địa chỉ URL
                 const origin = window.location.origin + window.location.pathname;
                 setShareableUrl(`${origin}?db=${code}`);
-                showToast("Đồng bộ dữ liệu thành công từ đám mây GoFile!");
-              } else {
-                throw new Error("Dữ liệu sai định dạng JSON array");
+                showToast("Đã đồng bộ thành công dữ liệu từ máy chủ đám mây GoFile!");
               }
             } else {
-              throw new Error("Không tìm thấy file database.json");
+              throw new Error("Không tìm thấy tệp tin database.json trong thư mục này");
             }
           } else {
-            throw new Error("Mã GoFile không chính xác hoặc tệp đã bị xóa");
+            throw new Error("Mã GoFile không tồn tại hoặc đã bị hết hạn lưu trữ");
           }
         } catch (err) {
           console.error(err);
-          showToast("Lỗi tải Database từ GoFile: " + err.message, "error");
+          showToast("Lỗi đồng bộ: " + err.message, "error");
         } finally {
           setSyncLoading(false);
         }
-      };
+      }, []);
 
-      // Load database from localStorage & URL Params on startup
+      // Đọc cấu hình khi khởi động
       React.useEffect(() => {
-        // Load categories
+        // Tải các danh mục cục bộ
         const localCats = localStorage.getItem("godownload_categories");
         if (localCats) {
           try {
@@ -355,19 +353,19 @@
           localStorage.setItem("godownload_categories", JSON.stringify(defaults));
         }
 
-        // Check synchronization from URL parameters `?db=CODE`
+        // Ưu tiên nạp mã DB GoFile từ liên kết URL (?db=CODE) để đồng bộ đa thiết bị
         const urlParams = new URLSearchParams(window.location.search);
         const dbCodeParam = urlParams.get('db');
         
         if (dbCodeParam) {
           fetchAndSyncFromGoFile(dbCodeParam);
         } else {
-          // If no URL parameter, check saved local database code
+          // Nếu không có trên URL, kiểm tra bộ nhớ trình duyệt
           const savedDb = localStorage.getItem("godownload_active_db");
           if (savedDb) {
             fetchAndSyncFromGoFile(savedDb);
           } else {
-            // No GoFile link, use standard localstorage
+            // Sử dụng dữ liệu offline mặc định ban đầu
             const localData = localStorage.getItem("godownload_tools");
             if (localData) {
               try {
@@ -382,9 +380,9 @@
             }
           }
         }
-      }, []);
+      }, [fetchAndSyncFromGoFile]);
 
-      // Synchronize database state helper
+      // Đồng bộ hóa trạng thái lưu trữ cục bộ
       const updateToolsDatabaseState = (newToolsList) => {
         setTools(newToolsList);
         localStorage.setItem("godownload_tools", JSON.stringify(newToolsList));
@@ -395,7 +393,7 @@
         localStorage.setItem("godownload_categories", JSON.stringify(newCatsList));
       };
 
-      // Admin verification (hung@admin.com / hung@123)
+      // Đăng nhập quản trị (hung@admin.com / hung@123)
       const handleAdminLogin = (e) => {
         e.preventDefault();
         if (adminEmail === "hung@admin.com" && adminPassword === "hung@123") {
@@ -410,27 +408,71 @@
         }
       };
 
-      // Active Upload current configuration to GoFile Account
+      // Ghi đè & Đồng bộ cấu hình lên đúng mã GoFile hiện tại
       const handleExportDatabaseToGoFile = async () => {
         setSyncLoading(true);
-        showToast("Đang kết nối API để đồng bộ dữ liệu...", "info");
+        showToast("Đang tải dữ liệu cấu hình lên tài khoản GoFile của bạn...", "info");
 
         try {
-          const dbString = JSON.stringify(tools, null, 2);
+          // Tạo tệp JSON nén chứa cả tools và categories
+          const dbPayload = {
+            tools: tools,
+            categories: categories
+          };
+          const dbString = JSON.stringify(dbPayload, null, 2);
           const blob = new Blob([dbString], { type: 'application/json' });
           const dbFile = new File([blob], 'database.json', { type: 'application/json' });
 
-          // 1. Get GoFile Server
+          // Lấy máy chủ GoFile khả dụng
           const serverRes = await fetch('https://api.gofile.io/servers');
           if (!serverRes.ok) throw new Error("Mất kết nối máy chủ GoFile");
           const serverData = await serverRes.json();
           const serverName = serverData.data.servers[0].name;
 
-          // 2. Upload file
+          // Nếu đã tồn tại mã DB cũ, tiến hành xóa file cũ trong thư mục trước để tránh rác
+          if (currentDbCode) {
+            try {
+              const checkRes = await fetch(`https://api.gofile.io/contents/${currentDbCode}?token=${GOFILE_ACCOUNT_TOKEN}`);
+              if (checkRes.ok) {
+                const checkJson = await checkRes.json();
+                if (checkJson.status === "ok" && checkJson.data.children) {
+                  const childrenList = Object.values(checkJson.data.children);
+                  const oldDbFile = childrenList.find(f => f.name === "database.json");
+                  if (oldDbFile) {
+                    // Gọi API xóa file cũ
+                    await fetch('https://api.gofile.io/contents', {
+                      method: 'DELETE',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        contentsId: [oldDbFile.id],
+                        token: GOFILE_ACCOUNT_TOKEN
+                      })
+                    });
+                  }
+                }
+              }
+            } catch(e) {
+              console.log("Không có file cũ để xóa");
+            }
+          }
+
+          // Chuẩn bị tải lên
           const formData = new FormData();
           formData.append('file', dbFile);
           formData.append('token', GOFILE_ACCOUNT_TOKEN);
           formData.append('accountId', GOFILE_ACCOUNT_ID);
+          
+          // Nếu đã có mã thư mục GoFile, tải trực tiếp đè vào thư mục đó
+          if (currentDbCode) {
+            // Lấy id thư mục thực tế từ mã chia sẻ
+            const getFolderIdRes = await fetch(`https://api.gofile.io/contents/${currentDbCode}?token=${GOFILE_ACCOUNT_TOKEN}`);
+            if (getFolderIdRes.ok) {
+              const folderDetails = await getFolderIdRes.json();
+              if (folderDetails.status === "ok") {
+                formData.append('folderId', folderDetails.data.id);
+              }
+            }
+          }
 
           const uploadRes = await fetch(`https://${serverName}.gofile.io/contents/uploadfile`, {
             method: 'POST',
@@ -447,9 +489,9 @@
             const newShareableUrl = `${origin}?db=${code}`;
             setShareableUrl(newShareableUrl);
             
-            showToast("Xuất cấu hình & Đồng bộ lên GoFile thành công!");
+            showToast("Đồng bộ dữ liệu trực tuyến thành công!");
           } else {
-            throw new Error(uploadData.data?.message || "GoFile từ chối");
+            throw new Error(uploadData.data?.message || "GoFile từ chối tải tệp tin");
           }
         } catch (err) {
           console.error(err);
@@ -459,7 +501,7 @@
         }
       };
 
-      // Manual Import DB trigger inside Admin
+      // Đọc tệp thủ công từ ô nhập mã
       const handleManualImport = (e) => {
         e.preventDefault();
         if (!currentDbCode.trim()) return;
@@ -471,7 +513,7 @@
         fetchAndSyncFromGoFile(code);
       };
 
-      // GoFile Direct Upload Logic with User Credentials for Tool Files
+      // Tải tệp tin phần mềm trực tiếp lên tài khoản GoFile
       const handleGoFileUpload = async (event, targetField) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -480,7 +522,7 @@
 
         try {
           const serverRes = await fetch('https://api.gofile.io/servers');
-          if (!serverRes.ok) throw new Error("CORS or network blockage");
+          if (!serverRes.ok) throw new Error("Không thể kết nối máy chủ GoFile");
           const serverData = await serverRes.json();
           const serverName = serverData.data.servers[0].name;
 
@@ -526,32 +568,38 @@
                   });
 
                   setUploadingFile({ active: false, percent: 100, targetField: null });
-                  showToast(`Tải lên GoFile thành công! Kích thước: ${formattedSize}`);
+                  showToast(`Đã lưu tệp lên GoFile thành công! Dung lượng: ${formattedSize}`);
                 } else {
                   throw new Error();
                 }
               } catch (err) {
-                triggerSimulationFallback(file, targetField);
+                showToast("Lỗi giải mã API GoFile", "error");
+                setUploadingFile({ active: false, percent: 0, targetField: null });
               }
             } else {
-              triggerSimulationFallback(file, targetField);
+              showToast("Máy chủ GoFile từ chối tải lên", "error");
+              setUploadingFile({ active: false, percent: 0, targetField: null });
             }
           };
 
-          xhr.onerror = () => triggerSimulationFallback(file, targetField);
+          xhr.onerror = () => {
+            showToast("Lỗi mạng khi tải lên GoFile", "error");
+            setUploadingFile({ active: false, percent: 0, targetField: null });
+          };
           xhr.send(formData);
 
         } catch (error) {
-          triggerSimulationFallback(file, targetField);
+          showToast("Lỗi kết nối máy chủ GoFile: " + error.message, "error");
+          setUploadingFile({ active: false, percent: 0, targetField: null });
         }
       };
 
-      // Save/Edit tool logic
+      // Lưu tệp cài đặt tài nguyên
       const handleSaveTool = (e) => {
         e.preventDefault();
         if (!isAdmin) return showToast("Vui lòng đăng nhập Admin.", "error");
-        if (!toolForm.name) return showToast("Vui lòng điền tên công cụ.", "error");
-        if (!toolForm.fileUrl) return showToast("Vui lòng tải lên tệp tin cài đặt hoặc dán liên kết tải về.", "error");
+        if (!toolForm.name) return showToast("Vui lòng điền tên tài nguyên.", "error");
+        if (!toolForm.fileUrl) return showToast("Vui lòng tải lên tệp cài đặt hoặc dán link tải.", "error");
 
         const documentPayload = {
           ...toolForm,
@@ -564,7 +612,7 @@
 
         if (isEditing && editToolId) {
           updatedList = tools.map(t => t.id === editToolId ? { ...t, ...documentPayload } : t);
-          showToast("Cập nhật Tool thành công!");
+          showToast("Cập nhật tài nguyên thành công!");
         } else {
           const newTool = {
             id: `tool-${Math.random().toString(36).substring(2, 9)}`,
@@ -572,12 +620,12 @@
             createdAt: Date.now()
           };
           updatedList = [newTool, ...tools];
-          showToast("Thêm mới Tool thành công!");
+          showToast("Đã thêm tài nguyên thành công!");
         }
 
         updateToolsDatabaseState(updatedList);
 
-        // Reset form
+        // Reset biểu mẫu
         setToolForm({
           name: "",
           description: "",
@@ -622,13 +670,12 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       };
 
-      // Safe Delete Handler
       const handleConfirmDelete = () => {
         if (!itemToDelete) return;
         const updatedList = tools.filter(t => t.id !== itemToDelete);
         updateToolsDatabaseState(updatedList);
         setItemToDelete(null);
-        showToast("Đã xóa công cụ thành công!");
+        showToast("Đã xóa công cụ thành công khỏi cơ sở dữ liệu!");
       };
 
       const handleToggleHide = (tool) => {
@@ -643,17 +690,17 @@
         showToast(tool.featured ? "Đã tắt nhãn nổi bật" : "Đã gắn nhãn nổi bật thành công!");
       };
 
-      // Direct Immediate download bypass logic
+      // Tăng lượt tải và chuyển hướng người dùng
       const triggerDownload = (tool) => {
         const updatedList = tools.map(t => t.id === tool.id ? { ...t, downloads: (t.downloads || 0) + 1 } : t);
         updateToolsDatabaseState(updatedList);
-        showToast("Đang chuẩn bị luồng tải tốc độ cao từ GoFile...");
+        showToast("Đang kết nối luồng tải tốc độ cao từ máy chủ GoFile...");
         setTimeout(() => {
           window.open(tool.fileUrl, '_blank');
         }, 800);
       };
 
-      // ADD NEW CATEGORY
+      // THÊM DANH MỤC MỚI
       const handleAddCategory = (e) => {
         e.preventDefault();
         const trimmedName = newCategoryName.trim();
@@ -671,7 +718,7 @@
         showToast(`Đã thêm danh mục '${trimmedName}' thành công!`);
       };
 
-      // START EDITING CATEGORY MODE
+      // BẮT ĐẦU CHỈNH SỬA DANH MỤC
       const handleStartEditCategory = (cat) => {
         if (cat === "Tất cả") {
           showToast("Không thể chỉnh sửa danh mục hệ thống 'Tất cả'!", "error");
@@ -681,7 +728,7 @@
         setEditCategoryInputValue(cat);
       };
 
-      // SAVE CATEGORY EDIT
+      // LƯU THAY ĐỔI DANH MỤC
       const handleSaveCategoryEdit = (e) => {
         e.preventDefault();
         const trimmedNewName = editCategoryInputValue.trim();
@@ -694,7 +741,7 @@
 
         const alreadyExists = categories.some(cat => cat.toLowerCase() === trimmedNewName.toLowerCase() && cat !== editingCategory);
         if (alreadyExists) {
-          showToast("Tên danh mục mới này đã tồn tại!", "error");
+          showToast("Tên danh mục này đã tồn tại!", "error");
           return;
         }
 
@@ -711,10 +758,10 @@
 
         setEditingCategory(null);
         setEditCategoryInputValue("");
-        showToast(`Đã đổi tên danh mục và cập nhật các công cụ liên quan!`);
+        showToast(`Đã cập nhật danh mục và đồng bộ các công cụ liên quan!`);
       };
 
-      // DELETE CATEGORY WITH SAFETY CHECKS
+      // XÓA DANH MỤC
       const handleDeleteCategory = (catToDelete) => {
         if (catToDelete === "Tất cả") {
           showToast("Không thể xóa danh mục hệ thống 'Tất cả'!", "error");
@@ -732,7 +779,7 @@
         showToast(`Đã xóa danh mục '${catToDelete}' thành công!`);
       };
 
-      // Copy Shareable URL helper
+      // Sao chép liên kết chia sẻ đồng bộ
       const copyToClipboard = () => {
         if (!shareableUrl) return;
         const input = document.createElement('textarea');
@@ -744,7 +791,7 @@
         showToast("Đã copy liên kết đồng bộ vào bộ nhớ tạm!");
       };
 
-      // Filtration and Sorting algorithms
+      // Bộ lọc hiển thị của người dùng
       const filteredAndSortedTools = tools
         .filter(t => {
           if (isAdmin) return true;
@@ -769,7 +816,7 @@
           <div className="glow-bg-1"></div>
           <div className="glow-bg-2"></div>
 
-          {/* Toast Notification */}
+          {/* Hộp thông báo nổi (Toast) */}
           {activeNotification && (
             <div className={`fixed bottom-6 right-6 z-50 glassmorphism p-4 rounded-xl flex items-center space-x-3 shadow-2xl transition-all border-l-4 ${activeNotification.type === 'error' ? 'border-l-red-500' : 'border-l-blue-500'}`}>
               <div className="text-slate-800 text-sm font-semibold">{activeNotification.message}</div>
@@ -779,12 +826,12 @@
             </div>
           )}
 
-          {/* Custom Delete Confirmation Modal */}
+          {/* Modal xác nhận xóa */}
           {itemToDelete && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
               <div className="w-full max-w-sm glassmorphism rounded-2xl p-6 border border-slate-200/50 shadow-2xl">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Xác nhận xóa tệp</h3>
-                <p className="text-sm text-slate-500 mb-6">Bạn có chắc chắn muốn xóa vĩnh viễn tài nguyên này khỏi cơ sở dữ liệu cục bộ không?</p>
+                <p className="text-sm text-slate-500 mb-6">Bạn có chắc chắn muốn xóa vĩnh viễn tài nguyên này khỏi cơ sở dữ liệu không?</p>
                 <div className="flex space-x-3">
                   <button 
                     onClick={() => setItemToDelete(null)}
@@ -801,11 +848,11 @@
             </div>
           )}
 
-          {/* 1. HEADER (Newly Styled Logo and Header Text) */}
+          {/* 1. HEADER */}
           <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/80">
             <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
               
-              {/* Logo & Slogan */}
+              {/* Logo Flaticon Style */}
               <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setCurrentTab("Home")}>
                 <Icons.Logo />
                 <div>
@@ -816,7 +863,7 @@
                 </div>
               </div>
 
-              {/* Minimalist Navigation Menu */}
+              {/* Menu điều hướng */}
               <nav className="flex space-x-6 text-xs font-semibold">
                 <button 
                   onClick={() => { setCurrentTab("Home"); setSelectedCategory("Tất cả"); }} 
@@ -833,7 +880,7 @@
                 )}
               </nav>
 
-              {/* Right Login/Logout Actions */}
+              {/* Đăng nhập Admin */}
               <div className="flex items-center space-x-4">
                 {isAdmin ? (
                   <button 
@@ -853,33 +900,40 @@
             </div>
           </header>
 
-          {/* 2. MARQUEE NOTIFICATION BAR (Double Speed, No Hover Pause - Bright Styling) */}
+          {/* 2. THANH THÔNG BÁO CHẠY NGANG */}
           <div className="w-full bg-blue-50/70 border-b border-blue-100 py-2.5 overflow-hidden relative">
             <div className="animate-marquee-fast flex space-x-16 items-center">
               <span className="flex items-center space-x-2 text-xs text-blue-700 font-semibold">
                 <Icons.Fire />
-                <span>[MỚI] Hỗ trợ đồng bộ hóa tệp dữ liệu tự động giữa các máy tính khác nhau thông qua link tham số db.</span>
+                <span>[MỚI] Đã kết nối tự động tài khoản GoFile. Xuất bản cấu hình trực tuyến dễ dàng.</span>
               </span>
               <span className="flex items-center space-x-2 text-xs text-orange-700 font-semibold">
                 <Icons.Fire />
-                <span>Chào mừng quý khách đến với Kho Tài Nguyên. Tải xuống an toàn, sạch sẽ, bảo mật cao.</span>
+                <span>Chào mừng quý khách đến với Kho Tài Nguyên. Tải dữ liệu siêu tốc độ, không quảng cáo.</span>
               </span>
               <span className="flex items-center space-x-2 text-xs text-blue-700 font-semibold">
                 <Icons.Fire />
-                <span>Không giới hạn tốc độ băng thông - Lưu trữ đám mây qua hệ thống API GoFile.</span>
+                <span>Không giới hạn băng thông download - Đồng bộ hóa tệp database tức thì.</span>
+              </span>
+              {/* Nhân đôi dòng để chạy liền mạch */}
+              <span className="flex items-center space-x-2 text-xs text-blue-700 font-semibold">
+                <Icons.Fire />
+                <span>[MỚI] Đã kết nối tự động tài khoản GoFile. Xuất bản cấu hình trực tuyến dễ dàng.</span>
+              </span>
+              <span className="flex items-center space-x-2 text-xs text-orange-700 font-semibold">
+                <Icons.Fire />
+                <span>Chào mừng quý khách đến với Kho Tài Nguyên. Tải dữ liệu siêu tốc độ, không quảng cáo.</span>
               </span>
             </div>
           </div>
 
-          {/* Cloud Database Sync Status Indicator (Header Status Bar) */}
+          {/* Chỉ báo trạng thái Đồng bộ GoFile */}
           {currentDbCode && (
             <div className="w-full bg-slate-200/50 border-b border-slate-200 py-1.5 text-center text-[10px] text-slate-500 flex items-center justify-center space-x-2">
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Đang đồng bộ từ GoFile: <strong>gofile.io/d/{currentDbCode}</strong></span>
+              <span>Đang kết nối Database GoFile: <strong>gofile.io/d/{currentDbCode}</strong></span>
               <button 
-                onClick={() => {
-                  fetchAndSyncFromGoFile(currentDbCode);
-                }}
+                onClick={() => fetchAndSyncFromGoFile(currentDbCode)}
                 className="text-blue-600 hover:underline font-bold"
                 title="Tải lại bản mới nhất từ GoFile">
                 [Tải lại dữ liệu]
@@ -887,13 +941,13 @@
             </div>
           )}
 
-          {/* Main App Container */}
+          {/* Toàn bộ vùng hiển thị chính (Độ rộng tối ưu chống chói mắt) */}
           <main className="max-w-5xl mx-auto px-4 mt-10">
 
             {currentTab === "Home" ? (
               <div className="min-h-[500px]">
-                {/* SEARCH PANEL WITH INTUITIVE LIGHT DESIGN */}
-                <div className="mb-10 max-w-2xl mx-auto">
+                {/* THANH TÌM KIẾM TÀI NGUYÊN */}
+                <div className="mb-10 max-w-2xl mx-auto animate-fadeIn">
                   <div className="bg-white p-2 rounded-2xl flex items-center border border-slate-200/80 shadow-md">
                     <div className="pl-3 text-slate-400">
                       <Icons.Search />
@@ -915,27 +969,27 @@
                   </div>
                 </div>
 
-                {/* CATEGORIES & SORT PANEL */}
+                {/* DANH MỤC LỌC VÀ SẮP XẾP (Cố định tuyệt đối chống xê dịch) */}
                 <div className="mb-8">
                   <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0 pb-4 border-b border-slate-200">
                     
-                    {/* Horizontal scrollable category list with absolute anti-shifting */}
+                    {/* Danh mục lọc cuộn ngang mượt mà */}
                     <div className="flex items-center space-x-1.5 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 scrollbar-none">
                       {categories.map((cat) => (
                         <button
                           key={cat}
                           onClick={() => setSelectedCategory(cat)}
-                          className={`px-3.5 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all flex-shrink-0 border ${
+                          className={`px-3.5 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all flex-shrink-0 border border-slate-200 ${
                             selectedCategory === cat 
-                              ? 'bg-blue-600 text-white border-blue-600' 
-                              : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
+                              : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                           }`}>
                           {cat}
                         </button>
                       ))}
                     </div>
 
-                    {/* Sorting selector */}
+                    {/* Sắp xếp tài nguyên */}
                     <div className="flex items-center space-x-2.5 w-full lg:w-auto justify-end">
                       <span className="text-[11px] text-slate-400 uppercase font-bold tracking-wider">Sắp xếp:</span>
                       <select 
@@ -951,10 +1005,10 @@
                   </div>
                 </div>
 
-                {/* GRID DASHBOARD OF TOOLS */}
+                {/* KHU VỰC GRID CARD TÀI NGUYÊN (Đã làm nhỏ gọn và dịu mắt) */}
                 {filteredAndSortedTools.length === 0 ? (
                   <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-sm">
-                    <p className="text-slate-500 text-xs">Không tìm thấy tài nguyên nào phù hợp với từ khóa.</p>
+                    <p className="text-slate-500 text-xs">Không tìm thấy tài nguyên nào phù hợp với bộ lọc hiện tại.</p>
                   </div>
                 ) : (
                   <div>
@@ -974,7 +1028,7 @@
                           )}
 
                           <div>
-                            {/* Card Header Info */}
+                            {/* Tiêu đề tệp và danh mục */}
                             <div className="flex items-start justify-between mb-3">
                               <div className="flex items-center space-x-3">
                                 <img 
@@ -996,12 +1050,12 @@
                               )}
                             </div>
 
-                            {/* Short Description */}
+                            {/* Mô tả chi tiết tài nguyên */}
                             <p className="text-xs text-slate-500 line-clamp-2 mb-3 leading-relaxed">
                               {tool.description || 'Không có mô tả bổ sung cho tài nguyên này.'}
                             </p>
 
-                            {/* Preview Image */}
+                            {/* Ảnh Preview */}
                             {tool.previewImage && (
                               <div className="w-full h-24 rounded-xl overflow-hidden mb-3 relative bg-slate-100 border border-slate-100">
                                 <img 
@@ -1013,7 +1067,7 @@
                               </div>
                             )}
 
-                            {/* Meta Specs */}
+                            {/* Thông số dung lượng */}
                             <div className="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-xl text-[11px] text-slate-500 mb-3 border border-slate-100">
                               <div>
                                 <span className="text-slate-400 block text-[9px] uppercase font-extrabold">Phiên bản</span>
@@ -1026,7 +1080,7 @@
                             </div>
                           </div>
 
-                          {/* Footer Info & Instant Direct Download */}
+                          {/* Footer & Tải trực tiếp không cần trung gian */}
                           <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 mt-auto">
                             <div className="flex items-center space-x-1">
                               <Icons.Star filled={true} />
@@ -1049,17 +1103,17 @@
                 )}
               </div>
             ) : (
-              /* 5. ADMIN CONTROL PANEL */
+              /* 5. BẢNG QUẢN TRỊ ADMIN */
               <div className="space-y-8 relative z-10 animate-fadeIn">
                 
-                {/* ADVANCED CLOUD DATABASE SYNCHRONIZATION BOX */}
+                {/* HỆ THỐNG ĐỒNG BỘ ĐÁM MÂY GOFILE TOÀN DIỆN */}
                 <div className="bg-white p-5 rounded-2xl border border-blue-200 shadow-sm">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-3 flex items-center space-x-2">
                     <Icons.CloudSync />
                     <span>HỆ THỐNG ĐỒNG BỘ ĐÁM MÂY GOFILE DATABASE</span>
                   </h3>
                   <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                    Đẩy cấu hình chứa toàn bộ tài nguyên, lượt tải, danh mục hiện tại lên tài khoản GoFile của bạn thành một tập tin đám mây. Hãy sử dụng liên kết chia sẻ bên dưới để truy cập hoặc chia sẻ cho các thiết bị khác được đồng bộ tự động 100%.
+                    Nhấp nút bên dưới để đóng gói toàn bộ kho ứng dụng và danh mục, sau đó tải lên lưu trữ đám mây GoFile. Chỉ cần chia sẻ đường dẫn duy nhất này tới các thiết bị khác để dữ liệu đồng bộ tự động mà không cần thêm cấu hình trung gian.
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-4">
@@ -1069,14 +1123,14 @@
                         disabled={syncLoading}
                         className="w-full py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold shadow-md hover:bg-blue-500 transition-all flex items-center justify-center space-x-1.5">
                         <Icons.Upload />
-                        <span>{syncLoading ? "Đang đồng bộ dữ liệu..." : "Xuất & Đồng bộ lên GoFile Database mới"}</span>
+                        <span>{syncLoading ? "Đang đẩy dữ liệu lên GoFile..." : "Đồng bộ lên GoFile mới"}</span>
                       </button>
                     </div>
 
                     <form onSubmit={handleManualImport} className="flex space-x-2">
                       <input 
                         type="text"
-                        placeholder="Nhập mã / Link GoFile khác để tải..."
+                        placeholder="Nhập mã / Link thư mục GoFile..."
                         value={currentDbCode}
                         onChange={(e) => setCurrentDbCode(e.target.value)}
                         className="flex-1 px-3 py-2 glass-input rounded-xl text-xs"
@@ -1092,7 +1146,7 @@
 
                   {shareableUrl && (
                     <div className="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100 space-y-1.5 animate-fadeIn">
-                      <span className="block text-[10px] font-extrabold text-blue-700 uppercase tracking-widest">LIÊN KẾT CHIA SẺ ĐỒNG BỘ:</span>
+                      <span className="block text-[10px] font-extrabold text-blue-700 uppercase tracking-widest">LIÊN KẾT ĐỒNG BỘ ĐA THIẾT BỊ:</span>
                       <div className="flex items-center space-x-2">
                         <input 
                           type="text" 
@@ -1103,7 +1157,7 @@
                         <button
                           onClick={copyToClipboard}
                           className="p-1.5 bg-white border border-blue-200 text-blue-600 rounded-lg hover:bg-blue-100 transition"
-                          title="Sao chép liên kết chia sẻ">
+                          title="Sao chép liên kết">
                           <Icons.Copy />
                         </button>
                       </div>
@@ -1144,7 +1198,7 @@
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   
-                  {/* Left block: FORM PANEL */}
+                  {/* Cột trái: BIỂU MẪU ĐĂNG TẢI */}
                   <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-5 flex items-center space-x-2">
@@ -1154,7 +1208,7 @@
 
                       <form onSubmit={handleSaveTool} className="space-y-4">
                         
-                        {/* Basic text information */}
+                        {/* Tên và Danh mục */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Tên công cụ *</label>
@@ -1180,7 +1234,7 @@
                           </div>
                         </div>
 
-                        {/* Optional description */}
+                        {/* Mô tả */}
                         <div>
                           <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Mô tả tóm tắt (Không bắt buộc)</label>
                           <textarea 
@@ -1192,7 +1246,7 @@
                           />
                         </div>
 
-                        {/* Specs row */}
+                        {/* Thông số */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                           <div>
                             <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Phiên bản</label>
@@ -1226,7 +1280,7 @@
                           </div>
                         </div>
 
-                        {/* INPUT SECTION 1: TOOL INSTALLATION FILE */}
+                        {/* UPLOAD TỆP TIN */}
                         <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-[10px] font-extrabold uppercase text-blue-600 flex items-center">
@@ -1261,7 +1315,7 @@
                                 Chọn tệp tin từ máy để đẩy lên GoFile Cloud
                               </label>
                               {toolForm.fileUrl && (
-                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đã tạo link GoFile: {toolForm.fileUrl}</p>
+                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đường dẫn GoFile: {toolForm.fileUrl}</p>
                               )}
                             </div>
                           ) : (
@@ -1270,12 +1324,12 @@
                               value={toolForm.fileUrl}
                               onChange={(e) => setToolForm({...toolForm, fileUrl: e.target.value})}
                               placeholder="Nhập liên kết tải xuống trực tiếp..." 
-                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs animate-fadeIn"
+                              className="w-full glass-input px-3.5 py-2 rounded-lg text-xs"
                             />
                           )}
                         </div>
 
-                        {/* INPUT SECTION 2: ICON */}
+                        {/* UPLOAD ICON */}
                         <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-[10px] font-extrabold uppercase text-blue-600 flex items-center">
@@ -1311,7 +1365,7 @@
                                 Chọn ảnh Icon tải lên
                               </label>
                               {toolForm.iconUrl && (
-                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đã tạo link Icon: {toolForm.iconUrl}</p>
+                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đường dẫn Icon: {toolForm.iconUrl}</p>
                               )}
                             </div>
                           ) : (
@@ -1320,12 +1374,12 @@
                               value={toolForm.iconUrl}
                               onChange={(e) => setToolForm({...toolForm, iconUrl: e.target.value})}
                               placeholder="Nhập liên kết hình ảnh icon trực tiếp..." 
-                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs animate-fadeIn"
+                              className="w-full glass-input px-3.5 py-2 rounded-lg text-xs"
                             />
                           )}
                         </div>
 
-                        {/* INPUT SECTION 3: PREVIEW IMAGE */}
+                        {/* UPLOAD ẢNH PREVIEW */}
                         <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-[10px] font-extrabold uppercase text-blue-600 flex items-center">
@@ -1358,10 +1412,10 @@
                                 id="admin-preview-upload-input" 
                               />
                               <label htmlFor="admin-preview-upload-input" className="flex items-center justify-center p-3 rounded-lg border border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/20 bg-white cursor-pointer text-xs font-semibold text-slate-600 transition">
-                                Chọn ảnh chụp màn hình tải lên
+                                Chọn ảnh minh họa tải lên
                               </label>
                               {toolForm.previewImage && (
-                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đã tạo link Ảnh: {toolForm.previewImage}</p>
+                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đường dẫn Minh họa: {toolForm.previewImage}</p>
                               )}
                             </div>
                           ) : (
@@ -1370,16 +1424,16 @@
                               value={toolForm.previewImage}
                               onChange={(e) => setToolForm({...toolForm, previewImage: e.target.value})}
                               placeholder="Nhập liên kết hình ảnh xem trước..." 
-                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs animate-fadeIn"
+                              className="w-full glass-input px-3.5 py-2 rounded-lg text-xs"
                             />
                           )}
                         </div>
 
-                        {/* File Uploading Progress Indicator */}
+                        {/* Tiến trình Upload */}
                         {uploadingFile.active && (
                           <div className="bg-blue-50 p-3 rounded-xl border border-blue-200">
                             <div className="flex justify-between items-center text-[10px] font-bold mb-1">
-                              <span className="text-blue-600 animate-pulse uppercase">ĐANG ĐẨY TỆP KHÁCH LÊN TÀI KHOẢN GOFILE...</span>
+                              <span className="text-blue-600 animate-pulse uppercase">ĐANG GỬI DỮ LIỆU ĐẾN TÀI KHOẢN GOFILE...</span>
                               <span>{uploadingFile.percent}%</span>
                             </div>
                             <div className="w-full bg-slate-200 rounded-full h-1 overflow-hidden">
@@ -1388,6 +1442,7 @@
                           </div>
                         )}
 
+                        {/* Tuỳ chọn nổi bật / ẩn */}
                         <div className="flex items-center space-x-6 pt-2">
                           <label className="flex items-center space-x-2 cursor-pointer">
                             <input 
@@ -1444,10 +1499,10 @@
                     </div>
                   </div>
 
-                  {/* Right block: QUICK OVERVIEW STATS & CATEGORY MANAGER */}
+                  {/* Cột phải: THỐNG KÊ VÀ QUẢN LÝ DANH MỤC DỘNG */}
                   <div className="space-y-6">
                     
-                    {/* STATS OVERVIEW CARD */}
+                    {/* Thống kê quy mô */}
                     <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-4 flex items-center space-x-2">
                         <Icons.Activity />
@@ -1488,14 +1543,14 @@
                       </div>
                     </div>
 
-                    {/* CATEGORY MANAGER CARD */}
+                    {/* Quản lý danh mục động */}
                     <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-orange-600 mb-4 flex items-center space-x-2">
                         <Icons.Globe />
                         <span>QUẢN LÝ DANH MỤC ({categories.length})</span>
                       </h3>
 
-                      {/* ADD CATEGORY FORM */}
+                      {/* Biểu mẫu chỉnh sửa/thêm danh mục */}
                       <form onSubmit={editingCategory ? handleSaveCategoryEdit : handleAddCategory} className="mb-4">
                         <div className="flex space-x-2">
                           <input 
@@ -1508,7 +1563,7 @@
                           />
                           <button 
                             type="submit"
-                            className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white rounded-xl shadow-md transition flex-shrink-0">
+                            className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-50 text-xs font-bold text-white rounded-xl shadow-md transition flex-shrink-0">
                             {editingCategory ? "Lưu" : "Thêm"}
                           </button>
                           {editingCategory && (
@@ -1522,7 +1577,7 @@
                         </div>
                       </form>
 
-                      {/* CATEGORIES LISTING WITH ACTIONS */}
+                      {/* Danh sách danh mục với các thao tác */}
                       <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                         {categories.map((cat) => (
                           <div 
@@ -1551,7 +1606,7 @@
                       </div>
 
                       <div className="mt-4 text-[10px] text-slate-400 italic">
-                        * Chú ý: Danh mục "Tất cả" là mặc định hệ thống. Khi chỉnh sửa danh mục khác, toàn bộ tài nguyên tương ứng sẽ tự động cập nhật đồng bộ.
+                        * Khi chỉnh sửa tên danh mục, toàn bộ các tệp tin tài nguyên trực thuộc sẽ được tự động đồng bộ sang danh mục mới.
                       </div>
                     </div>
 
@@ -1559,7 +1614,7 @@
 
                 </div>
 
-                {/* 7. DATABASE MANAGEMENT TABLE */}
+                {/* BẢNG QUẢN LÝ DANH SÁCH TÀI NGUYÊN */}
                 <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden mt-6 shadow-sm">
                   <div className="p-5 border-b border-slate-100">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 flex items-center space-x-2">
@@ -1612,7 +1667,7 @@
                                 
                                 <button 
                                   onClick={() => handleToggleHide(tool)} 
-                                  title={tool.hidden ? "Hiện tool" : "Ẩn tool"}
+                                  title={tool.hidden ? "Hiện" : "Ẩn"}
                                   className={`p-1.5 rounded transition ${tool.hidden ? 'text-red-500 hover:bg-red-50' : 'text-slate-400 hover:text-slate-800'}`}>
                                   {tool.hidden ? <Icons.EyeOff /> : <Icons.Eye />}
                                 </button>
@@ -1649,7 +1704,7 @@
             <p>© 2026 Kho Tài Nguyên Platform. Tối ưu hóa lưu trữ đám mây qua hệ thống GoFile API.</p>
           </footer>
 
-          {/* MODAL 1: REDESIGNED ADMIN LOGIN FORM (No Suggestion Hints) */}
+          {/* ĐĂNG NHẬP ADMIN */}
           {showLoginModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
               <div className="w-full max-w-md glassmorphism rounded-2xl p-6 relative border border-slate-200 shadow-2xl">
