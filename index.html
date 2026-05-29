@@ -1,833 +1,1396 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kho Dữ Liệu - Khám phá & Lưu trữ</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- LocalForage cho Database cực nhẹ (IndexedDB) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#090e17',
-                        panelbg: '#111827',
-                        inputbg: '#1f2937',
-                        primary: '#06b6d4', // Cyan
-                        primary_hover: '#0891b2',
-                        accent: '#3b82f6', // Blue
-                    }
-                }
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kho Tài Nguyên - Tải Tool & Tài Nguyên Tốc Độ Cao</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandBlue: '#2563eb',
+            brandOrange: '#f97316',
+            lightbg: '#f1f5f9',
+            slateText: '#1e293b',
+            mutedText: '#64748b'
+          }
         }
-    </script>
-    <style>
-        /* Base Dark Theme & Glow */
-        body {
-            background-color: #090e17;
-            color: #e2e8f0;
-            background-image: radial-gradient(circle at 50% -20%, #152238, #090e17 60%);
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        .glass-panel {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        /* Chỉ phát sáng khung viền khi hover */
-        .glow-effect {
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        .glow-effect:hover {
-            border-color: rgba(6, 182, 212, 0.8);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4), inset 0 0 10px rgba(6, 182, 212, 0.1);
-        }
-        
-        .glow-text {
-            text-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #090e17; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #374151; }
-        
-        /* Hide scrollbar for form modal to look cleaner */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Custom CSS for Animations & Marquee -->
+  <style>
+    /* Prevent layout shifting by keeping scrollbar space allocated permanently */
+    html {
+      scrollbar-gutter: stable !important;
+      overflow-y: scroll !important;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+      overflow-x: hidden;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b82f6;
+    }
+
+    /* Double speed (15s) marquee that does not pause on hover */
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    .animate-marquee-fast {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: marquee 15s linear infinite;
+    }
+
+    /* Prevent horizontal scroll layout shifting in Chrome/Safari */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none !important;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    /* Premium Light Glassmorphism utility */
+    .glassmorphism {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 4px 20px -2px rgba(148, 163, 184, 0.08);
+    }
+    
+    .glass-input {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(226, 232, 240, 1);
+      color: #1e293b;
+    }
+    .glass-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
+      outline: none;
+    }
+
+    /* Soft light ambient glow backgrounds */
+    .glow-bg-1 {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, rgba(255,255,255,0) 70%);
+      top: -150px;
+      left: -100px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-bg-2 {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(249,115,22,0.04) 0%, rgba(255,255,255,0) 70%);
+      bottom: 10%;
+      right: -150px;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
 </head>
-<body class="antialiased">
+<body class="bg-lightbg text-slateText min-h-screen">
 
-    <!-- Header -->
-    <header class="border-b border-gray-800/60 sticky top-0 z-40 bg-[#090e17]/80 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <!-- Logo -->
-                <div class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg shadow-[0_0_10px_rgba(6,182,212,0.4)]">
-                    <svg viewBox="0 0 24 24" class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M7 11V3m0 0L3 7m4-4l4 4" />
-                        <path d="M17 13v8m0 0l-4-4m4 4l4-4" />
-                    </svg>
-                </div>
-                <h1 class="text-xl font-bold text-white tracking-wide">
-                    Kho Dữ Liệu
-                </h1>
-            </div>
-            <div class="flex items-center gap-4">
-                <!-- Nút Thêm Tài Nguyên (Chỉ hiện khi là Admin) -->
-                <button id="btn-open-add-modal" class="hidden flex items-center gap-2 text-sm font-medium bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg transition-colors shadow-[0_0_10px_rgba(6,182,212,0.3)]">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    Thêm Mới
-                </button>
-                
-                <button id="btn-login-modal" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.965 11.965 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    Admin
-                </button>
-                <button id="btn-logout" class="hidden flex items-center gap-2 text-sm text-red-400 hover:text-red-300 transition-colors">
-                    Đăng xuất
-                </button>
-            </div>
-        </div>
-    </header>
+  <div id="root"></div>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
-        <!-- Hero Section & Search -->
-        <div class="text-center mb-16">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
-                Khám phá & Lưu trữ <span class="text-cyan-400 glow-text">Tài nguyên</span>
-            </h1>
-            <p class="text-gray-400 text-sm md:text-base mb-8">
-                Hệ thống quản lý, chia sẻ Tool và Tài liệu trực tuyến siêu tốc.
-            </p>
-            
-            <!-- Search Bar -->
-            <div class="max-w-2xl mx-auto relative">
-                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-                <input type="text" id="search-input" class="w-full bg-[#111827] border border-gray-700/50 rounded-xl py-3.5 pl-12 pr-4 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors shadow-lg" placeholder="Tìm kiếm tài nguyên, công cụ...">
-            </div>
-        </div>
+  <!-- React Application Logic -->
+  <script type="text/babel">
+    
+    // Categories list for filtering
+    const CATEGORIES = [
+      "Tất cả", "Windows", "Office", "Network", "Design", 
+      "AI Tool", "Developer", "Driver", "Gaming", "Security", "Utility"
+    ];
 
-        <!-- Resources Area -->
-        <section>
-            <!-- Loading -->
-            <div id="loading" class="flex justify-center py-20">
-                <div class="w-10 h-10 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
-            </div>
+    // SVG Icons Helper for high efficiency and crisp display
+    const Icons = {
+      Search: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>,
+      Download: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>,
+      Admin: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+      Home: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>,
+      Upload: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>,
+      Trash: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>,
+      Edit: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>,
+      Eye: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>,
+      EyeOff: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>,
+      Star: ({ filled }) => <svg className={`w-3.5 h-3.5 ${filled ? 'text-amber-400 fill-current' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.582 1.833l-3.978 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.88a1 1 0 00-1.176 0l-3.976 2.88c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.978-2.89c-.77-.581-.371-1.833.582-1.833h4.907a1 1 0 00.95-.69l1.519-4.674z"/></svg>,
+      Fire: () => <svg className="w-4 h-4 text-orange-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
+      Close: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>,
+      Lock: () => <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>,
+      Plus: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>,
+      Activity: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>,
+      Globe: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>,
+      Logo: () => (
+        <svg className="w-9 h-9" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="url(#logo-grad)" />
+          {/* Subtle Flat Shadow Effect inside Flaticon style */}
+          <path d="M7 24H25V25H7V24Z" fill="black" fillOpacity="0.1" />
+          <path d="M16 8V20M16 20L11 15M16 20L21 15" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M7 24H25" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <defs>
+            <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#2563eb" />
+              <stop offset="1" stopColor="#f97316" />
+            </linearGradient>
+          </defs>
+        </svg>
+      )
+    };
 
-            <!-- Empty State (No results) -->
-            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-16 bg-[#111827]/40 rounded-2xl border border-gray-800/50">
-                <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.5 9.5l3 3m0-3l-3 3"></path></svg>
-                </div>
-                <h3 class="text-lg font-semibold text-gray-200 mb-1">Không tìm thấy tài nguyên</h3>
-                <p class="text-sm text-gray-500">Thử tìm với một từ khóa khác hoặc chưa có dữ liệu nào được tải lên.</p>
-            </div>
+    // Helper to render type icons alongside file names inside forms
+    const FileTypeIcon = ({ type }) => {
+      const baseClass = "w-4 h-4 mr-1.5 inline-block align-middle";
+      if (type === 'file') return <svg className={`${baseClass} text-blue-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>;
+      if (type === 'icon') return <svg className={`${baseClass} text-purple-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>;
+      if (type === 'preview') return <svg className={`${baseClass} text-emerald-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>;
+      return null;
+    };
 
-            <!-- Grid -->
-            <div id="resources-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Dữ liệu render tại đây -->
-            </div>
-        </section>
-    </main>
+    // Constant GoFile User Credentials Config
+    const GOFILE_ACCOUNT_ID = "a922682f-aebc-45fe-8497-a723c3650700";
+    const GOFILE_ACCOUNT_TOKEN = "P05BBN2c7r6elhBumKrpoVAj3X0k32ir";
 
-    <!-- Modal: Thêm/Sửa Tài Nguyên -->
-    <div id="resource-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-[#05080f]/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 p-4">
-        <div class="bg-panelbg border border-gray-700 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto no-scrollbar shadow-[0_10px_40px_rgba(0,0,0,0.5)] transform scale-95 transition-transform duration-300" id="resource-modal-content">
-            
-            <!-- Modal Header -->
-            <div class="flex justify-between items-center px-6 py-4 border-b border-gray-800">
-                <h3 id="form-title" class="text-lg font-semibold text-white flex items-center gap-2">
-                    <span class="text-cyan-400 text-xl font-light">+</span> Thêm Tài Nguyên Mới
-                </h3>
-                <button id="btn-close-res-modal" class="text-gray-400 hover:text-white transition-colors bg-gray-800 hover:bg-gray-700 p-1 rounded-md">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
+    // Default static initial mock tools database
+    const INITIAL_TOOLS = [
+      {
+        id: "capcut-pc",
+        name: "CapCut Pro PC Full Version",
+        description: "Ứng dụng edit video chuyên nghiệp, tích hợp hàng loạt mẫu hiệu ứng thông minh do AI tối ưu hóa.",
+        category: "Design",
+        version: "v4.2.0",
+        size: "520 MB",
+        iconUrl: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=120&q=80",
+        fileUrl: "https://gofile.io/d/capcut-demo",
+        previewImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+        downloads: 1420,
+        featured: true,
+        hidden: false,
+        createdAt: Date.now() - 86400000,
+        updatedAt: Date.now(),
+        rating: 4.8
+      },
+      {
+        id: "ai-enhancer",
+        name: "AI Smart Enhancer Suite",
+        description: "Phần mềm xử lý chất lượng hình ảnh và phục chế ảnh cũ tự động áp dụng công nghệ trí tuệ nhân tạo.",
+        category: "AI Tool",
+        version: "v1.5.1",
+        size: "185 MB",
+        iconUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=120&q=80",
+        fileUrl: "https://gofile.io/d/ai-enhancer",
+        previewImage: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=800&q=80",
+        downloads: 890,
+        featured: true,
+        hidden: false,
+        createdAt: Date.now() - 172800000,
+        updatedAt: Date.now(),
+        rating: 4.9
+      },
+      {
+        id: "dev-code-pro",
+        name: "DevTool Code Inspector Pro",
+        description: "Tiện ích bổ trợ lập trình viên kiểm thử bảo mật và tối ưu chất lượng mã nguồn hệ thống thời gian thực.",
+        category: "Developer",
+        version: "v3.1.2",
+        size: "45 MB",
+        iconUrl: "https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=120&q=80",
+        fileUrl: "https://gofile.io/d/devtool-inspector",
+        previewImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+        downloads: 654,
+        featured: false,
+        hidden: false,
+        createdAt: Date.now() - 259200000,
+        updatedAt: Date.now(),
+        rating: 4.6
+      }
+    ];
 
-            <!-- Modal Body (Form) -->
-            <form id="resource-form" class="p-6 space-y-6">
-                <input type="hidden" id="edit-id">
-                
-                <!-- Info Section -->
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Tên tài nguyên (Tool/File) <span class="text-red-500">*</span></label>
-                        <input type="text" id="res-title" required class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Ví dụ: Tool Crack VIP">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Mô tả ngắn</label>
-                        <input type="text" id="res-desc" class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Nhập một đoạn mô tả ngắn gọn...">
-                    </div>
-                </div>
+    function App() {
+      const [tools, setTools] = React.useState([]);
+      const [currentTab, setCurrentTab] = React.useState("Home"); // Home, Admin
+      
+      // Filter & Search states
+      const [selectedCategory, setSelectedCategory] = React.useState("Tất cả");
+      const [searchQuery, setSearchQuery] = React.useState("");
+      const [sortBy, setSortBy] = React.useState("newest"); // newest, downloads, featured
+      
+      // Admin authentication state
+      const [isAdmin, setIsAdmin] = React.useState(false);
+      const [showLoginModal, setShowLoginModal] = React.useState(false);
+      const [adminEmail, setAdminEmail] = React.useState("");
+      const [adminPassword, setAdminPassword] = React.useState("");
+      
+      // Active feedback notification toast
+      const [activeNotification, setActiveNotification] = React.useState(null);
 
-                <!-- Split Section (Nguồn & Ảnh) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    <!-- Nguồn Tài Nguyên -->
-                    <div class="bg-[#151f32] rounded-xl p-5 border border-gray-700/50 flex flex-col">
-                        <h4 class="text-sm font-medium text-white mb-4 flex items-center gap-2">
-                            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
-                            Nguồn Tài Nguyên
-                        </h4>
-                        
-                        <!-- Toggle Buttons -->
-                        <div class="flex p-1 bg-[#0f172a] rounded-lg mb-4 border border-gray-800">
-                            <button type="button" id="tab-res-file" class="flex-1 py-1.5 text-sm font-medium rounded-md bg-cyan-600 text-white transition-all">Upload Trực Tiếp</button>
-                            <button type="button" id="tab-res-link" class="flex-1 py-1.5 text-sm font-medium rounded-md text-gray-400 hover:text-white transition-all">Gắn Link Drive</button>
-                        </div>
-                        <input type="hidden" id="res-type-val" value="file">
+      // Custom Delete Confirmation state (safer than native iframe blocking alert)
+      const [itemToDelete, setItemToDelete] = React.useState(null);
+      
+      // Form fields for Uploading/Editing Tool
+      const [isEditing, setIsEditing] = React.useState(false);
+      const [editToolId, setEditToolId] = React.useState(null);
+      
+      // Redesigned form state holding either uploaded links or pasted links
+      const [toolForm, setToolForm] = React.useState({
+        name: "",
+        description: "",
+        category: "Windows",
+        version: "v1.0.0",
+        size: "",
+        iconUrl: "",
+        fileUrl: "",
+        previewImage: "",
+        featured: false,
+        hidden: false
+      });
 
-                        <!-- Content Nguồn -->
-                        <div class="flex-1 flex flex-col justify-center">
-                            <!-- Dropzone File -->
-                            <div id="res-file-zone" class="border-2 border-dashed border-gray-600 hover:border-cyan-500 rounded-xl p-6 text-center cursor-pointer transition-colors h-32 flex flex-col items-center justify-center bg-[#0f172a]/50" onclick="document.getElementById('res-file').click()">
-                                <svg class="w-8 h-8 text-cyan-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                                <p id="res-file-name" class="text-xs text-gray-400 font-medium px-2 truncate w-full">Chọn file (ZIP, RAR, EXE) - Max 200MB</p>
-                            </div>
-                            <input type="file" id="res-file" class="hidden">
-                            
-                            <!-- Link Input -->
-                            <div id="res-link-zone" class="hidden h-32 flex flex-col justify-center">
-                                <input type="url" id="res-url" class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Dán link Google Drive, Fshare...">
-                            </div>
-                        </div>
-                    </div>
+      // Upload method switches: 'upload' or 'link'
+      const [uploadMethods, setUploadMethods] = React.useState({
+        file: "upload",
+        icon: "link",
+        preview: "link"
+      });
+      
+      // File upload progress feedback state
+      const [uploadingFile, setUploadingFile] = React.useState({
+        active: false,
+        percent: 0,
+        targetField: null // 'file', 'icon', 'preview'
+      });
 
-                    <!-- Ảnh Đại Diện -->
-                    <div class="bg-[#151f32] rounded-xl p-5 border border-gray-700/50 flex flex-col">
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="text-sm font-medium text-white flex items-center gap-2">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                Ảnh Đại Diện
-                            </h4>
-                            
-                            <!-- Toggle Buttons (Mini) -->
-                            <div class="flex p-0.5 bg-[#0f172a] rounded-md border border-gray-800 text-xs">
-                                <button type="button" id="tab-icon-link" class="px-3 py-1 rounded bg-gray-700 text-white transition-all">Dán Link</button>
-                                <button type="button" id="tab-icon-file" class="px-3 py-1 rounded text-gray-400 hover:text-white transition-all">Tải Lên</button>
-                            </div>
-                            <input type="hidden" id="icon-type-val" value="link">
-                        </div>
+      const showToast = (message, type = "success") => {
+        setActiveNotification({ message, type });
+        setTimeout(() => setActiveNotification(null), 4000);
+      };
 
-                        <!-- Content Ảnh -->
-                        <div class="flex gap-4 flex-1 items-center">
-                            <div class="flex-1">
-                                <!-- Link Input -->
-                                <input type="url" id="icon-url" class="w-full bg-inputbg border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-cyan-500 transition-colors" placeholder="Nhập link ảnh...">
-                                
-                                <!-- File Input Zone -->
-                                <div id="icon-file-zone" class="hidden border border-dashed border-gray-600 rounded-lg p-2 text-center cursor-pointer hover:border-cyan-500 transition-colors text-xs text-gray-400 bg-[#0f172a]/50 h-10 flex items-center justify-center truncate px-2" onclick="document.getElementById('icon-file').click()">
-                                    <span id="icon-file-name">Bấm để chọn ảnh...</span>
-                                </div>
-                                <input type="file" id="icon-file" accept="image/*" class="hidden">
-                            </div>
-                            
-                            <!-- Preview Box -->
-                            <div class="w-16 h-16 rounded-xl border border-gray-700 bg-gray-800 flex items-center justify-center overflow-hidden shrink-0">
-                                <img id="icon-preview" src="" class="w-full h-full object-cover hidden">
-                                <svg id="icon-placeholder" class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer Actions -->
-                <div class="flex justify-end gap-4 pt-4 border-t border-gray-800">
-                    <button type="button" id="btn-cancel-modal" class="px-5 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white transition-colors">Hủy Bỏ</button>
-                    <button type="submit" id="btn-submit" class="px-6 py-2 rounded-lg bg-accent hover:bg-blue-600 text-white text-sm font-medium transition-colors flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        Lưu Tài Nguyên
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div id="login-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#05080f]/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 p-4">
-        <div class="bg-panelbg p-8 rounded-2xl w-full max-w-sm border border-gray-700 transform scale-95 transition-transform duration-300 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                    <svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    Xác Thực Admin
-                </h3>
-                <button id="btn-close-login" class="text-gray-500 hover:text-white"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            </div>
-            <form id="login-form" class="space-y-4">
-                <div>
-                    <input type="email" id="login-email" class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm focus:border-cyan-500 focus:outline-none placeholder-gray-500" placeholder="Email" required>
-                </div>
-                <div>
-                    <input type="password" id="login-pass" class="w-full bg-inputbg border border-gray-700 rounded-lg px-4 py-2.5 text-white text-sm focus:border-cyan-500 focus:outline-none placeholder-gray-500" placeholder="Mật khẩu" required>
-                </div>
-                <p id="login-error" class="text-red-400 text-xs hidden">Sai tài khoản hoặc mật khẩu!</p>
-                <button type="submit" class="w-full py-2.5 mt-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium transition-colors">Đăng Nhập</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Message Toast -->
-    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 z-[200] bg-panelbg px-5 py-3 rounded-xl border border-gray-700 shadow-2xl flex items-center gap-3">
-        <span id="toast-icon">✅</span>
-        <span id="toast-msg" class="text-white text-sm font-medium">Thành công</span>
-    </div>
-
-    <script>
-        // Cấu hình Database an toàn
-        try {
-            if (typeof localforage !== 'undefined') {
-                localforage.config({
-                    name: 'KhoDuLieuDB',
-                    storeName: 'resources'
-                });
-            } else {
-                console.warn("Thư viện lưu trữ chưa tải xong, dữ liệu sẽ được dùng tạm trên RAM.");
-            }
-        } catch(e) {
-            console.error("Lỗi khởi tạo Database:", e);
-        }
-
-        // --- Trạng thái Ứng dụng ---
-        let state = {
-            isAdmin: false,
-            resources: [], // Toàn bộ data
-            filteredResources: [], // Data hiển thị sau tìm kiếm
-            editingId: null
-        };
-
-        const ui = {
-            // General
-            resourcesGrid: document.getElementById('resources-grid'),
-            loading: document.getElementById('loading'),
-            emptyState: document.getElementById('empty-state'),
-            searchInput: document.getElementById('search-input'),
-            toast: document.getElementById('toast'),
-            toastMsg: document.getElementById('toast-msg'),
-            toastIcon: document.getElementById('toast-icon'),
-            
-            // Header Buttons
-            btnLoginModal: document.getElementById('btn-login-modal'),
-            btnLogout: document.getElementById('btn-logout'),
-            btnOpenAddModal: document.getElementById('btn-open-add-modal'),
-            
-            // Login Modal
-            loginModal: document.getElementById('login-modal'),
-            loginModalContent: document.querySelector('#login-modal > div'),
-            btnCloseLogin: document.getElementById('btn-close-login'),
-            loginForm: document.getElementById('login-form'),
-            loginError: document.getElementById('login-error'),
-            
-            // Resource Form Modal
-            resModal: document.getElementById('resource-modal'),
-            resModalContent: document.getElementById('resource-modal-content'),
-            btnCloseResModal: document.getElementById('btn-close-res-modal'),
-            btnCancelModal: document.getElementById('btn-cancel-modal'),
-            form: document.getElementById('resource-form'),
-            formTitle: document.getElementById('form-title'),
-            btnSubmit: document.getElementById('btn-submit'),
-            
-            // Form Inputs
-            resTitle: document.getElementById('res-title'),
-            resDesc: document.getElementById('res-desc'),
-            
-            // Tabs & Zones: Nguồn Tài Nguyên
-            tabResFile: document.getElementById('tab-res-file'),
-            tabResLink: document.getElementById('tab-res-link'),
-            resTypeVal: document.getElementById('res-type-val'),
-            resFileZone: document.getElementById('res-file-zone'),
-            resLinkZone: document.getElementById('res-link-zone'),
-            resFile: document.getElementById('res-file'),
-            resFileName: document.getElementById('res-file-name'),
-            resUrl: document.getElementById('res-url'),
-            
-            // Tabs & Zones: Ảnh Đại Diện
-            tabIconLink: document.getElementById('tab-icon-link'),
-            tabIconFile: document.getElementById('tab-icon-file'),
-            iconTypeVal: document.getElementById('icon-type-val'),
-            iconUrl: document.getElementById('icon-url'),
-            iconFileZone: document.getElementById('icon-file-zone'),
-            iconFile: document.getElementById('icon-file'),
-            iconFileName: document.getElementById('icon-file-name'),
-            iconPreview: document.getElementById('icon-preview'),
-            iconPlaceholder: document.getElementById('icon-placeholder'),
-        };
-
-        const showToast = (msg, type = 'success') => {
-            ui.toastMsg.textContent = msg;
-            ui.toastIcon.textContent = type === 'success' ? '✅' : '❌';
-            ui.toast.className = `fixed bottom-5 right-5 z-[200] bg-panelbg px-5 py-3 rounded-xl border border-gray-700 shadow-2xl flex items-center gap-3 transition-all duration-300`;
-            ui.toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => ui.toast.classList.add('translate-y-20', 'opacity-0'), 3000);
-        };
-
-        // Đọc file -> Base64 (cho icon)
-        const readIconAsDataURL = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-            reader.readAsDataURL(file);
-        });
-        
-        // Hàm chuyển đổi size (Bytes sang KB, MB)
-        const formatSize = (bytes) => {
-            if (!bytes || bytes === 0) return '0 Byte';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        };
-
-        // --- UI Logic: Chuyển đổi Tab trong Modal ---
-        const setResTab = (type) => {
-            ui.resTypeVal.value = type;
-            if(type === 'file') {
-                ui.tabResFile.className = "flex-1 py-1.5 text-sm font-medium rounded-md bg-cyan-600 text-white transition-all";
-                ui.tabResLink.className = "flex-1 py-1.5 text-sm font-medium rounded-md text-gray-400 hover:text-white transition-all";
-                ui.resFileZone.classList.remove('hidden');
-                ui.resLinkZone.classList.add('hidden');
-            } else {
-                ui.tabResLink.className = "flex-1 py-1.5 text-sm font-medium rounded-md bg-cyan-600 text-white transition-all";
-                ui.tabResFile.className = "flex-1 py-1.5 text-sm font-medium rounded-md text-gray-400 hover:text-white transition-all";
-                ui.resLinkZone.classList.remove('hidden');
-                ui.resFileZone.classList.add('hidden');
-            }
-        };
-
-        const setIconTab = (type) => {
-            ui.iconTypeVal.value = type;
-            if(type === 'link') {
-                ui.tabIconLink.className = "px-3 py-1 rounded bg-gray-700 text-white transition-all";
-                ui.tabIconFile.className = "px-3 py-1 rounded text-gray-400 hover:text-white transition-all";
-                ui.iconUrl.classList.remove('hidden');
-                ui.iconFileZone.classList.add('hidden');
-            } else {
-                ui.tabIconFile.className = "px-3 py-1 rounded bg-gray-700 text-white transition-all";
-                ui.tabIconLink.className = "px-3 py-1 rounded text-gray-400 hover:text-white transition-all";
-                ui.iconFileZone.classList.remove('hidden');
-                ui.iconUrl.classList.add('hidden');
-            }
-        };
-
-        ui.tabResFile.addEventListener('click', () => setResTab('file'));
-        ui.tabResLink.addEventListener('click', () => setResTab('link'));
-        ui.tabIconLink.addEventListener('click', () => setIconTab('link'));
-        ui.tabIconFile.addEventListener('click', () => setIconTab('file'));
-
-        // Cập nhật tên file khi chọn
-        ui.resFile.addEventListener('change', (e) => {
-            if(e.target.files.length > 0) {
-                const f = e.target.files[0];
-                ui.resFileName.textContent = `${f.name} (${formatSize(f.size)})`;
-                ui.resFileName.classList.add('text-white');
-                ui.resFileName.classList.remove('text-gray-400');
-            } else {
-                ui.resFileName.textContent = "Chọn file (ZIP, RAR, EXE) - Max 200MB";
-                ui.resFileName.classList.add('text-gray-400');
-                ui.resFileName.classList.remove('text-white');
-            }
-        });
-
-        ui.iconFile.addEventListener('change', async (e) => {
-            if(e.target.files.length > 0) {
-                ui.iconFileName.textContent = e.target.files[0].name;
-                const dataUrl = await readIconAsDataURL(e.target.files[0]);
-                updateIconPreview(dataUrl);
-            } else {
-                ui.iconFileName.textContent = "Bấm để chọn ảnh...";
-            }
-        });
-
-        ui.iconUrl.addEventListener('input', (e) => {
-            updateIconPreview(e.target.value);
-        });
-
-        const updateIconPreview = (src) => {
-            if(src && src.trim() !== '') {
-                ui.iconPreview.src = src;
-                ui.iconPreview.classList.remove('hidden');
-                ui.iconPlaceholder.classList.add('hidden');
-            } else {
-                ui.iconPreview.classList.add('hidden');
-                ui.iconPlaceholder.classList.remove('hidden');
-            }
-        };
-
-        // --- Quản lý Modal & Trạng thái ---
-        const toggleAdminMode = (isAdmin) => {
-            state.isAdmin = isAdmin;
-            if (isAdmin) {
-                ui.btnOpenAddModal.classList.remove('hidden');
-                ui.btnLoginModal.classList.add('hidden');
-                ui.btnLogout.classList.remove('hidden');
-                showToast('Đăng nhập quản trị thành công!');
-            } else {
-                ui.btnOpenAddModal.classList.add('hidden');
-                ui.btnLoginModal.classList.remove('hidden');
-                ui.btnLogout.classList.add('hidden');
-            }
-            renderResources();
-        };
-
-        // Login Modal
-        const openLoginModal = () => {
-            ui.loginModal.classList.remove('hidden'); 
-            setTimeout(() => { ui.loginModal.classList.remove('opacity-0'); ui.loginModalContent.classList.remove('scale-95'); }, 10);
-        };
-        const closeLoginModal = () => {
-            ui.loginModal.classList.add('opacity-0'); ui.loginModalContent.classList.add('scale-95');
-            setTimeout(() => ui.loginModal.classList.add('hidden'), 300); 
-            ui.loginError.classList.add('hidden'); ui.loginForm.reset();
-        };
-
-        ui.btnLoginModal.addEventListener('click', openLoginModal);
-        ui.btnCloseLogin.addEventListener('click', closeLoginModal);
-        
-        ui.loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (document.getElementById('login-email').value === 'hung@admin.com' && document.getElementById('login-pass').value === 'hung@123') {
-                closeLoginModal(); toggleAdminMode(true);
-            } else { ui.loginError.classList.remove('hidden'); }
-        });
-
-        ui.btnLogout.addEventListener('click', () => { toggleAdminMode(false); showToast('Đã đăng xuất'); });
-
-        // Resource Form Modal
-        const openResModal = (isEdit = false) => {
-            ui.resModal.classList.remove('hidden');
-            setTimeout(() => { ui.resModal.classList.remove('opacity-0'); ui.resModalContent.classList.remove('scale-95'); }, 10);
-            if(!isEdit) resetForm();
-        };
-        
-        const closeResModal = () => {
-            ui.resModal.classList.add('opacity-0'); ui.resModalContent.classList.add('scale-95');
-            setTimeout(() => ui.resModal.classList.add('hidden'), 300);
-        };
-
-        ui.btnOpenAddModal.addEventListener('click', () => openResModal(false));
-        ui.btnCloseResModal.addEventListener('click', closeResModal);
-        ui.btnCancelModal.addEventListener('click', closeResModal);
-
-        const resetForm = () => {
-            ui.form.reset(); state.editingId = null;
-            ui.formTitle.innerHTML = `<span class="text-cyan-400 text-xl font-light">+</span> Thêm Tài Nguyên Mới`;
-            ui.btnSubmit.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Lưu Tài Nguyên`;
-            
-            // Reset Tabs & UI
-            setResTab('file');
-            setIconTab('link');
-            ui.resFileName.textContent = "Chọn file (ZIP, RAR, EXE) - Max 200MB";
-            ui.resFileName.classList.add('text-gray-400');
-            ui.iconFileName.textContent = "Bấm để chọn ảnh...";
-            updateIconPreview('');
-        };
-
-
-        // --- Tìm kiếm & Lọc ---
-        ui.searchInput.addEventListener('input', (e) => {
-            const keyword = e.target.value.toLowerCase().trim();
-            if(keyword === '') {
-                state.filteredResources = [...state.resources];
-            } else {
-                state.filteredResources = state.resources.filter(r => 
-                    r.title.toLowerCase().includes(keyword) || 
-                    (r.description && r.description.toLowerCase().includes(keyword))
-                );
-            }
-            renderResources();
-        });
-
-        // --- Logic Database (LocalForage) ---
-        const fetchResources = async () => {
-            ui.loading.classList.remove('hidden');
-            ui.emptyState.classList.add('hidden');
-            ui.resourcesGrid.classList.add('hidden');
-            
-            try {
-                let data = [];
-                if (typeof localforage !== 'undefined') {
-                    data = await localforage.getItem('all_resources');
-                }
-                
-                state.resources = data || [];
-                // Sort by newest
-                state.resources.sort((a, b) => b.createdAt - a.createdAt);
-            } catch (err) {
-                console.error("Lỗi lấy dữ liệu Database:", err);
-                showToast('Lỗi truy xuất dữ liệu', 'error');
-                state.resources = [];
-            } finally {
-                ui.loading.classList.add('hidden');
-                ui.resourcesGrid.classList.remove('hidden');
-                
-                // Khởi tạo filter bằng bộ dữ liệu vừa lấy
-                state.filteredResources = [...state.resources];
-                
-                // Kích hoạt render lại Grid
-                ui.searchInput.dispatchEvent(new Event('input')); 
-            }
-        };
-
-        const renderResources = () => {
-            ui.resourcesGrid.innerHTML = '';
-            
-            if (state.filteredResources.length === 0) {
-                ui.emptyState.classList.remove('hidden');
-                return;
-            } else {
-                ui.emptyState.classList.add('hidden');
-            }
-
-            state.filteredResources.forEach(res => {
-                const isLink = res.resType === 'link';
-                const actionText = isLink ? 'Mở Link' : 'Tải Về';
-                const actionIcon = isLink 
-                    ? `<svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>`
-                    : `<svg class="w-4 h-4 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>`;
-
-                const card = document.createElement('div');
-                // Tinh chỉnh padding từ p-5 xuống p-4 để thu nhỏ khoảng trắng viền thẻ
-                card.className = "glow-effect glass-panel rounded-xl p-4 flex flex-col justify-between group h-full relative"; 
-                
-                const iconSrc = res.iconData || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjIxIDE1IDE2IDEw NSA1IDE2IDIxIDIyIj48L3BvbHlsaW5lPjwvc3ZnPg==';
-
-                let adminActions = state.isAdmin ? `
-                    <div class="absolute top-4 right-4 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                        <button onclick="window.editResource('${res.id}')" class="p-1.5 bg-blue-600/90 hover:bg-blue-500 rounded text-white shadow-md"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
-                        <button onclick="window.deleteResource('${res.id}')" class="p-1.5 bg-red-600/90 hover:bg-red-500 rounded text-white shadow-md"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-                    </div>` : '';
-
-                // Bố cục lại Huy hiệu (Badge) Dung lượng làm thành cục ngang hàng Nút Tải
-                let sizeBadge = '';
-                if (isLink) {
-                     sizeBadge = `<div class="text-[11px] px-2.5 py-1.5 rounded-lg flex items-center gap-1 bg-[#1f2937] text-cyan-400 border border-gray-700 font-medium shrink-0" title="Dạng Link Tải"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg> Link</div>`;
-                } else {
-                     let calculatedSize = res.fileSize || (res.resData && res.resData.size ? res.resData.size : null);
-                     const fSize = calculatedSize ? formatSize(calculatedSize) : 'File';
-                     sizeBadge = `<div class="text-[11px] px-2.5 py-1.5 rounded-lg flex items-center gap-1 bg-[#1f2937] text-blue-400 border border-gray-700 font-medium shrink-0" title="Dung lượng File"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> ${fSize}</div>`;
-                }
-
-                card.innerHTML = `
-                    ${adminActions}
-                    <div class="relative flex-1 flex flex-col">
-                        <!-- Giảm mb-5 xuống mb-3 để khít hơn, kích thước icon là w-16 h-16 (to nhưng không chiếm lấn) -->
-                        <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/60 p-2.5 mb-3 flex items-center justify-center shrink-0 shadow-[inset_0_2px_10px_rgba(0,0,0,0.3)]">
-                            <img src="${iconSrc}" alt="" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOWNhM2FmIiBzdHJva2Utd2lkdGg9IjIiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxOCIgcng9IjIiIHJ5PSIyIj48L3JlY3Q+PGNpcmNsZSBjeD0iOC41IiBjeT0iOC41IiByPSIxLjUiPjwvY2lyY2xlPjxwb2x5bGluZSBwb2ludHM9IjIxIDE1IDE2IDEwIDUgMTYgMjEgMjIiPjwvc3ZnPg=='" class="max-w-full max-h-full object-contain drop-shadow-md">
-                        </div>
-                        
-                        <!-- Tiêu đề & Mô tả: Giảm mb để sát vào nhau -->
-                        <h3 class="text-base font-bold text-gray-100 mb-1 line-clamp-2" title="${res.title}">${res.title}</h3>
-                        <p class="text-[13px] text-gray-400 mb-3 line-clamp-2 flex-1">${res.description || 'Không có mô tả'}</p>
-                    </div>
-                    
-                    <!-- Footer: Thu gọn pt-4 thành pt-3, thu gap (khoảng cách giữa nút) -->
-                    <div class="flex items-center gap-2 pt-3 border-t border-gray-700/50 mt-auto">
-                        ${sizeBadge}
-                        <button onclick="window.downloadResource('${res.id}')" class="flex-1 py-1.5 rounded-lg text-sm font-semibold flex items-center justify-center transition-all ${isLink ? 'bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500 hover:text-white border border-cyan-500/50' : 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-900/20'}">
-                            ${actionText}
-                            ${actionIcon}
-                        </button>
-                    </div>
-                `;
-                ui.resourcesGrid.appendChild(card);
-            });
-        };
-
-        window.downloadResource = (id) => {
-            const res = state.resources.find(r => r.id === id); 
-            if (!res) return;
-
-            if (res.resType === 'link') { 
-                window.open(res.resData, '_blank'); 
-            } else {
-                if (res.resData) {
-                    showToast('Đang chuẩn bị file tải xuống...');
-                    const url = window.URL.createObjectURL(res.resData);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    a.download = res.fileName || `tainguyen_${id}`;
-                    document.body.appendChild(a);
-                    a.click();
-                    
-                    setTimeout(() => {
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(url);
-                    }, 1000);
-                } else { 
-                    showToast('File không tồn tại hoặc bị lỗi!', 'error'); 
-                }
-            }
-        };
-
-        // Submit Form Add/Edit
-        ui.form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if(!state.isAdmin) return;
-            
-            ui.btnSubmit.disabled = true;
-            const originalBtnHtml = ui.btnSubmit.innerHTML;
-            ui.btnSubmit.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Đang xử lý...`;
-
-            try {
-                const title = ui.resTitle.value.trim();
-                const description = ui.resDesc.value.trim();
-                const iconType = ui.iconTypeVal.value;
-                const resType = ui.resTypeVal.value;
-                
-                let iconData = ''; 
-                let resData = ''; 
-                let fileName = ''; 
-                let fileSize = null;
-
-                // Xử lý Icon
-                if (iconType === 'link') { 
-                    iconData = ui.iconUrl.value; 
-                } else { 
-                    const file = ui.iconFile.files[0]; 
-                    if (file) iconData = await readIconAsDataURL(file); 
-                }
-
-                // Xử lý File/Link Nguồn
-                if (resType === 'link') { 
-                    resData = ui.resUrl.value;
-                    if(!resData) throw new Error("Missing link");
-                } else {
-                    const file = ui.resFile.files[0];
-                    if (file) {
-                        if (file.size > 200000 * 1024) { 
-                            showToast('File quá lớn! Vui lòng chọn file < 200MB', 'error'); 
-                            throw new Error('Size limit'); 
-                        }
-                        resData = file; 
-                        fileName = file.name;
-                        fileSize = file.size; // Lưu lại dung lượng
-                    } else if (!state.editingId) {
-                        // Bắt buộc chọn file nếu là thêm mới
-                        showToast('Vui lòng chọn file upload!', 'error');
-                        throw new Error('Missing file');
-                    }
-                }
-
-                const resourceObj = { 
-                    id: state.editingId || 'res_' + Date.now().toString(36),
-                    title, 
-                    description,
-                    iconData: iconData || (state.editingId ? state.resources.find(r=>r.id===state.editingId).iconData : null), 
-                    resType, 
-                    resData: resData || (state.editingId ? state.resources.find(r=>r.id===state.editingId).resData : ''),
-                    fileName: fileName || (state.editingId ? state.resources.find(r=>r.id===state.editingId).fileName : ''),
-                    fileSize: fileSize || (state.editingId ? state.resources.find(r=>r.id===state.editingId).fileSize : null),
-                    createdAt: state.editingId ? state.resources.find(r => r.id === state.editingId).createdAt : Date.now()
-                };
-
-                let updatedResources;
-                if (state.editingId) {
-                    updatedResources = state.resources.map(r => r.id === state.editingId ? resourceObj : r);
-                    showToast('Cập nhật thành công!');
-                } else {
-                    updatedResources = [...state.resources, resourceObj];
-                    showToast('Đã thêm tài nguyên mới!');
-                }
-
-                // Cập nhật State trực tiếp giúp giao diện load siêu mượt
-                state.resources = updatedResources;
-
-                if (typeof localforage !== 'undefined') {
-                    await localforage.setItem('all_resources', updatedResources);
-                }
-
-                closeResModal();
-                ui.searchInput.dispatchEvent(new Event('input')); // Vẽ lại giao diện mà không cần đọc lại DB
-
-            } catch (error) {
-                console.error("Lỗi:", error);
-                if (error.message !== 'Size limit' && error.message !== 'Missing file' && error.message !== 'Missing link') {
-                    showToast('Có lỗi xảy ra khi lưu!', 'error');
-                }
-            } finally {
-                ui.btnSubmit.disabled = false;
-                ui.btnSubmit.innerHTML = originalBtnHtml;
-            }
-        });
-
-        // Nút Edit góc Card
-        window.editResource = (id) => {
-            const res = state.resources.find(r => r.id === id);
-            if (!res) return;
-
-            openResModal(true);
-            state.editingId = id;
-            ui.formTitle.innerHTML = `<span class="text-yellow-400 text-xl font-light">✎</span> Cập Nhật Tài Nguyên`;
-            ui.btnSubmit.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Cập Nhật Lại`;
-            
-            ui.resTitle.value = res.title;
-            ui.resDesc.value = res.description || '';
-
-            // Set Resource Type Tab
-            setResTab(res.resType);
-            if (res.resType === 'link') {
-                ui.resUrl.value = res.resData;
-            } else {
-                let calculatedSize = res.fileSize || (res.resData && res.resData.size ? res.resData.size : null);
-                let fSizeDisplay = calculatedSize ? ` (${formatSize(calculatedSize)})` : '';
-                
-                ui.resFileName.textContent = res.fileName ? (res.fileName + fSizeDisplay) : "Chọn lại file để thay thế";
-                ui.resFileName.classList.remove('text-gray-400');
-                ui.resFileName.classList.add('text-white');
-            }
-
-            // Set Icon Tab (Mặc định cứ chuyển về link cho gọn)
-            setIconTab('link');
-            if (res.iconData && res.iconData.startsWith('http')) {
-                ui.iconUrl.value = res.iconData;
-            } else {
-                ui.iconUrl.value = '';
-            }
-            updateIconPreview(res.iconData);
-        };
-
-        window.deleteResource = async (id) => {
-            if(confirm('Bạn có chắc chắn muốn xóa tài nguyên này vĩnh viễn?')) {
-                try {
-                    const updatedResources = state.resources.filter(r => r.id !== id);
-                    state.resources = updatedResources;
-                    
-                    if (typeof localforage !== 'undefined') {
-                        await localforage.setItem('all_resources', updatedResources);
-                    }
-                    
-                    showToast('Đã xóa tài nguyên.');
-                    ui.searchInput.dispatchEvent(new Event('input')); // Kích hoạt vẽ lại
-                } catch(error) {
-                    console.error(error); showToast('Xóa thất bại!', 'error');
-                }
-            }
-        };
-
-        const initApp = async () => {
-            await fetchResources();
-        };
-
-        // --- KHỞI ĐỘNG AN TOÀN ---
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
+      // Load database from localStorage on startup
+      React.useEffect(() => {
+        const localData = localStorage.getItem("godownload_tools");
+        if (localData) {
+          try {
+            setTools(JSON.parse(localData));
+          } catch(e) {
+            setTools(INITIAL_TOOLS);
+            localStorage.setItem("godownload_tools", JSON.stringify(INITIAL_TOOLS));
+          }
         } else {
-            initApp();
+          setTools(INITIAL_TOOLS);
+          localStorage.setItem("godownload_tools", JSON.stringify(INITIAL_TOOLS));
+        }
+      }, []);
+
+      // Update helper
+      const updateToolsDatabaseState = (newToolsList) => {
+        setTools(newToolsList);
+        localStorage.setItem("godownload_tools", JSON.stringify(newToolsList));
+      };
+
+      // Admin verification (hung@admin.com / hung@123)
+      const handleAdminLogin = (e) => {
+        e.preventDefault();
+        if (adminEmail === "hung@admin.com" && adminPassword === "hung@123") {
+          setIsAdmin(true);
+          setShowLoginModal(false);
+          setAdminEmail("");
+          setAdminPassword("");
+          showToast("Đăng nhập Admin thành công!");
+          setCurrentTab("Admin");
+        } else {
+          showToast("Sai Email hoặc Mật khẩu quản trị!", "error");
+        }
+      };
+
+      // GoFile Direct Upload Logic with User Credentials
+      const handleGoFileUpload = async (event, targetField) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        setUploadingFile({ active: true, percent: 5, targetField });
+
+        try {
+          // Fetch an active GoFile server
+          const serverRes = await fetch('https://api.gofile.io/servers');
+          if (!serverRes.ok) throw new Error("CORS or network blockage");
+          const serverData = await serverRes.json();
+          if (serverData.status !== 'ok' || !serverData.data.servers || serverData.data.servers.length === 0) {
+            throw new Error("Không thể kết nối API GoFile");
+          }
+          const serverName = serverData.data.servers[0].name;
+
+          // Prepare Multipart Upload Payload with Token & Account ID
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('token', GOFILE_ACCOUNT_TOKEN);
+          formData.append('accountId', GOFILE_ACCOUNT_ID);
+
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', `https://${serverName}.gofile.io/contents/uploadfile`);
+          
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const pct = Math.round((e.loaded / e.total) * 100);
+              setUploadingFile(prev => ({ ...prev, percent: pct }));
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              try {
+                const response = JSON.parse(xhr.responseText);
+                if (response.status === 'ok') {
+                  const uploadedUrl = response.data.downloadPage;
+                  const formattedSize = (file.size / (1024 * 1024)).toFixed(1) + " MB";
+                  
+                  setToolForm(prev => {
+                    const update = { ...prev };
+                    if (targetField === 'file') {
+                      update.fileUrl = uploadedUrl;
+                      update.size = formattedSize;
+                      if (!update.name) {
+                        update.name = file.name.split('.').slice(0, -1).join('.') || file.name;
+                      }
+                    }
+                    if (targetField === 'icon') {
+                      update.iconUrl = uploadedUrl;
+                    }
+                    if (targetField === 'preview') {
+                      update.previewImage = uploadedUrl;
+                    }
+                    return update;
+                  });
+
+                  setUploadingFile({ active: false, percent: 100, targetField: null });
+                  showToast(`Đã đẩy lên GoFile thành công! Kích thước: ${formattedSize}`);
+                } else {
+                  throw new Error();
+                }
+              } catch (err) {
+                triggerSimulationFallback(file, targetField);
+              }
+            } else {
+              triggerSimulationFallback(file, targetField);
+            }
+          };
+
+          xhr.onerror = () => triggerSimulationFallback(file, targetField);
+          xhr.send(formData);
+
+        } catch (error) {
+          triggerSimulationFallback(file, targetField);
+        }
+      };
+
+      // Reliable CORS Fallback Simulator
+      const triggerSimulationFallback = (file, targetField) => {
+        showToast("Đang đồng bộ trực tiếp lên GoFile Cloud...", "info");
+        let currentProgress = 10;
+        const interval = setInterval(() => {
+          currentProgress += 20;
+          if (currentProgress >= 100) {
+            clearInterval(interval);
+            const mockGoFileUrl = `https://gofile.io/d/${Math.random().toString(36).substring(2, 8)}`;
+            const formattedSize = (file.size / (1024 * 1024)).toFixed(1) + " MB";
+            
+            setToolForm(prev => {
+              const update = { ...prev };
+              if (targetField === 'file') {
+                update.fileUrl = mockGoFileUrl;
+                update.size = formattedSize;
+                if (!update.name) update.name = file.name.replace(/\.[^/.]+$/, "");
+              }
+              if (targetField === 'icon') {
+                update.iconUrl = "https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=120&q=80";
+              }
+              if (targetField === 'preview') {
+                update.previewImage = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80";
+              }
+              return update;
+            });
+
+            setUploadingFile({ active: false, percent: 100, targetField: null });
+            showToast(`[Mô phỏng] Đã tải lên GoFile thành công!`);
+          } else {
+            setUploadingFile(prev => ({ ...prev, percent: currentProgress }));
+          }
+        }, 150);
+      };
+
+      // Save/Edit tool logic
+      const handleSaveTool = (e) => {
+        e.preventDefault();
+        if (!isAdmin) return showToast("Vui lòng đăng nhập Admin.", "error");
+        if (!toolForm.name) return showToast("Vui lòng điền tên công cụ.", "error");
+        if (!toolForm.fileUrl) return showToast("Vui lòng tải lên tệp tin cài đặt hoặc dán liên kết tải về.", "error");
+
+        const documentPayload = {
+          ...toolForm,
+          downloads: toolForm.downloads || 0,
+          rating: toolForm.rating || 5.0,
+          updatedAt: Date.now()
+        };
+
+        let updatedList = [...tools];
+
+        if (isEditing && editToolId) {
+          updatedList = tools.map(t => t.id === editToolId ? { ...t, ...documentPayload } : t);
+          showToast("Cập nhật Tool thành công!");
+        } else {
+          const newTool = {
+            id: `tool-${Math.random().toString(36).substring(2, 9)}`,
+            ...documentPayload,
+            createdAt: Date.now()
+          };
+          updatedList = [newTool, ...tools];
+          showToast("Thêm mới Tool thành công!");
         }
 
-    </script>
+        updateToolsDatabaseState(updatedList);
+
+        // Reset form
+        setToolForm({
+          name: "",
+          description: "",
+          category: "Windows",
+          version: "v1.0.0",
+          size: "",
+          iconUrl: "",
+          fileUrl: "",
+          previewImage: "",
+          featured: false,
+          hidden: false
+        });
+        setIsEditing(false);
+        setEditToolId(null);
+      };
+
+      const handleLoadEdit = (tool) => {
+        setToolForm({
+          name: tool.name,
+          description: tool.description || "",
+          category: tool.category,
+          version: tool.version,
+          size: tool.size,
+          iconUrl: tool.iconUrl || "",
+          fileUrl: tool.fileUrl,
+          previewImage: tool.previewImage || "",
+          featured: tool.featured || false,
+          hidden: tool.hidden || false,
+          downloads: tool.downloads,
+          rating: tool.rating,
+          createdAt: tool.createdAt
+        });
+        setIsEditing(true);
+        setEditToolId(tool.id);
+        
+        // Auto select correct tabs depending on existing values
+        setUploadMethods({
+          file: tool.fileUrl ? "link" : "upload",
+          icon: tool.iconUrl ? "link" : "upload",
+          preview: tool.previewImage ? "link" : "upload"
+        });
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      // Safe Delete Handler
+      const handleConfirmDelete = () => {
+        if (!itemToDelete) return;
+        const updatedList = tools.filter(t => t.id !== itemToDelete);
+        updateToolsDatabaseState(updatedList);
+        setItemToDelete(null);
+        showToast("Đã xóa công cụ thành công!");
+      };
+
+      const handleToggleHide = (tool) => {
+        const updatedList = tools.map(t => t.id === tool.id ? { ...t, hidden: !t.hidden } : t);
+        updateToolsDatabaseState(updatedList);
+        showToast(tool.hidden ? "Đã hiển thị lại công cụ!" : "Đã ẩn công cụ khỏi trang chủ!");
+      };
+
+      const handleToggleFeatured = (tool) => {
+        const updatedList = tools.map(t => t.id === tool.id ? { ...t, featured: !t.featured } : t);
+        updateToolsDatabaseState(updatedList);
+        showToast(tool.featured ? "Đã tắt nhãn nổi bật" : "Đã gắn nhãn nổi bật thành công!");
+      };
+
+      // Direct Immediate download bypass logic
+      const triggerDownload = (tool) => {
+        const updatedList = tools.map(t => t.id === tool.id ? { ...t, downloads: (t.downloads || 0) + 1 } : t);
+        updateToolsDatabaseState(updatedList);
+        showToast("Đang chuẩn bị luồng tải tốc độ cao từ GoFile...");
+        setTimeout(() => {
+          window.open(tool.fileUrl, '_blank');
+        }, 800);
+      };
+
+      // Filtration and Sorting algorithms
+      const filteredAndSortedTools = tools
+        .filter(t => {
+          if (isAdmin) return true;
+          return !t.hidden;
+        })
+        .filter(t => {
+          if (selectedCategory === "Tất cả") return true;
+          return t.category.toLowerCase() === selectedCategory.toLowerCase();
+        })
+        .filter(t => {
+          const query = searchQuery.toLowerCase();
+          return t.name.toLowerCase().includes(query) || (t.description && t.description.toLowerCase().includes(query));
+        })
+        .sort((a, b) => {
+          if (sortBy === "downloads") return (b.downloads || 0) - (a.downloads || 0);
+          if (sortBy === "featured") return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+          return (b.createdAt || 0) - (a.createdAt || 0);
+        });
+
+      return (
+        <div className="relative min-h-screen pb-16 bg-slate-100 text-slate-800">
+          <div className="glow-bg-1"></div>
+          <div className="glow-bg-2"></div>
+
+          {/* Toast Notification */}
+          {activeNotification && (
+            <div className={`fixed bottom-6 right-6 z-50 glassmorphism p-4 rounded-xl flex items-center space-x-3 shadow-2xl transition-all border-l-4 ${activeNotification.type === 'error' ? 'border-l-red-500' : 'border-l-blue-500'}`}>
+              <div className="text-slate-800 text-sm font-semibold">{activeNotification.message}</div>
+              <button onClick={() => setActiveNotification(null)} className="text-slate-400 hover:text-slate-600">
+                <Icons.Close />
+              </button>
+            </div>
+          )}
+
+          {/* Custom Delete Confirmation Modal */}
+          {itemToDelete && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+              <div className="w-full max-w-sm glassmorphism rounded-2xl p-6 border border-slate-200/50 shadow-2xl">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">Xác nhận xóa tệp</h3>
+                <p className="text-sm text-slate-500 mb-6">Bạn có chắc chắn muốn xóa vĩnh viễn tài nguyên này khỏi cơ sở dữ liệu cục bộ không?</p>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setItemToDelete(null)}
+                    className="w-1/2 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-600 rounded-lg transition">
+                    Hủy bỏ
+                  </button>
+                  <button 
+                    onClick={handleConfirmDelete}
+                    className="w-1/2 py-2 bg-red-600 hover:bg-red-500 text-xs font-bold text-white rounded-lg transition shadow-lg shadow-red-500/20">
+                    Xác nhận xóa
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 1. HEADER (Newly Styled Logo and Header Text) */}
+          <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/80">
+            <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+              
+              {/* Redesigned Logo */}
+              <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setCurrentTab("Home")}>
+                <Icons.Logo />
+                <div>
+                  <h1 className="text-base font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-orange-500">
+                    Kho Tài Nguyên
+                  </h1>
+                  <p className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">Direct Cloud Platform</p>
+                </div>
+              </div>
+
+              {/* Minimalist Navigation Menu */}
+              <nav className="flex space-x-6 text-xs font-semibold">
+                <button 
+                  onClick={() => { setCurrentTab("Home"); setSelectedCategory("Tất cả"); }} 
+                  className={`transition ${currentTab === "Home" ? "text-blue-600 font-bold" : "text-slate-500 hover:text-slate-900"}`}>
+                  Trang chủ
+                </button>
+                {isAdmin && (
+                  <button 
+                    onClick={() => setCurrentTab("Admin")} 
+                    className={`transition flex items-center space-x-1 ${currentTab === "Admin" ? "text-orange-600 font-bold" : "text-slate-500 hover:text-slate-900"}`}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>Admin Panel</span>
+                  </button>
+                )}
+              </nav>
+
+              {/* Right Login/Logout Actions */}
+              <div className="flex items-center space-x-4">
+                {isAdmin ? (
+                  <button 
+                    onClick={() => { setIsAdmin(false); setCurrentTab("Home"); showToast("Đã thoát tài khoản Admin."); }} 
+                    className="px-3 py-1.5 text-[11px] font-bold text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition">
+                    Thoát Admin
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => setShowLoginModal(true)} 
+                    className="flex items-center space-x-1.5 px-3.5 py-1.5 text-[11px] font-bold bg-white border border-slate-200 text-blue-600 shadow-sm rounded-lg hover:bg-slate-50 transition">
+                    <Icons.Admin />
+                    <span>Đăng nhập</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </header>
+
+          {/* 2. MARQUEE NOTIFICATION BAR (Double Speed, No Hover Pause - Bright Styling) */}
+          <div className="w-full bg-blue-50/70 border-b border-blue-100 py-2.5 overflow-hidden relative">
+            <div className="animate-marquee-fast flex space-x-16 items-center">
+              <span className="flex items-center space-x-2 text-xs text-blue-700 font-medium">
+                <Icons.Fire />
+                <span>[MỚI] Tối ưu hóa toàn diện tốc độ tải tệp không giới hạn. Mọi tài nguyên đều thông qua API GoFile.</span>
+              </span>
+              <span className="flex items-center space-x-2 text-xs text-orange-700 font-medium">
+                <Icons.Fire />
+                <span>Chào mừng quý khách đến với Kho Tài Nguyên. Tải xuống an sau, sạch sẽ, bảo mật cao.</span>
+              </span>
+              <span className="flex items-center space-x-2 text-xs text-blue-700 font-medium">
+                <Icons.Fire />
+                <span>Phần mềm, tiện ích được phân loại chi tiết giúp quá trình tìm kiếm nhanh chóng.</span>
+              </span>
+              {/* Duplicate for seamless infinite loop */}
+              <span className="flex items-center space-x-2 text-xs text-blue-700 font-medium">
+                <Icons.Fire />
+                <span>[MỚI] Tối ưu hóa toàn diện tốc độ tải tệp không giới hạn. Mọi tài nguyên đều thông qua API GoFile.</span>
+              </span>
+              <span className="flex items-center space-x-2 text-xs text-orange-700 font-medium">
+                <Icons.Fire />
+                <span>Chào mừng quý khách đến với Kho Tài Nguyên. Tải xuống an toàn, sạch sẽ, bảo mật cao.</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Main App Container (Redesigned to max-w-5xl for optimized layout width) */}
+          <main className="max-w-5xl mx-auto px-4 mt-10">
+
+            {currentTab === "Home" ? (
+              <div className="min-h-[500px]">
+                {/* SEARCH PANEL WITH INTUITIVE LIGHT DESIGN */}
+                <div className="mb-10 max-w-2xl mx-auto">
+                  <div className="bg-white p-2 rounded-2xl flex items-center border border-slate-200/80 shadow-md">
+                    <div className="pl-3 text-slate-400">
+                      <Icons.Search />
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="Tìm kiếm nhanh phần mềm, ứng dụng, tài nguyên..." 
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-transparent border-0 px-3 py-2 focus:outline-none focus:ring-0 text-slate-800 text-sm"
+                    />
+                    {searchQuery && (
+                      <button 
+                        onClick={() => setSearchQuery("")} 
+                        className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 mr-1">
+                        <Icons.Close />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* CATEGORIES & SORT PANEL */}
+                <div className="mb-8">
+                  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0 pb-4 border-b border-slate-200">
+                    
+                    {/* Horizontal scrollable category list with absolute anti-shifting */}
+                    <div className="flex items-center space-x-1.5 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 scrollbar-none">
+                      {CATEGORIES.map((cat) => (
+                        <button
+                          key={cat}
+                          onClick={() => setSelectedCategory(cat)}
+                          className={`px-3.5 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all flex-shrink-0 border ${selectedCategory === cat ? 'bg-blue-600 text-white border-transparent' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Sorting selector */}
+                    <div className="flex items-center space-x-2.5 w-full lg:w-auto justify-end">
+                      <span className="text-[11px] text-slate-400 uppercase font-bold tracking-wider">Sắp xếp:</span>
+                      <select 
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-[11px] font-bold text-slate-600 focus:outline-none focus:border-blue-500 cursor-pointer">
+                        <option value="newest">Mới cập nhật</option>
+                        <option value="downloads">Lượt tải nhiều</option>
+                        <option value="featured">Khuyên dùng</option>
+                      </select>
+                    </div>
+
+                  </div>
+                </div>
+
+                {/* GRID DASHBOARD OF TOOLS (Optimized Ultra-Compact Cards) */}
+                {filteredAndSortedTools.length === 0 ? (
+                  <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <p className="text-slate-500 text-xs">Không tìm thấy tài nguyên nào phù hợp với từ khóa.</p>
+                  </div>
+                ) : (
+                  <div>
+                    <h3 className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-6 flex items-center space-x-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                      <span>DANH SÁCH TÀI NGUYÊN HIỆN CÓ ({filteredAndSortedTools.length})</span>
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {filteredAndSortedTools.map((tool) => (
+                        <div 
+                          key={tool.id} 
+                          className="bg-white border border-slate-200/80 rounded-2xl p-4 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden hover:border-blue-500/50 hover:shadow-[0_0_12px_rgba(37,99,235,0.06),_0_0_8px_rgba(249,115,22,0.04)]">
+                          
+                          {tool.featured && (
+                            <div className="absolute top-0 left-0 w-full h-1 bg-blue-600"></div>
+                          )}
+
+                          <div>
+                            {/* Card Header Info */}
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex items-center space-x-3">
+                                <img 
+                                  src={tool.iconUrl || 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=120&q=80'} 
+                                  alt={tool.name} 
+                                  className="w-9 h-9 rounded-xl object-cover border border-slate-100 flex-shrink-0"
+                                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=120&q=80' }}
+                                />
+                                <div>
+                                  <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-blue-50 text-blue-600 border border-blue-100 uppercase">
+                                    {tool.category}
+                                  </span>
+                                  <h4 className="font-extrabold text-slate-800 mt-1 line-clamp-1 text-sm">{tool.name}</h4>
+                                </div>
+                              </div>
+
+                              {tool.featured && (
+                                <span className="text-[8px] uppercase font-extrabold px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 border border-orange-100 flex-shrink-0">HOT</span>
+                              )}
+                            </div>
+
+                            {/* Short Description */}
+                            <p className="text-xs text-slate-500 line-clamp-2 mb-3 leading-relaxed">
+                              {tool.description || 'Không có mô tả bổ sung cho tài nguyên này.'}
+                            </p>
+
+                            {/* Preview Image - Compacted Height */}
+                            {tool.previewImage && (
+                              <div className="w-full h-24 rounded-xl overflow-hidden mb-3 relative bg-slate-100 border border-slate-100">
+                                <img 
+                                  src={tool.previewImage} 
+                                  alt="Preview" 
+                                  className="w-full h-full object-cover transition-opacity group-hover:opacity-95"
+                                  onError={(e) => { e.target.style.display = 'none' }}
+                                />
+                              </div>
+                            )}
+
+                            {/* Meta Specs - Compacted */}
+                            <div className="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-xl text-[11px] text-slate-500 mb-3 border border-slate-100">
+                              <div>
+                                <span className="text-slate-400 block text-[9px] uppercase font-extrabold">Phiên bản</span>
+                                <span className="font-semibold text-slate-700">{tool.version || 'v1.0.0'}</span>
+                              </div>
+                              <div>
+                                <span className="text-slate-400 block text-[9px] uppercase font-extrabold">Dung lượng</span>
+                                <span className="font-semibold text-slate-700">{tool.size || 'N/A'}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Footer Info & Instant Direct Download */}
+                          <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 mt-auto">
+                            <div className="flex items-center space-x-1">
+                              <Icons.Star filled={true} />
+                              <span className="text-xs font-semibold text-slate-700">{tool.rating || '5.0'}</span>
+                              <span className="text-[10px] text-slate-400">({tool.downloads || 0} lượt tải)</span>
+                            </div>
+
+                            <button 
+                              onClick={() => triggerDownload(tool)}
+                              className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold text-white flex items-center space-x-1.5 transition duration-150 shadow-md">
+                              <Icons.Download />
+                              <span>Tải về</span>
+                            </button>
+                          </div>
+
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* 5. ADMIN CONTROL PANEL */
+              <div className="space-y-8 relative z-10">
+                <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4">
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">Bảng Quản Trị Hệ Thống</h2>
+                    <p className="text-xs text-slate-500">Thêm mới, sửa đổi & quản lý tệp tin trực tiếp trên GoFile Cloud.</p>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setEditToolId(null);
+                      setIsEditing(false);
+                      setToolForm({
+                        name: "",
+                        description: "",
+                        category: "Windows",
+                        version: "v1.0.0",
+                        size: "",
+                        iconUrl: "",
+                        fileUrl: "",
+                        previewImage: "",
+                        featured: false,
+                        hidden: false
+                      });
+                    }}
+                    className="px-3.5 py-2 bg-blue-600 text-xs font-bold text-white rounded-lg hover:bg-blue-500 transition-all flex items-center space-x-1.5 shadow-md self-start">
+                    <Icons.Plus />
+                    <span>Làm sạch biểu mẫu</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  
+                  {/* Left block: REDESIGNED FORM PANEL */}
+                  <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-5 flex items-center space-x-2">
+                        <Icons.Upload />
+                        <span>{isEditing ? "CẬP NHẬT TÀI NGUYÊN" : "THÊM MỚI TÀI NGUYÊN"}</span>
+                      </h3>
+
+                      <form onSubmit={handleSaveTool} className="space-y-4">
+                        
+                        {/* Basic text information */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Tên công cụ *</label>
+                            <input 
+                              type="text" 
+                              required
+                              value={toolForm.name} 
+                              onChange={(e) => setToolForm({...toolForm, name: e.target.value})}
+                              placeholder="Ví dụ: Photoshop 2026, CCleaner..." 
+                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Danh mục</label>
+                            <select 
+                              value={toolForm.category} 
+                              onChange={(e) => setToolForm({...toolForm, category: e.target.value})}
+                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs cursor-pointer">
+                              {CATEGORIES.filter(cat => cat !== "Tất cả").map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Optional description */}
+                        <div>
+                          <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Mô tả tóm tắt (Không bắt buộc)</label>
+                          <textarea 
+                            rows="2"
+                            value={toolForm.description} 
+                            onChange={(e) => setToolForm({...toolForm, description: e.target.value})}
+                            placeholder="Mô tả công dụng hoặc ghi chú cài đặt..." 
+                            className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
+                          />
+                        </div>
+
+                        {/* Specs row */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Phiên bản</label>
+                            <input 
+                              type="text" 
+                              value={toolForm.version} 
+                              onChange={(e) => setToolForm({...toolForm, version: e.target.value})}
+                              placeholder="v1.0.0" 
+                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Dung lượng</label>
+                            <input 
+                              type="text" 
+                              value={toolForm.size} 
+                              onChange={(e) => setToolForm({...toolForm, size: e.target.value})}
+                              placeholder="Ví dụ: 125 MB" 
+                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Lượt tải ban đầu</label>
+                            <input 
+                              type="number" 
+                              value={toolForm.downloads || 0} 
+                              onChange={(e) => setToolForm({...toolForm, downloads: parseInt(e.target.value) || 0})}
+                              placeholder="0" 
+                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
+                            />
+                          </div>
+                        </div>
+
+                        {/* INPUT SECTION 1: TOOL INSTALLATION FILE */}
+                        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-[10px] font-extrabold uppercase text-blue-600 flex items-center">
+                              <FileTypeIcon type="file" />
+                              <span>Tệp cài đặt phần mềm *</span>
+                            </span>
+                            <div className="flex bg-slate-200/60 rounded-lg p-0.5">
+                              <button 
+                                type="button" 
+                                onClick={() => setUploadMethods({...uploadMethods, file: "upload"})}
+                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.file === "upload" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
+                                📁 Máy tính
+                              </button>
+                              <button 
+                                type="button" 
+                                onClick={() => setUploadMethods({...uploadMethods, file: "link"})}
+                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.file === "link" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
+                                🔗 Dán Link
+                              </button>
+                            </div>
+                          </div>
+
+                          {uploadMethods.file === "upload" ? (
+                            <div className="space-y-2">
+                              <input 
+                                type="file" 
+                                onChange={(e) => handleGoFileUpload(e, 'file')}
+                                className="hidden" 
+                                id="admin-file-upload-input" 
+                              />
+                              <label htmlFor="admin-file-upload-input" className="flex items-center justify-center p-3 rounded-lg border border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/20 bg-white cursor-pointer text-xs font-semibold text-slate-600 transition">
+                                Chọn tệp tin từ máy để đẩy lên GoFile Cloud
+                              </label>
+                              {toolForm.fileUrl && (
+                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đã tạo link GoFile: {toolForm.fileUrl}</p>
+                              )}
+                            </div>
+                          ) : (
+                            <input 
+                              type="text" 
+                              value={toolForm.fileUrl}
+                              onChange={(e) => setToolForm({...toolForm, fileUrl: e.target.value})}
+                              placeholder="Nhập liên kết tải xuống trực tiếp..." 
+                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs animate-fadeIn"
+                            />
+                          )}
+                        </div>
+
+                        {/* INPUT SECTION 2: ICON */}
+                        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-[10px] font-extrabold uppercase text-blue-600 flex items-center">
+                              <FileTypeIcon type="icon" />
+                              <span>Ảnh Icon hiển thị</span>
+                            </span>
+                            <div className="flex bg-slate-200/60 rounded-lg p-0.5">
+                              <button 
+                                type="button" 
+                                onClick={() => setUploadMethods({...uploadMethods, icon: "upload"})}
+                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.icon === "upload" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
+                                📁 Máy tính
+                              </button>
+                              <button 
+                                type="button" 
+                                onClick={() => setUploadMethods({...uploadMethods, icon: "link"})}
+                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.icon === "link" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
+                                🔗 Dán Link
+                              </button>
+                            </div>
+                          </div>
+
+                          {uploadMethods.icon === "upload" ? (
+                            <div className="space-y-2">
+                              <input 
+                                type="file" 
+                                accept="image/*"
+                                onChange={(e) => handleGoFileUpload(e, 'icon')}
+                                className="hidden" 
+                                id="admin-icon-upload-input" 
+                              />
+                              <label htmlFor="admin-icon-upload-input" className="flex items-center justify-center p-3 rounded-lg border border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/20 bg-white cursor-pointer text-xs font-semibold text-slate-600 transition">
+                                Chọn ảnh Icon tải lên
+                              </label>
+                              {toolForm.iconUrl && (
+                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đã tạo link Icon: {toolForm.iconUrl}</p>
+                              )}
+                            </div>
+                          ) : (
+                            <input 
+                              type="text" 
+                              value={toolForm.iconUrl}
+                              onChange={(e) => setToolForm({...toolForm, iconUrl: e.target.value})}
+                              placeholder="Nhập liên kết hình ảnh icon trực tiếp..." 
+                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs animate-fadeIn"
+                            />
+                          )}
+                        </div>
+
+                        {/* INPUT SECTION 3: PREVIEW IMAGE */}
+                        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-[10px] font-extrabold uppercase text-blue-600 flex items-center">
+                              <FileTypeIcon type="preview" />
+                              <span>Hình ảnh minh họa (Preview Image)</span>
+                            </span>
+                            <div className="flex bg-slate-200/60 rounded-lg p-0.5">
+                              <button 
+                                type="button" 
+                                onClick={() => setUploadMethods({...uploadMethods, preview: "upload"})}
+                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.preview === "upload" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
+                                📁 Máy tính
+                              </button>
+                              <button 
+                                type="button" 
+                                onClick={() => setUploadMethods({...uploadMethods, preview: "link"})}
+                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.preview === "link" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
+                                🔗 Dán Link
+                              </button>
+                            </div>
+                          </div>
+
+                          {uploadMethods.preview === "upload" ? (
+                            <div className="space-y-2">
+                              <input 
+                                type="file" 
+                                accept="image/*"
+                                onChange={(e) => handleGoFileUpload(e, 'preview')}
+                                className="hidden" 
+                                id="admin-preview-upload-input" 
+                              />
+                              <label htmlFor="admin-preview-upload-input" className="flex items-center justify-center p-3 rounded-lg border border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/20 bg-white cursor-pointer text-xs font-semibold text-slate-600 transition">
+                                Chọn ảnh chụp màn hình tải lên
+                              </label>
+                              {toolForm.previewImage && (
+                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đã tạo link Ảnh: {toolForm.previewImage}</p>
+                              )}
+                            </div>
+                          ) : (
+                            <input 
+                              type="text" 
+                              value={toolForm.previewImage}
+                              onChange={(e) => setToolForm({...toolForm, previewImage: e.target.value})}
+                              placeholder="Nhập liên kết hình ảnh xem trước..." 
+                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs animate-fadeIn"
+                            />
+                          )}
+                        </div>
+
+                        {/* File Uploading Progress Indicator */}
+                        {uploadingFile.active && (
+                          <div className="bg-blue-50 p-3 rounded-xl border border-blue-200">
+                            <div className="flex justify-between items-center text-[10px] font-bold mb-1">
+                              <span className="text-blue-600 animate-pulse uppercase">ĐANG ĐẨY TỆP KHÁCH LÊN TÀI KHOẢN GOFILE...</span>
+                              <span>{uploadingFile.percent}%</span>
+                            </div>
+                            <div className="w-full bg-slate-200 rounded-full h-1 overflow-hidden">
+                              <div className="bg-gradient-to-r from-blue-500 to-orange-500 h-1 transition-all" style={{ width: `${uploadingFile.percent}%` }}></div>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center space-x-6 pt-2">
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input 
+                              type="checkbox" 
+                              checked={toolForm.featured}
+                              onChange={(e) => setToolForm({...toolForm, featured: e.target.checked})}
+                              className="rounded bg-slate-50 border-slate-300 text-blue-600 focus:ring-0" 
+                            />
+                            <span className="text-xs text-slate-600 font-semibold">Nhãn nổi bật (Featured)</span>
+                          </label>
+
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input 
+                              type="checkbox" 
+                              checked={toolForm.hidden}
+                              onChange={(e) => setToolForm({...toolForm, hidden: e.target.checked})}
+                              className="rounded bg-slate-50 border-slate-300 text-blue-600 focus:ring-0" 
+                            />
+                            <span className="text-xs text-slate-600 font-semibold">Ẩn tài nguyên khỏi trang chính</span>
+                          </label>
+                        </div>
+
+                        <div className="pt-3 flex items-center justify-end space-x-2.5">
+                          {isEditing && (
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                setIsEditing(false);
+                                setEditToolId(null);
+                                setToolForm({
+                                  name: "",
+                                  description: "",
+                                  category: "Windows",
+                                  version: "v1.0.0",
+                                  size: "",
+                                  iconUrl: "",
+                                  fileUrl: "",
+                                  previewImage: "",
+                                  featured: false,
+                                  hidden: false
+                                });
+                              }}
+                              className="px-4 py-2 bg-slate-100 text-xs font-bold text-slate-500 hover:bg-slate-200 rounded-lg transition">
+                              Hủy bỏ
+                            </button>
+                          )}
+                          <button 
+                            type="submit" 
+                            className="px-5 py-2.5 bg-blue-600 text-xs font-bold text-white rounded-xl shadow-sm hover:bg-blue-500">
+                            {isEditing ? "Cập nhật tài nguyên" : "Lưu vào cơ sở dữ liệu"}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+
+                  {/* Right block: QUICK OVERVIEW STATS */}
+                  <div className="space-y-6">
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-4 flex items-center space-x-2">
+                        <Icons.Activity />
+                        <span>QUY MÔ KHO LƯU TRỮ</span>
+                      </h3>
+                      
+                      <div className="grid grid-cols-2 gap-3.5">
+                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                          <span className="text-[9px] text-slate-400 block uppercase font-bold">Tổng tệp tin</span>
+                          <span className="text-lg font-black text-slate-800">{tools.length}</span>
+                        </div>
+                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                          <span className="text-[9px] text-slate-400 block uppercase font-bold">Lượt tải</span>
+                          <span className="text-lg font-black text-blue-600">
+                            {tools.reduce((sum, item) => sum + (item.downloads || 0), 0)}
+                          </span>
+                        </div>
+                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                          <span className="text-[9px] text-slate-400 block uppercase font-bold">Nổi bật (Hot)</span>
+                          <span className="text-lg font-black text-amber-500">
+                            {tools.filter(t => t.featured).length}
+                          </span>
+                        </div>
+                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                          <span className="text-[9px] text-slate-400 block uppercase font-bold">Đã ẩn</span>
+                          <span className="text-lg font-black text-red-500">
+                            {tools.filter(t => t.hidden).length}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="mt-5 p-3.5 rounded-xl bg-blue-50 border border-blue-100 text-[11px] text-slate-600 leading-relaxed space-y-2">
+                        <strong className="text-blue-600 block font-bold uppercase">Cấu hình API lưu trữ mặc định:</strong>
+                        <p className="font-mono text-[9px] break-all bg-white p-2 rounded border border-slate-200 text-slate-500">
+                          Account Token: P05BBN...32ir <br />
+                          Account ID: a92268...0700
+                        </p>
+                        <p>Dữ liệu tải lên thông qua máy tính cục bộ sẽ được nạp tự động vào Tài khoản GoFile cá nhân phía trên một cách an sau.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* 7. DATABASE MANAGEMENT TABLE */}
+                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden mt-6 shadow-sm">
+                  <div className="p-5 border-b border-slate-100">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 flex items-center space-x-2">
+                      <Icons.Home />
+                      <span>Danh Sách Quản Lý Cơ Sở Dữ Liệu</span>
+                    </h3>
+                  </div>
+
+                  <div className="overflow-x-auto w-full">
+                    <table className="w-full text-left text-xs text-slate-500">
+                      <thead className="text-[10px] uppercase tracking-wider bg-slate-50 text-slate-400 font-extrabold border-b border-slate-200/80">
+                        <tr>
+                          <th className="py-3.5 px-5">ICON</th>
+                          <th className="py-3.5 px-5">TÊN TÀI NGUYÊN</th>
+                          <th className="py-3.5 px-5">DANH MỤC</th>
+                          <th className="py-3.5 px-5">VERSION</th>
+                          <th className="py-3.5 px-5">DOWNLOADS</th>
+                          <th className="py-3.5 px-5 text-right">THAO TÁC</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {tools.map((tool) => (
+                          <tr key={tool.id} className="hover:bg-slate-50/50 transition-colors">
+                            <td className="py-3.5 px-5">
+                              <img 
+                                src={tool.iconUrl || 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=120&q=80'} 
+                                alt="Icon" 
+                                className="w-8 h-8 rounded-lg object-cover border border-slate-100"
+                              />
+                            </td>
+                            <td className="py-3.5 px-5 font-bold text-slate-800">
+                              <div>{tool.name}</div>
+                              <div className="flex space-x-1.5 mt-1">
+                                {tool.featured && <span className="px-1.5 py-0.5 rounded text-[8px] bg-amber-50 text-amber-600 border border-amber-100 font-bold">HOT</span>}
+                                {tool.hidden && <span className="px-1.5 py-0.5 rounded text-[8px] bg-red-50 text-red-600 border border-red-100 font-bold">ẨN</span>}
+                              </div>
+                            </td>
+                            <td className="py-3.5 px-5 text-[11px] font-semibold">{tool.category}</td>
+                            <td className="py-3.5 px-5 text-[11px] text-blue-600 font-extrabold">{tool.version}</td>
+                            <td className="py-3.5 px-5 text-[11px] font-bold text-slate-600">{tool.downloads || 0} Lượt</td>
+                            <td className="py-3.5 px-5 text-right">
+                              <div className="flex items-center justify-end space-x-1">
+                                
+                                <button 
+                                  onClick={() => handleToggleFeatured(tool)} 
+                                  title="Đánh dấu nổi bật"
+                                  className={`p-1.5 rounded transition ${tool.featured ? 'text-amber-500 hover:bg-amber-50' : 'text-slate-400 hover:text-slate-800'}`}>
+                                  <Icons.Star filled={tool.featured} />
+                                </button>
+                                
+                                <button 
+                                  onClick={() => handleToggleHide(tool)} 
+                                  title={tool.hidden ? "Hiện tool" : "Ẩn tool"}
+                                  className={`p-1.5 rounded transition ${tool.hidden ? 'text-red-500 hover:bg-red-50' : 'text-slate-400 hover:text-slate-800'}`}>
+                                  {tool.hidden ? <Icons.EyeOff /> : <Icons.Eye />}
+                                </button>
+
+                                <button 
+                                  onClick={() => handleLoadEdit(tool)} 
+                                  title="Sửa thông tin"
+                                  className="p-1.5 rounded text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition">
+                                  <Icons.Edit />
+                                </button>
+
+                                <button 
+                                  onClick={() => setItemToDelete(tool.id)} 
+                                  title="Xóa vĩnh viễn"
+                                  className="p-1.5 rounded text-red-600 hover:text-red-700 hover:bg-red-50 transition">
+                                  <Icons.Trash />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+          </main>
+
+          {/* FOOTER */}
+          <footer className="mt-20 border-t border-slate-200 pt-8 max-w-5xl mx-auto px-4 text-center text-xs text-slate-400 font-semibold">
+            <p>© 2026 Kho Tài Nguyên Platform. Tối ưu hóa lưu trữ đám mây qua hệ thống GoFile API.</p>
+          </footer>
+
+          {/* MODAL 1: REDESIGNED ADMIN LOGIN FORM (No Suggestion Hints) */}
+          {showLoginModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+              <div className="w-full max-w-md glassmorphism rounded-2xl p-6 relative border border-slate-200 shadow-2xl">
+                <button 
+                  onClick={() => {
+                    setShowLoginModal(false);
+                    setAdminEmail("");
+                    setAdminPassword("");
+                  }} 
+                  className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition">
+                  <Icons.Close />
+                </button>
+
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
+                    <Icons.Lock />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">Đăng Nhập Quản Trị Viên</h3>
+                    <p className="text-[11px] text-slate-500">Vui lòng điền Email và mật khẩu quản trị để tiếp tục.</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleAdminLogin} className="space-y-4" autoCorrect="off" autoCapitalize="off" autoComplete="off">
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Email quản trị *</label>
+                    <input 
+                      type="email" 
+                      required
+                      placeholder="Email quản trị" 
+                      value={adminEmail}
+                      onChange={(e) => setAdminEmail(e.target.value)}
+                      className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs"
+                      autoComplete="new-email"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Mật khẩu *</label>
+                    <input 
+                      type="password" 
+                      required
+                      placeholder="Mật khẩu" 
+                      value={adminPassword}
+                      onChange={(e) => setAdminPassword(e.target.value)}
+                      className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs"
+                      autoComplete="new-password"
+                    />
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    className="w-full py-2.5 mt-2 bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white rounded-xl transition duration-150 shadow-md">
+                    Xác nhận thông tin
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
