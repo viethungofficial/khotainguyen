@@ -1,1776 +1,1834 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="h-full bg-slate-50">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kho Tài Nguyên - Tải Tool & Tài Nguyên Tốc Độ Cao</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brandBlue: '#2563eb',
-            brandOrange: '#f97316',
-            lightbg: '#f8fafc',
-            slateText: '#1e293b',
-            mutedText: '#64748b'
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kho Tài Nguyên Tải Về - Hệ Thống Chia Sẻ Tài Liệu & Phần Mềm</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f7ff',
+                            100: '#ebf0ff',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        },
+                        secondary: {
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                        }
+                    },
+                    boxShadow: {
+                        'premium': '0 4px 20px -2px rgba(79, 70, 229, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.04)',
+                        'hover-premium': '0 12px 30px -4px rgba(79, 70, 229, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06)'
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
-
-  <!-- Google Fonts & Icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- React & ReactDOM -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  
-  <!-- Babel for JSX -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Custom CSS for Animations & Marquee -->
-  <style>
-    /* Ngăn chặn xê dịch màn hình bằng cách giữ cố định thanh cuộn trình duyệt */
-    html {
-      scrollbar-gutter: stable !important;
-      overflow-y: scroll !important;
-    }
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #f8fafc;
-      color: #1e293b;
-      overflow-x: hidden;
-    }
-    
-    /* Tùy biến thanh cuộn đẹp mắt */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f5f9;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 3px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #3b82f6;
-    }
-
-    /* Hiệu ứng chạy chữ nhanh gấp đôi và không bị dừng lại khi di chuột */
-    @keyframes marquee {
-      0% { transform: translateX(0%); }
-      100% { transform: translateX(-50%); }
-    }
-    .animate-marquee-fast {
-      display: inline-flex;
-      white-space: nowrap;
-      animation: marquee 15s linear infinite;
-    }
-
-    /* Ẩn thanh cuộn ngang của danh mục */
-    .scrollbar-none::-webkit-scrollbar {
-      display: none !important;
-    }
-    .scrollbar-none {
-      -ms-overflow-style: none !important;
-      scrollbar-width: none !important;
-    }
-
-    /* Giao diện Glassmorphism trên nền sáng */
-    .glassmorphism {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      box-shadow: 0 4px 20px -2px rgba(148, 163, 184, 0.05);
-    }
-    
-    .glass-input {
-      background: #ffffff;
-      border: 1px solid rgba(226, 232, 240, 1);
-      color: #1e293b;
-    }
-    .glass-input:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 10px rgba(37, 99, 235, 0.12);
-      outline: none;
-    }
-
-    /* Phủ sáng dịu xung quanh trang web */
-    .glow-bg-1 {
-      position: absolute;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(59,130,246,0.03) 0%, rgba(255,255,255,0) 70%);
-      top: -100px;
-      left: -100px;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .glow-bg-2 {
-      position: absolute;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(249,115,22,0.02) 0%, rgba(255,255,255,0) 70%);
-      bottom: 10%;
-      right: -100px;
-      pointer-events: none;
-      z-index: 0;
-    }
-  </style>
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+        }
+        /* Anti-layout shift styles */
+        .resources-container-min-height {
+            min-height: 590px;
+        }
+        /* Grid overlay decor for banner */
+        .grid-decor {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
 </head>
-<body class="bg-lightbg text-slateText min-h-screen">
+<body class="h-full flex flex-col bg-slate-50/50 text-slate-800">
 
-  <div id="root"></div>
+    <!-- TOAST NOTIFICATION SYSTEM -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[70] flex flex-col gap-2 max-w-sm w-full"></div>
 
-  <!-- Logic Ứng dụng React -->
-  <script type="text/babel">
-    
-    // Cấu hình thông tin tài khoản GoFile từ hình ảnh của bạn
-    const GOFILE_ACCOUNT_ID = "a922682f-aebc-45fe-8497-a723c3650700";
-    const GOFILE_ACCOUNT_TOKEN = "P05BBN2c7r6elhBumKrpoVAj3X0k32ir";
+    <!-- FLOATING ADMIN VIEWING AS GUEST BAR (PREMIUM FLOATING PILL BUTTON) -->
+    <div id="admin-guest-view-bar" class="hidden fixed bottom-6 right-6 z-50 transition-all">
+        <button onclick="exitGuestModeAndReturnAdmin()" class="flex items-center space-x-2.5 bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-800 text-white px-6 py-4 rounded-full shadow-2xl shadow-primary-500/20 hover:shadow-primary-500/35 transition-all duration-300 transform hover:scale-105 border border-white/10 group">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-bold uppercase tracking-wider">Quay lại Admin Panel</span>
+            <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+        </button>
+    </div>
 
-    // Bộ Helper Icon phẳng SVG
-    const Icons = {
-      Search: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>,
-      Download: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>,
-      Admin: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
-      Home: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>,
-      Upload: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>,
-      Trash: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>,
-      Edit: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>,
-      Eye: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>,
-      EyeOff: () => <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>,
-      Star: ({ filled }) => <svg className={`w-3.5 h-3.5 ${filled ? 'text-amber-400 fill-current' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.582 1.833l-3.978 2.89a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.88a1 1 0 00-1.176 0l-3.976 2.88c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118l-3.978-2.89c-.77-.581-.371-1.833.582-1.833h4.907a1 1 0 00.95-.69l1.519-4.674z"/></svg>,
-      Fire: () => <svg className="w-3.5 h-3.5 text-orange-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
-      Close: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>,
-      Lock: () => <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>,
-      Plus: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>,
-      Activity: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>,
-      Globe: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>,
-      Copy: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>,
-      CloudSync: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17"/></svg>,
-      Logo: () => (
-        <svg className="w-8 h-8 rounded-lg shadow-sm" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="32" height="32" rx="7" fill="#2563eb" />
-          <path d="M16 7V21M16 21L11 16M16 21L21 16" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M7 25H25" stroke="#f97316" strokeWidth="3" strokeLinecap="round"/>
-        </svg>
-      )
-    };
-
-    // Chỉ báo loại tệp tải lên
-    const FileTypeIcon = ({ type }) => {
-      const baseClass = "w-4 h-4 mr-1.5 inline-block align-middle";
-      if (type === 'file') return <svg className={`${baseClass} text-blue-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>;
-      if (type === 'icon') return <svg className={`${baseClass} text-purple-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>;
-      if (type === 'preview') return <svg className={`${baseClass} text-emerald-500`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>;
-      return null;
-    };
-
-    // Dữ liệu giả lập ban đầu (chỉ dùng khi chưa đồng bộ GoFile lần nào)
-    const INITIAL_TOOLS = [
-      {
-        id: "capcut-pc",
-        name: "CapCut Pro PC Full Version",
-        description: "Ứng dụng edit video chuyên nghiệp, tích hợp hàng loạt mẫu hiệu ứng thông minh do AI tối ưu hóa.",
-        category: "Design",
-        version: "v4.2.0",
-        size: "520 MB",
-        iconUrl: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=120&q=80",
-        fileUrl: "https://gofile.io/d/capcut-demo",
-        previewImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
-        downloads: 1420,
-        featured: true,
-        hidden: false,
-        createdAt: Date.now() - 86400000,
-        updatedAt: Date.now(),
-        rating: 4.8
-      },
-      {
-        id: "ai-enhancer",
-        name: "AI Smart Enhancer Suite",
-        description: "Phần mềm xử lý chất lượng hình ảnh và phục chế ảnh cũ tự động áp dụng công nghệ trí tuệ nhân tạo.",
-        category: "AI Tool",
-        version: "v1.5.1",
-        size: "185 MB",
-        iconUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=120&q=80",
-        fileUrl: "https://gofile.io/d/ai-enhancer",
-        previewImage: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=800&q=80",
-        downloads: 890,
-        featured: true,
-        hidden: false,
-        createdAt: Date.now() - 172800000,
-        updatedAt: Date.now(),
-        rating: 4.9
-      }
-    ];
-
-    function App() {
-      const [tools, setTools] = React.useState([]);
-      const [categories, setCategories] = React.useState([]);
-      const [currentTab, setCurrentTab] = React.useState("Home");
-      
-      // Bộ lọc và thanh tìm kiếm
-      const [selectedCategory, setSelectedCategory] = React.useState("Tất cả");
-      const [searchQuery, setSearchQuery] = React.useState("");
-      const [sortBy, setSortBy] = React.useState("newest");
-      
-      // Mã GoFile chứa Cấu hình Database
-      const [currentDbCode, setCurrentDbCode] = React.useState("");
-      const [shareableUrl, setShareableUrl] = React.useState("");
-      const [syncLoading, setSyncLoading] = React.useState(false);
-
-      // Trạng thái Quản trị
-      const [isAdmin, setIsAdmin] = React.useState(false);
-      const [showLoginModal, setShowLoginModal] = React.useState(false);
-      const [adminEmail, setAdminEmail] = React.useState("");
-      const [adminPassword, setAdminPassword] = React.useState("");
-      
-      // Hộp thoại phản hồi Toast
-      const [activeNotification, setActiveNotification] = React.useState(null);
-
-      // Hộp thoại xác nhận xóa tài nguyên
-      const [itemToDelete, setItemToDelete] = React.useState(null);
-      
-      // Quản lý danh mục động
-      const [newCategoryName, setNewCategoryName] = React.useState("");
-      const [editingCategory, setEditingCategory] = React.useState(null);
-      const [editCategoryInputValue, setEditCategoryInputValue] = React.useState("");
-
-      // Biểu mẫu chỉnh sửa tệp tin tài nguyên
-      const [isEditing, setIsEditing] = React.useState(false);
-      const [editToolId, setEditToolId] = React.useState(null);
-      const [toolForm, setToolForm] = React.useState({
-        name: "",
-        description: "",
-        category: "Windows",
-        version: "v1.0.0",
-        size: "",
-        iconUrl: "",
-        fileUrl: "",
-        previewImage: "",
-        featured: false,
-        hidden: false
-      });
-
-      const [uploadMethods, setUploadMethods] = React.useState({
-        file: "upload",
-        icon: "link",
-        preview: "link"
-      });
-      
-      const [uploadingFile, setUploadingFile] = React.useState({
-        active: false,
-        percent: 0,
-        targetField: null
-      });
-
-      const showToast = (message, type = "success") => {
-        setActiveNotification({ message, type });
-        setTimeout(() => setActiveNotification(null), 4000);
-      };
-
-      // ĐỌC VÀ ĐỒNG BỘ HOÀN TOÀN TỪ GOFILE ĐÁM MÂY
-      const fetchAndSyncFromGoFile = React.useCallback(async (code) => {
-        if (!code) return;
-        setSyncLoading(true);
-        try {
-          // Bước 1: Lấy thông tin thư mục (folder) bằng mã chia sẻ GoFile
-          const res = await fetch(`https://api.gofile.io/contents/${code}?token=${GOFILE_ACCOUNT_TOKEN}`);
-          if (!res.ok) throw new Error("Mã database GoFile không khả dụng");
-          const json = await res.json();
-          
-          if (json.status === "ok" && json.data.children) {
-            const childrenList = Object.values(json.data.children);
-            // Tìm tệp cấu hình database.json bên trong thư mục
-            const dbFile = childrenList.find(f => f.name === "database.json");
-            
-            if (dbFile && dbFile.link) {
-              // Tải trực tiếp tệp JSON cấu hình về
-              const fileRes = await fetch(dbFile.link);
-              if (!fileRes.ok) throw new Error("Không thể đọc tệp cấu hình trên GoFile");
-              const importedData = await fileRes.json();
-              
-              if (importedData && typeof importedData === 'object') {
-                // Nạp tệp tin ứng dụng
-                if (Array.isArray(importedData.tools)) {
-                  setTools(importedData.tools);
-                  localStorage.setItem("godownload_tools", JSON.stringify(importedData.tools));
-                }
-                // Nạp danh mục động
-                if (Array.isArray(importedData.categories)) {
-                  setCategories(importedData.categories);
-                  localStorage.setItem("godownload_categories", JSON.stringify(importedData.categories));
-                }
-                
-                setCurrentDbCode(code);
-                localStorage.setItem("godownload_active_db", code);
-                
-                // Đồng bộ địa chỉ URL
-                const origin = window.location.origin + window.location.pathname;
-                setShareableUrl(`${origin}?db=${code}`);
-                showToast("Đã đồng bộ thành công dữ liệu từ máy chủ đám mây GoFile!");
-              }
-            } else {
-              throw new Error("Không tìm thấy tệp tin database.json trong thư mục này");
-            }
-          } else {
-            throw new Error("Mã GoFile không tồn tại hoặc đã bị hết hạn lưu trữ");
-          }
-        } catch (err) {
-          console.error(err);
-          showToast("Lỗi đồng bộ: " + err.message, "error");
-        } finally {
-          setSyncLoading(false);
-        }
-      }, []);
-
-      // Đọc cấu hình khi khởi động
-      React.useEffect(() => {
-        // Tải các danh mục cục bộ
-        const localCats = localStorage.getItem("godownload_categories");
-        if (localCats) {
-          try {
-            setCategories(JSON.parse(localCats));
-          } catch(e) {
-            const defaults = ["Tất cả", "Windows", "Office", "Network", "Design", "AI Tool", "Developer", "Driver", "Gaming", "Security", "Utility"];
-            setCategories(defaults);
-            localStorage.setItem("godownload_categories", JSON.stringify(defaults));
-          }
-        } else {
-          const defaults = ["Tất cả", "Windows", "Office", "Network", "Design", "AI Tool", "Developer", "Driver", "Gaming", "Security", "Utility"];
-          setCategories(defaults);
-          localStorage.setItem("godownload_categories", JSON.stringify(defaults));
-        }
-
-        // Ưu tiên nạp mã DB GoFile từ liên kết URL (?db=CODE) để đồng bộ đa thiết bị
-        const urlParams = new URLSearchParams(window.location.search);
-        const dbCodeParam = urlParams.get('db');
+    <!-- MAIN APP WRAPPER -->
+    <div class="flex-grow flex flex-col min-h-screen">
         
-        if (dbCodeParam) {
-          fetchAndSyncFromGoFile(dbCodeParam);
-        } else {
-          // Nếu không có trên URL, kiểm tra bộ nhớ trình duyệt
-          const savedDb = localStorage.getItem("godownload_active_db");
-          if (savedDb) {
-            fetchAndSyncFromGoFile(savedDb);
-          } else {
-            // Sử dụng dữ liệu offline mặc định ban đầu
-            const localData = localStorage.getItem("godownload_tools");
-            if (localData) {
-              try {
-                setTools(JSON.parse(localData));
-              } catch(e) {
-                setTools(INITIAL_TOOLS);
-                localStorage.setItem("godownload_tools", JSON.stringify(INITIAL_TOOLS));
-              }
-            } else {
-              setTools(INITIAL_TOOLS);
-              localStorage.setItem("godownload_tools", JSON.stringify(INITIAL_TOOLS));
-            }
-          }
-        }
-      }, [fetchAndSyncFromGoFile]);
+        <!-- HEADER / NAVIGATION BAR -->
+        <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 transition-all duration-200 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20">
+                    <!-- Logo & Brand Name (Enlarged and premium) -->
+                    <div class="flex items-center space-x-3.5 cursor-pointer" onclick="navigateTo('home')">
+                        <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-800 text-white shadow-lg shadow-primary-500/25 transform hover:scale-105 transition-all duration-200">
+                            <i class="fa-solid fa-cloud-arrow-down text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-xl sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-800 bg-clip-text text-transparent">KHO TÀI NGUYÊN</span>
+                            <span class="hidden sm:inline-block text-[9px] block font-bold text-slate-400 tracking-widest uppercase ml-0.5">HỆ THỐNG TẢI VỀ CHÍNH THỨC</span>
+                        </div>
+                    </div>
 
-      // Đồng bộ hóa trạng thái lưu trữ cục bộ
-      const updateToolsDatabaseState = (newToolsList) => {
-        setTools(newToolsList);
-        localStorage.setItem("godownload_tools", JSON.stringify(newToolsList));
-      };
+                    <!-- Search Input (Header center - hidden on mobile) -->
+                    <div class="hidden md:flex flex-1 max-w-md mx-10">
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                            </div>
+                            <input type="text" id="header-search" oninput="handleSearch(this.value)" placeholder="Tìm kiếm công cụ, phần mềm, tài liệu..." class="block w-full pl-11 pr-4 py-2.5 border border-slate-200/80 rounded-2xl bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:bg-white text-sm transition-all duration-150">
+                        </div>
+                    </div>
 
-      const updateCategoriesDatabaseState = (newCatsList) => {
-        setCategories(newCatsList);
-        localStorage.setItem("godownload_categories", JSON.stringify(newCatsList));
-      };
+                    <!-- Navigation Action Buttons -->
+                    <div class="flex items-center space-x-3 sm:space-x-5">
+                        <!-- Connection Status Badge -->
+                        <div id="db-status-badge" class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm shadow-emerald-500/5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span id="db-status-text" class="font-medium tracking-wide">Đang kết nối...</span>
+                        </div>
 
-      // Đăng nhập quản trị (hung@admin.com / hung@123)
-      const handleAdminLogin = (e) => {
-        e.preventDefault();
-        if (adminEmail === "hung@admin.com" && adminPassword === "hung@123") {
-          setIsAdmin(true);
-          setShowLoginModal(false);
-          setAdminEmail("");
-          setAdminPassword("");
-          showToast("Đăng nhập Admin thành công!");
-          setCurrentTab("Admin");
-        } else {
-          showToast("Sai Email hoặc Mật khẩu quản trị!", "error");
-        }
-      };
+                        <!-- User/Admin Login Control -->
+                        <button id="nav-action-btn" onclick="handleAuthAction()" class="flex items-center space-x-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-sm hover:shadow transition-all duration-150 uppercase tracking-wider">
+                            <i class="fa-solid fa-user-shield text-xs"></i>
+                            <span id="nav-btn-text">Quản trị viên</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-      // Ghi đè & Đồng bộ cấu hình lên đúng mã GoFile hiện tại
-      const handleExportDatabaseToGoFile = async () => {
-        setSyncLoading(true);
-        showToast("Đang tải dữ liệu cấu hình lên tài khoản GoFile của bạn...", "info");
+        <!-- MAIN VIEWPORT PANELS -->
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        try {
-          // Tạo tệp JSON nén chứa cả tools và categories
-          const dbPayload = {
-            tools: tools,
-            categories: categories
-          };
-          const dbString = JSON.stringify(dbPayload, null, 2);
-          const blob = new Blob([dbString], { type: 'application/json' });
-          const dbFile = new File([blob], 'database.json', { type: 'application/json' });
+            <!-- PAGE 1: USER HOME PAGE VIEW -->
+            <section id="view-home" class="space-y-8">
+                <!-- HERO BANNER SECTION (VIP GLOWING GRADIENT STYLE) -->
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 text-white p-6 sm:p-10 shadow-xl shadow-indigo-950/10">
+                    <!-- Subtle Tech Grid Overlay -->
+                    <div class="absolute inset-0 grid-decor opacity-40"></div>
+                    <!-- Ambient Glows -->
+                    <div class="absolute -right-20 -top-20 w-80 h-80 bg-primary-600/20 rounded-full blur-3xl"></div>
+                    <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-secondary-500/10 rounded-full blur-3xl"></div>
+                    
+                    <div class="relative max-w-4xl space-y-4">
+                        <span class="inline-flex items-center px-3.5 py-1 rounded-full text-[10px] font-extrabold tracking-wider bg-white/10 text-indigo-300 border border-white/10 uppercase backdrop-blur-sm">
+                            <i class="fa-solid fa-sparkles mr-1.5 text-yellow-400"></i>Phiên bản nâng cấp 2026
+                        </span>
+                        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                            Hệ Thống Tải Về <span class="bg-gradient-to-r from-indigo-300 via-primary-300 to-cyan-300 bg-clip-text text-transparent font-black">Tài Nguyên Doanh Nghiệp</span>
+                        </h1>
+                        <p class="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+                            Cung cấp tốc độ tải tối đa cho các công cụ nghiệp vụ quan trọng: Chữ ký số, Hóa đơn điện tử, Thuế điện tử, BHXH, Driver cài đặt và tài liệu hướng dẫn chuẩn hóa.
+                        </p>
+                        
+                        <!-- Search container for mobile/tablet -->
+                        <div class="pt-2 md:hidden max-w-md">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                                </div>
+                                <input type="text" id="mobile-hero-search" oninput="handleSearch(this.value)" placeholder="Tìm kiếm nhanh phần mềm..." class="block w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-xs transition-all">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-          // Lấy máy chủ GoFile khả dụng
-          const serverRes = await fetch('https://api.gofile.io/servers');
-          if (!serverRes.ok) throw new Error("Mất kết nối máy chủ GoFile");
-          const serverData = await serverRes.json();
-          const serverName = serverData.data.servers[0].name;
+                <!-- MAIN WORKSPACE: SIDEBAR CATEGORY + CARDS GRID -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    
+                    <!-- LEFT COLUMN: CATEGORIES FILTER -->
+                    <aside class="lg:col-span-3 space-y-4 lg:sticky lg:top-[6.5rem] z-30">
+                        <div class="bg-white border border-slate-200/60 rounded-3xl p-5 transition-all shadow-premium">
+                            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                                <span class="font-extrabold text-slate-800 text-xs uppercase tracking-wider flex items-center space-x-2.5">
+                                    <i class="fa-solid fa-folder-tree text-primary-600 text-sm"></i>
+                                    <span>Danh mục tài nguyên</span>
+                                </span>
+                                <span id="category-count" class="text-xs bg-slate-50 text-slate-500 font-extrabold px-2.5 py-0.5 rounded-full border border-slate-100">0</span>
+                            </div>
+                            
+                            <!-- Dynamic Categories List Container -->
+                            <div id="categories-filter-list" class="space-y-1.5 max-h-[300px] lg:max-h-none overflow-y-auto pr-1">
+                                <!-- Loading skeleton -->
+                                <div class="animate-pulse space-y-2">
+                                    <div class="h-9 bg-slate-100 rounded-xl"></div>
+                                    <div class="h-9 bg-slate-100 rounded-xl"></div>
+                                </div>
+                            </div>
+                        </div>
 
-          // Nếu đã tồn tại mã DB cũ, tiến hành xóa file cũ trong thư mục trước để tránh rác
-          if (currentDbCode) {
-            try {
-              const checkRes = await fetch(`https://api.gofile.io/contents/${currentDbCode}?token=${GOFILE_ACCOUNT_TOKEN}`);
-              if (checkRes.ok) {
-                const checkJson = await checkRes.json();
-                if (checkJson.status === "ok" && checkJson.data.children) {
-                  const childrenList = Object.values(checkJson.data.children);
-                  const oldDbFile = childrenList.find(f => f.name === "database.json");
-                  if (oldDbFile) {
-                    // Gọi API xóa file cũ
-                    await fetch('https://api.gofile.io/contents', {
-                      method: 'DELETE',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        contentsId: [oldDbFile.id],
-                        token: GOFILE_ACCOUNT_TOKEN
-                      })
-                    });
-                  }
-                }
-              }
-            } catch(e) {
-              console.log("Không có file cũ để xóa");
-            }
-          }
+                        <!-- Statistics Counter Widget -->
+                        <div class="bg-gradient-to-br from-slate-50 to-white border border-slate-200/60 rounded-3xl p-4 flex justify-around text-center shadow-premium">
+                            <div>
+                                <span class="block text-2xl font-black text-primary-600" id="stat-total-resources">0</span>
+                                <span class="text-[9px] uppercase font-extrabold text-slate-400 tracking-wider">Tài nguyên</span>
+                            </div>
+                            <div class="border-l border-slate-200/80"></div>
+                            <div>
+                                <span class="block text-2xl font-black text-secondary-600" id="stat-total-downloads">0</span>
+                                <span class="text-[9px] uppercase font-extrabold text-slate-400 tracking-wider">Lượt tải về</span>
+                            </div>
+                        </div>
+                    </aside>
 
-          // Chuẩn bị tải lên
-          const formData = new FormData();
-          formData.append('file', dbFile);
-          formData.append('token', GOFILE_ACCOUNT_TOKEN);
-          formData.append('accountId', GOFILE_ACCOUNT_ID);
-          
-          // Nếu đã có mã thư mục GoFile, tải trực tiếp đè vào thư mục đó
-          if (currentDbCode) {
-            // Lấy id thư mục thực tế từ mã chia sẻ
-            const getFolderIdRes = await fetch(`https://api.gofile.io/contents/${currentDbCode}?token=${GOFILE_ACCOUNT_TOKEN}`);
-            if (getFolderIdRes.ok) {
-              const folderDetails = await getFolderIdRes.json();
-              if (folderDetails.status === "ok") {
-                formData.append('folderId', folderDetails.data.id);
-              }
-            }
-          }
+                    <!-- RIGHT COLUMN: RESOURCES CONTENT GRID WITH PAGINATION AND HEIGHT FIX -->
+                    <section class="lg:col-span-9 space-y-5">
+                        <!-- Active Filters Status Bar -->
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center space-x-2.5">
+                                <h2 class="text-base font-extrabold text-slate-800 tracking-tight" id="resource-grid-title">Tất cả tài nguyên</h2>
+                                <span id="resource-count-badge" class="bg-primary-50 text-primary-700 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-primary-100">0 kết quả</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <label for="sort-select" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sắp xếp:</label>
+                                <select id="sort-select" onchange="handleSortChange(this.value)" class="text-xs bg-white border border-slate-200 text-slate-700 rounded-xl px-3 py-2 font-semibold focus:ring-2 focus:ring-primary-600/10 focus:border-primary-600 focus:outline-none cursor-pointer">
+                                    <option value="newest">Mới cập nhật</option>
+                                    <option value="oldest">Cũ nhất</option>
+                                    <option value="downloads">Lượt tải cao</option>
+                                    <option value="alphabet">Theo tên A-Z</option>
+                                </select>
+                            </div>
+                        </div>
 
-          const uploadRes = await fetch(`https://${serverName}.gofile.io/contents/uploadfile`, {
-            method: 'POST',
-            body: formData
-          });
-          const uploadData = await uploadRes.json();
+                        <!-- Fixed height grid area to prevent layout shifting -->
+                        <div class="resources-container-min-height flex flex-col justify-between">
+                            
+                            <!-- Main Resources Grid Grid -->
+                            <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                                <!-- Card Loading Skeleton -->
+                                <div class="bg-white border border-slate-100 rounded-3xl p-5 space-y-4 animate-pulse">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-11 h-11 bg-slate-200 rounded-2xl"></div>
+                                        <div class="flex-1 space-y-2">
+                                            <div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                                            <div class="h-2 bg-slate-200 rounded w-1/2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="h-3 bg-slate-200 rounded w-5/6"></div>
+                                </div>
+                            </div>
 
-          if (uploadData.status === 'ok') {
-            const code = uploadData.data.code;
-            setCurrentDbCode(code);
-            localStorage.setItem("godownload_active_db", code);
+                            <!-- Empty State Screen -->
+                            <div id="empty-state-container" class="hidden text-center py-20 bg-white border border-dashed border-slate-300 rounded-3xl transition-colors my-auto shadow-sm">
+                                <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-3.5 text-slate-400 border border-slate-100">
+                                    <i class="fa-solid fa-folder-open text-xl"></i>
+                                </div>
+                                <h3 class="text-sm font-bold text-slate-800">Không tìm thấy tài nguyên nào</h3>
+                                <p class="text-slate-500 text-xs mt-1.5 max-w-xs mx-auto leading-relaxed">Vui lòng thử tìm kiếm bằng từ khóa khác hoặc lọc danh mục khác.</p>
+                                <button onclick="resetFilters()" class="mt-4 inline-flex items-center space-x-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-150">
+                                    <i class="fa-solid fa-arrow-rotate-left text-[10px]"></i>
+                                    <span>Đặt lại bộ lọc</span>
+                                </button>
+                            </div>
 
-            const origin = window.location.origin + window.location.pathname;
-            const newShareableUrl = `${origin}?db=${code}`;
-            setShareableUrl(newShareableUrl);
+                            <!-- PAGINATION CONTROLS PANEL (Anti-Shift Bottom Aligned) -->
+                            <div id="pagination-panel" class="pt-6 border-t border-slate-200/60 flex items-center justify-between mt-auto">
+                                <span id="pagination-info" class="text-xs text-slate-400 font-bold uppercase tracking-wider">Trang 1 / 1</span>
+                                <div class="flex items-center space-x-1.5" id="pagination-buttons">
+                                    <!-- Back and Next will render here dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <!-- PAGE 2: ADMIN LOGIN VIEW -->
+            <section id="view-admin-login" class="hidden max-w-md mx-auto my-12">
+                <div class="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-premium space-y-6">
+                    <div class="text-center space-y-2">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primary-600 to-indigo-700 text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-primary-500/20">
+                            <i class="fa-solid fa-lock text-lg"></i>
+                        </div>
+                        <h2 class="text-xl font-extrabold text-slate-800">Đăng nhập Quản trị viên</h2>
+                        <p class="text-slate-500 text-xs">Vui lòng nhập tài khoản quản trị để tiếp tục thao tác.</p>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="admin-login-form" class="space-y-4.5" onsubmit="handleEmailLogin(event)">
+                        <div class="space-y-1.5">
+                            <label for="login-email" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-0.5">Tên tài khoản / Email</label>
+                            <input type="text" id="login-email" required placeholder="admin" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:bg-white text-xs transition-all">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label for="login-password" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-0.5">Mật khẩu</label>
+                            <input type="password" id="login-password" required placeholder="••••••••" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:bg-white text-xs transition-all">
+                        </div>
+
+                        <button type="submit" class="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-800 text-white font-extrabold text-xs shadow-md shadow-primary-500/20 hover:shadow-primary-500/30 transition-all duration-150 uppercase tracking-wider">
+                            <span>Xác nhận đăng nhập</span>
+                            <i class="fa-solid fa-right-to-bracket text-xs"></i>
+                        </button>
+                    </form>
+
+                    <!-- Back link -->
+                    <div class="text-center pt-2">
+                        <button onclick="navigateTo('home')" class="inline-flex items-center space-x-1.5 text-xs font-bold text-slate-400 hover:text-primary-600 transition-colors">
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                            <span>Quay lại trang chủ</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PAGE 3: ADMIN DASHBOARD VIEW -->
+            <section id="view-admin-dashboard" class="hidden space-y-6">
+                <!-- Admin Header Card -->
+                <div class="bg-white border border-slate-200/60 rounded-3xl p-6 transition-colors shadow-premium">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 text-[10px] font-extrabold uppercase tracking-wider border border-indigo-100">BẢNG ĐIỀU KHIỂN</span>
+                                <span id="admin-status-badge" class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-extrabold uppercase tracking-wider border border-emerald-100">Đang hoạt động</span>
+                            </div>
+                            <h2 class="text-xl font-extrabold text-slate-800">Hệ Thống Quản Trị Viên</h2>
+                            <p class="text-slate-500 text-xs">Thêm mới, sửa đổi thông tin hoặc ẩn/hiện và sắp xếp danh mục tài nguyên.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="viewHomeAsAdmin()" class="flex items-center space-x-1.5 px-4 py-2.5 border border-indigo-200 hover:bg-indigo-50 text-indigo-700 rounded-2xl text-xs font-bold transition-all">
+                                <i class="fa-solid fa-eye text-xs"></i>
+                                <span>Xem Trang Chủ</span>
+                            </button>
+                            <button onclick="openResourceModal()" class="flex items-center space-x-1.5 px-4 py-2.5 bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-800 text-white rounded-2xl text-xs font-bold shadow-md shadow-primary-500/10 hover:shadow-primary-500/25 transition-all">
+                                <i class="fa-solid fa-plus text-xs"></i>
+                                <span>Thêm tài nguyên</span>
+                            </button>
+                            <button onclick="openCategoryManager()" class="flex items-center space-x-1.5 px-4 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-2xl text-xs font-bold transition-all">
+                                <i class="fa-solid fa-folder-plus text-xs"></i>
+                                <span>Danh mục</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Tabs Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+                    
+                    <!-- Sidebar: Mini Navigation & System Stats -->
+                    <div class="lg:col-span-1 space-y-4">
+                        <div class="bg-white border border-slate-200/60 rounded-3xl p-5 space-y-1.5 shadow-premium">
+                            <button onclick="switchAdminTab('resources')" id="btn-tab-res" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all bg-primary-50 text-primary-600">
+                                <span class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-box-archive text-sm"></i>
+                                    <span>Tất cả tài nguyên</span>
+                                </span>
+                                <span id="admin-res-badge" class="text-xs bg-primary-100 px-2.5 py-0.5 rounded-full font-extrabold">0</span>
+                            </button>
+                            <button onclick="openCategoryManager()" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all text-slate-600 hover:bg-slate-50">
+                                <span class="flex items-center space-x-2">
+                                    <i class="fa-solid fa-tags text-sm"></i>
+                                    <span>Quản lý danh mục</span>
+                                </span>
+                                <i class="fa-solid fa-angle-right text-slate-400 text-[10px]"></i>
+                            </button>
+                            <button onclick="seedInitialData()" class="w-full flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-amber-600 hover:bg-amber-50/50 transition-all border border-dashed border-amber-300 mt-4">
+                                <i class="fa-solid fa-database animate-pulse"></i>
+                                <span>Khởi tạo dữ liệu mẫu</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Dashboard Table Area -->
+                    <div class="lg:col-span-3 space-y-4">
+                        <div class="bg-white border border-slate-200/60 rounded-3xl overflow-hidden shadow-premium transition-colors">
+                            <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-50/30">
+                                <span class="font-extrabold text-slate-800 text-xs flex items-center space-x-2.5">
+                                    <i class="fa-solid fa-list-check text-primary-600 text-sm"></i>
+                                    <span class="uppercase tracking-wider">Danh Sách Quản Lý Tài Nguyên</span>
+                                </span>
+                                <!-- Table search -->
+                                <div class="relative max-w-xs w-full">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </div>
+                                    <input type="text" id="admin-table-search" oninput="handleAdminSearch(this.value)" placeholder="Tìm nhanh theo tên..." class="block w-full pl-9 pr-3 py-2 border border-slate-200 bg-white rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary-500 text-xs">
+                                </div>
+                            </div>
+
+                            <!-- Responsive Admin Table -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-sm">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-500 text-[10px] font-extrabold uppercase tracking-wider border-b border-slate-100">
+                                            <th class="py-3.5 px-5">Tài nguyên</th>
+                                            <th class="py-3.5 px-5">Danh mục</th>
+                                            <th class="py-3.5 px-5">Phiên bản</th>
+                                            <th class="py-3.5 px-5">Lượt tải</th>
+                                            <th class="py-3.5 px-5">Trạng thái</th>
+                                            <th class="py-3.5 px-5 text-right">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-resources-tbody" class="divide-y divide-slate-100">
+                                        <!-- Resource row templates render here -->
+                                        <tr>
+                                            <td colspan="6" class="py-10 text-center text-slate-400 text-xs">Đang tải tài nguyên quản trị...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER SECTION -->
+        <footer class="bg-white border-t border-slate-100 text-slate-600 py-10 transition-colors">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Branding and info -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-secondary-600 text-white flex items-center justify-center shadow-md shadow-primary-500/10">
+                            <i class="fa-solid fa-cloud-arrow-down text-base"></i>
+                        </div>
+                        <span class="text-base font-extrabold tracking-tight bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">KHO TÀI NGUYÊN</span>
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-slate-400 max-w-md">
+                        Cổng chia sẻ tài nguyên hỗ trợ doanh nghiệp và cá nhân phổ biến hàng đầu. Lưu trữ bộ công cụ thiết lập Chữ ký số, Hóa đơn điện tử, Thuế điện tử và Bảo hiểm xã hội chính quy.
+                    </p>
+                    <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">© 2026 Kho Tài Nguyên. Tải dữ liệu an toàn và tối ưu hóa cao.</p>
+                </div>
+
+                <!-- Technical information -->
+                <div class="space-y-4">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-widest">Hạ tầng hệ thống đám mây</h3>
+                    <p class="text-[11px] leading-relaxed text-slate-400">
+                        Ứng dụng hoạt động dựa trên cơ chế đơn trang SPA, loại bỏ độ trễ phản hồi trang. Cơ sở dữ liệu đám mây Firebase Realtime và Firestore tự động đồng bộ hóa thông tin và lượt tải của tài nguyên.
+                    </p>
+                    <div class="flex space-x-2">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-100 uppercase tracking-wider">Single Page App</span>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase tracking-wider">Firebase Cloud</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- VIEW RESOURCE DETAILS MODAL -->
+    <div id="modal-detail" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div onclick="closeDetailModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
             
-            showToast("Đồng bộ dữ liệu trực tuyến thành công!");
-          } else {
-            throw new Error(uploadData.data?.message || "GoFile từ chối tải tệp tin");
-          }
-        } catch (err) {
-          console.error(err);
-          showToast("Lỗi đồng bộ: " + err.message, "error");
-        } finally {
-          setSyncLoading(false);
-        }
-      };
+            <!-- Modal panel content spacer -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <!-- Detail Card Panel -->
+            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-100">
+                <!-- Top Header banner color -->
+                <div class="h-2 bg-gradient-to-r from-primary-600 to-secondary-600"></div>
+                
+                <div class="p-6 sm:p-8 space-y-6 relative">
+                    <!-- Close button -->
+                    <div class="absolute top-5 right-5">
+                        <button onclick="closeDetailModal()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                    </div>
 
-      // Đọc tệp thủ công từ ô nhập mã
-      const handleManualImport = (e) => {
-        e.preventDefault();
-        if (!currentDbCode.trim()) return;
+                    <!-- Header core info -->
+                    <div class="flex flex-col sm:flex-row gap-5 items-start pt-2">
+                        <div id="modal-res-image-container" class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center text-primary-600 text-3xl shrink-0 shadow-inner border border-primary-200/20">
+                            <i class="fa-solid fa-file-arrow-down"></i>
+                        </div>
+                        <div class="space-y-1.5">
+                            <div class="flex items-center flex-wrap gap-2">
+                                <span id="modal-res-category" class="px-2.5 py-0.5 rounded bg-primary-50 text-primary-600 text-[10px] font-bold uppercase tracking-wider">Category</span>
+                                <span id="modal-res-version" class="px-2.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold">v1.0</span>
+                            </div>
+                            <h3 id="modal-res-title" class="text-xl font-extrabold text-slate-900 leading-tight">Tên tài nguyên</h3>
+                            <div class="flex items-center space-x-3 text-xs text-slate-400 font-medium">
+                                <span><i class="fa-regular fa-calendar mr-1.5"></i>Cập nhật: <span id="modal-res-updated">30/05/2026</span></span>
+                                <span><i class="fa-solid fa-circle-down mr-1.5"></i>Lượt tải: <span id="modal-res-downloads">0</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Description block -->
+                    <div class="space-y-2.5 bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                        <h4 class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Thông tin chi tiết và Hướng dẫn cài đặt</h4>
+                        <div id="modal-res-description" class="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">Mô tả của tài nguyên...</div>
+                    </div>
+
+                    <!-- Technical Meta Data -->
+                    <div class="grid grid-cols-2 gap-4 text-xs font-semibold">
+                        <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-2xl">
+                            <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-extrabold">Ngày phát hành:</span>
+                            <span id="modal-res-created" class="font-bold text-slate-700 mt-1 block">-</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-2xl">
+                            <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-extrabold">Xác thực mã nguồn:</span>
+                            <span class="font-bold text-emerald-600 flex items-center space-x-1.5 mt-1">
+                                <i class="fa-solid fa-shield-halved text-sm"></i>
+                                <span>Đã kiểm duyệt sạch 100%</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Actions Panel (Enlarged Buttons) -->
+                    <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                        <a id="modal-download-link" href="#" target="_blank" onclick="incrementDownloadCounterFromModal()" class="flex-grow flex items-center justify-center space-x-2 py-4 px-6 bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-800 hover:from-primary-700 hover:to-indigo-900 text-white font-bold text-xs rounded-2xl shadow-lg shadow-primary-500/20 hover:shadow-primary-500/30 transition-all uppercase tracking-wider">
+                            <i class="fa-solid fa-cloud-arrow-down text-sm"></i>
+                            <span>Liên kết Tải Xuống (Mở tab mới)</span>
+                        </a>
+                        <button onclick="closeDetailModal()" class="px-6 py-4 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-2xl transition-all uppercase tracking-wider">
+                            Đóng lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD/EDIT RESOURCE MODAL (ADMIN ONLY) -->
+    <div id="modal-resource-form" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div onclick="closeResourceModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 transition-colors">
+                <div class="h-2 bg-gradient-to-r from-primary-600 to-secondary-600"></div>
+                
+                <form id="resource-form" onsubmit="handleResourceSubmit(event)" class="p-6 sm:p-8 space-y-4">
+                    <h3 id="form-modal-title" class="text-lg font-extrabold text-slate-900">Thêm tài nguyên mới</h3>
+                    
+                    <input type="hidden" id="form-resource-id">
+
+                    <!-- Title -->
+                    <div class="space-y-1">
+                        <label for="form-title" class="text-xs font-bold text-slate-500 uppercase">Tên tài nguyên <span class="text-rose-500">*</span></label>
+                        <input type="text" id="form-title" required placeholder="Ví dụ: TeamViewer, eSigner..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
+                    </div>
+
+                    <!-- Category & Version Grid -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label for="form-category" class="text-xs font-bold text-slate-500 uppercase">Danh mục <span class="text-rose-500">*</span></label>
+                            <select id="form-category" required class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none cursor-pointer">
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label for="form-version" class="text-xs font-bold text-slate-500 uppercase">Phiên bản <span class="text-rose-500">*</span></label>
+                            <input type="text" id="form-version" required placeholder="15.0 hoặc Mới nhất" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Download URL -->
+                    <div class="space-y-1">
+                        <label for="form-downloadUrl" class="text-xs font-bold text-slate-500 uppercase">Liên kết tải về (URL) <span class="text-rose-500">*</span></label>
+                        <input type="url" id="form-downloadUrl" required placeholder="Dán link Google Drive, Mediafire, OneDrive..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
+                    </div>
+
+                    <!-- Thumbnail / Icon Selector -->
+                    <div class="space-y-1">
+                        <label for="form-image" class="text-xs font-bold text-slate-500 uppercase">Đường dẫn ảnh/icon đại diện (URL)</label>
+                        <input type="text" id="form-image" placeholder="Dán link ảnh https://... hoặc để trống để tạo icon tự động" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
+                    </div>
+
+                    <!-- Description -->
+                    <div class="space-y-1">
+                        <label for="form-description" class="text-xs font-bold text-slate-500 uppercase">Mô tả ngắn & Hướng dẫn <span class="text-rose-500">*</span></label>
+                        <textarea id="form-description" required rows="3" placeholder="Ví dụ: Công cụ điều khiển máy tính từ xa tiện dụng..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none"></textarea>
+                    </div>
+
+                    <!-- Active status & Highlight -->
+                    <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" id="form-status" checked class="w-4 h-4 text-primary-600 border-slate-300 rounded focus:ring-primary-500">
+                            <label for="form-status" class="text-xs font-bold text-slate-700">Cho phép hiển thị ra Trang Chủ</label>
+                        </div>
+                    </div>
+
+                    <!-- Footer Action buttons -->
+                    <div class="flex space-x-2 pt-2">
+                        <button type="submit" class="flex-grow py-3 px-4 bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-850 text-white font-bold text-xs rounded-2xl transition-all shadow-md">
+                            Lưu cấu hình tài nguyên
+                        </button>
+                        <button type="button" onclick="closeResourceModal()" class="px-5 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-2xl transition-all">
+                            Hủy bỏ
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- CATEGORY MANAGEMENT MODAL -->
+    <div id="modal-category-manager" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div onclick="closeCategoryManager()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-100 transition-colors">
+                <div class="h-2 bg-gradient-to-r from-primary-600 to-secondary-600"></div>
+                
+                <div class="p-6 space-y-4">
+                    <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                        <h3 class="text-base font-extrabold text-slate-900">Quản lý Danh mục</h3>
+                        <button onclick="closeCategoryManager()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <!-- Category additions form -->
+                    <form id="category-add-form" onsubmit="handleCategoryAdd(event)" class="space-y-2">
+                        <label for="form-new-cat-name" class="text-xs font-bold text-slate-500 uppercase">Thêm danh mục mới</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="form-new-cat-name" required placeholder="Tên danh mục..." class="flex-grow px-3.5 py-2.5 text-xs rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 focus:outline-none focus:ring-1 focus:ring-primary-500">
+                            <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-bold transition-all shrink-0">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Category Items list container -->
+                    <div class="space-y-2">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase">Danh sách danh mục hiện có</h4>
+                        <div id="modal-category-list" class="space-y-1.5 max-h-[220px] overflow-y-auto border border-slate-100 rounded-2xl p-2 bg-slate-50">
+                            <!-- Populated dynamically -->
+                            <div class="text-slate-400 text-xs text-center py-4">Chưa có danh mục nào.</div>
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="pt-2 flex justify-end">
+                        <button onclick="closeCategoryManager()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition-all">
+                            Hoàn tất
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!--          FIREBASE CORE INTEGRATIONS       -->
+    <!-- ========================================== -->
+    <script type="module">
+        // Import Firebase JS modules from the official Google CDN ESM endpoints
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // APP INITIAL STATE VARIABLES
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'resource-download-center-viet';
         
-        let code = currentDbCode.trim();
-        if (code.includes("/d/")) {
-          code = code.split("/d/").pop().split("/").shift();
-        }
-        fetchAndSyncFromGoFile(code);
-      };
-
-      // Tải tệp tin phần mềm trực tiếp lên tài khoản GoFile
-      const handleGoFileUpload = async (event, targetField) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        setUploadingFile({ active: true, percent: 5, targetField });
-
-        try {
-          const serverRes = await fetch('https://api.gofile.io/servers');
-          if (!serverRes.ok) throw new Error("Không thể kết nối máy chủ GoFile");
-          const serverData = await serverRes.json();
-          const serverName = serverData.data.servers[0].name;
-
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('token', GOFILE_ACCOUNT_TOKEN);
-          formData.append('accountId', GOFILE_ACCOUNT_ID);
-
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', `https://${serverName}.gofile.io/contents/uploadfile`);
-          
-          xhr.upload.onprogress = (e) => {
-            if (e.lengthComputable) {
-              const pct = Math.round((e.loaded / e.total) * 100);
-              setUploadingFile(prev => ({ ...prev, percent: pct }));
-            }
-          };
-
-          xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              try {
-                const response = JSON.parse(xhr.responseText);
-                if (response.status === 'ok') {
-                  const uploadedUrl = response.data.downloadPage;
-                  const formattedSize = (file.size / (1024 * 1024)).toFixed(1) + " MB";
-                  
-                  setToolForm(prev => {
-                    const update = { ...prev };
-                    if (targetField === 'file') {
-                      update.fileUrl = uploadedUrl;
-                      update.size = formattedSize;
-                      if (!update.name) {
-                        update.name = file.name.split('.').slice(0, -1).join('.') || file.name;
-                      }
-                    }
-                    if (targetField === 'icon') {
-                      update.iconUrl = uploadedUrl;
-                    }
-                    if (targetField === 'preview') {
-                      update.previewImage = uploadedUrl;
-                    }
-                    return update;
-                  });
-
-                  setUploadingFile({ active: false, percent: 100, targetField: null });
-                  showToast(`Đã lưu tệp lên GoFile thành công! Dung lượng: ${formattedSize}`);
-                } else {
-                  throw new Error();
-                }
-              } catch (err) {
-                showToast("Lỗi giải mã API GoFile", "error");
-                setUploadingFile({ active: false, percent: 0, targetField: null });
-              }
-            } else {
-              showToast("Máy chủ GoFile từ chối tải lên", "error");
-              setUploadingFile({ active: false, percent: 0, targetField: null });
-            }
-          };
-
-          xhr.onerror = () => {
-            showToast("Lỗi mạng khi tải lên GoFile", "error");
-            setUploadingFile({ active: false, percent: 0, targetField: null });
-          };
-          xhr.send(formData);
-
-        } catch (error) {
-          showToast("Lỗi kết nối máy chủ GoFile: " + error.message, "error");
-          setUploadingFile({ active: false, percent: 0, targetField: null });
-        }
-      };
-
-      // Lưu tệp cài đặt tài nguyên
-      const handleSaveTool = (e) => {
-        e.preventDefault();
-        if (!isAdmin) return showToast("Vui lòng đăng nhập Admin.", "error");
-        if (!toolForm.name) return showToast("Vui lòng điền tên tài nguyên.", "error");
-        if (!toolForm.fileUrl) return showToast("Vui lòng tải lên tệp cài đặt hoặc dán link tải.", "error");
-
-        const documentPayload = {
-          ...toolForm,
-          downloads: toolForm.downloads || 0,
-          rating: toolForm.rating || 5.0,
-          updatedAt: Date.now()
+        // GIỮ CẤU HÌNH FIREBASE THỰC TẾ TRONG HỆ THỐNG
+        const defaultFirebaseConfig = {
+            apiKey: "AIzaSyALT8o8hQtVuSVn6A_hQSE4SvDHsg_y80I",
+            authDomain: "khotainguyen-5d8b8.firebaseapp.com",
+            projectId: "khotainguyen-5d8b8",
+            storageBucket: "khotainguyen-5d8b8.firebasestorage.app",
+            messagingSenderId: "345543974251",
+            appId: "1:345543974251:web:d9a1c177c8a686827ac02e",
+            measurementId: "G-X73FSSCR12"
         };
 
-        let updatedList = [...tools];
+        let firebaseConfig = defaultFirebaseConfig;
 
-        if (isEditing && editToolId) {
-          updatedList = tools.map(t => t.id === editToolId ? { ...t, ...documentPayload } : t);
-          showToast("Cập nhật tài nguyên thành công!");
-        } else {
-          const newTool = {
-            id: `tool-${Math.random().toString(36).substring(2, 9)}`,
-            ...documentPayload,
-            createdAt: Date.now()
-          };
-          updatedList = [newTool, ...tools];
-          showToast("Đã thêm tài nguyên thành công!");
-        }
-
-        updateToolsDatabaseState(updatedList);
-
-        // Reset biểu mẫu
-        setToolForm({
-          name: "",
-          description: "",
-          category: categories[1] || "Windows",
-          version: "v1.0.0",
-          size: "",
-          iconUrl: "",
-          fileUrl: "",
-          previewImage: "",
-          featured: false,
-          hidden: false
-        });
-        setIsEditing(false);
-        setEditToolId(null);
-      };
-
-      const handleLoadEdit = (tool) => {
-        setToolForm({
-          name: tool.name,
-          description: tool.description || "",
-          category: tool.category,
-          version: tool.version,
-          size: tool.size,
-          iconUrl: tool.iconUrl || "",
-          fileUrl: tool.fileUrl,
-          previewImage: tool.previewImage || "",
-          featured: tool.featured || false,
-          hidden: tool.hidden || false,
-          downloads: tool.downloads,
-          rating: tool.rating,
-          createdAt: tool.createdAt
-        });
-        setIsEditing(true);
-        setEditToolId(tool.id);
+        // Active Application variables
+        let db = null;
+        let auth = null;
+        let isFirebaseOnline = false;
+        let activeUser = null;
+        let isBypassMode = false; // Bypass mode for simulated admin logic
+        let isAdminViewingAsUser = false; // Toggle view home as guest for admins
         
-        setUploadMethods({
-          file: tool.fileUrl ? "link" : "upload",
-          icon: tool.iconUrl ? "link" : "upload",
-          preview: tool.previewImage ? "link" : "upload"
-        });
+        // Dynamic States
+        let categories = [];
+        let resources = [];
+        let currentCategoryFilter = 'all';
+        let searchKeyword = '';
+        let adminSearchKeyword = '';
+        let sortBy = 'newest';
+        let activeAdminTab = 'resources';
 
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      };
+        // Pagination State
+        let currentPage = 1;
+        const itemsPerPage = 6;
 
-      const handleConfirmDelete = () => {
-        if (!itemToDelete) return;
-        const updatedList = tools.filter(t => t.id !== itemToDelete);
-        updateToolsDatabaseState(updatedList);
-        setItemToDelete(null);
-        showToast("Đã xóa công cụ thành công khỏi cơ sở dữ liệu!");
-      };
+        // DEFAULT FALLBACK IN-MEMORY DATA (No Local Storage)
+        const defaultCategories = [
+            { id: "tool", name: "Tool hỗ trợ" },
+            { id: "signature", name: "Chữ ký số" },
+            { id: "invoice", name: "Hóa đơn điện tử" },
+            { id: "insurance", name: "BHXH điện tử" },
+            { id: "tax", name: "Thuế điện tử" },
+            { id: "driver", name: "Driver" },
+            { id: "guide", name: "Tài liệu hướng dẫn" },
+            { id: "form", name: "Biểu mẫu" },
+            { id: "software", name: "Phần mềm" },
+            { id: "other", name: "Khác" }
+        ];
 
-      const handleToggleHide = (tool) => {
-        const updatedList = tools.map(t => t.id === tool.id ? { ...t, hidden: !t.hidden } : t);
-        updateToolsDatabaseState(updatedList);
-        showToast(tool.hidden ? "Đã hiển thị lại công cụ!" : "Đã ẩn công cụ khỏi trang chủ!");
-      };
+        const defaultResources = [
+            {
+                id: "def-tv",
+                title: "TeamViewer",
+                category: "Tool hỗ trợ",
+                version: "15.0",
+                description: "Phần mềm điều khiển máy tính từ xa phổ biến nhất thế giới. Hỗ trợ kỹ thuật viên đăng nhập trực quan và khắc phục sự cố phần mềm tức thì cho khách hàng.",
+                downloadUrl: "https://www.teamviewer.com/vi/tai-ve/windows/",
+                image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=150",
+                downloadsCount: 142,
+                status: true,
+                createdAt: "2026-05-30",
+                updatedAt: "2026-05-30"
+            },
+            {
+                id: "def-esign",
+                title: "eSigner",
+                category: "Chữ ký số",
+                version: "2.0",
+                description: "Công cụ hỗ trợ người dùng ký số các tờ khai thuế trực tuyến. Cài đặt trực tiếp vào trình duyệt hỗ trợ dịch vụ khai thuế Tổng cục thuế Việt Nam.",
+                downloadUrl: "https://thuedientu.gdt.gov.vn/",
+                image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150",
+                downloadsCount: 89,
+                status: true,
+                createdAt: "2026-05-30",
+                updatedAt: "2026-05-30"
+            },
+            {
+                id: "def-itax",
+                title: "iTaxViewer",
+                category: "Thuế điện tử",
+                version: "2.3.1",
+                description: "Phần mềm đọc tờ khai thuế định dạng XML của Tổng cục Thuế Việt Nam. Đáp ứng yêu cầu mở và xem nội dung báo cáo tài chính, tờ khai giá trị gia tăng, thuế TNCN.",
+                downloadUrl: "https://thuedientu.gdt.gov.vn/",
+                image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=150",
+                downloadsCount: 315,
+                status: true,
+                createdAt: "2026-05-30",
+                updatedAt: "2026-05-30"
+            }
+        ];
 
-      const handleToggleFeatured = (tool) => {
-        const updatedList = tools.map(t => t.id === tool.id ? { ...t, featured: !t.featured } : t);
-        updateToolsDatabaseState(updatedList);
-        showToast(tool.featured ? "Đã tắt nhãn nổi bật" : "Đã gắn nhãn nổi bật thành công!");
-      };
+        // Global fallback handler to replace broken images with beautiful gradient placeholder
+        window.handleImageError = function(img, initial) {
+            img.onerror = null; // Prevent loop
+            const parent = img.parentElement;
+            if (parent) {
+                const placeholder = document.createElement('div');
+                placeholder.className = "w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 text-white flex items-center justify-center text-sm shadow-md font-bold shrink-0";
+                placeholder.textContent = initial.toUpperCase();
+                parent.replaceChild(placeholder, img);
+            }
+        };
 
-      // Tăng lượt tải và chuyển hướng người dùng
-      const triggerDownload = (tool) => {
-        const updatedList = tools.map(t => t.id === tool.id ? { ...t, downloads: (t.downloads || 0) + 1 } : t);
-        updateToolsDatabaseState(updatedList);
-        showToast("Đang kết nối luồng tải tốc độ cao từ máy chủ GoFile...");
-        setTimeout(() => {
-          window.open(tool.fileUrl, '_blank');
-        }, 800);
-      };
+        // ==========================================
+        //      UI SENSITIVE UTILITIES / ACTIONS      
+        // ==========================================
 
-      // THÊM DANH MỤC MỚI
-      const handleAddCategory = (e) => {
-        e.preventDefault();
-        const trimmedName = newCategoryName.trim();
-        if (!trimmedName) return;
+        // TOAST NOTIFICATIONS ENGINE
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
 
-        const alreadyExists = categories.some(cat => cat.toLowerCase() === trimmedName.toLowerCase());
-        if (alreadyExists) {
-          showToast("Danh mục này đã tồn tại!", "error");
-          return;
-        }
+            const id = 'toast-' + Math.random().toString(36).substr(2, 9);
+            let icon = 'fa-circle-info';
+            let colorClasses = 'bg-white text-slate-800 border-slate-200';
+            
+            if (type === 'success') {
+                icon = 'fa-circle-check';
+                colorClasses = 'bg-emerald-50 text-emerald-800 border-emerald-200';
+            } else if (type === 'error') {
+                icon = 'fa-triangle-exclamation';
+                colorClasses = 'bg-rose-50 text-rose-800 border-rose-200';
+            } else if (type === 'warning') {
+                icon = 'fa-circle-exclamation';
+                colorClasses = 'bg-amber-50 text-amber-800 border-amber-200';
+            }
 
-        const updatedCategories = [...categories, trimmedName];
-        updateCategoriesDatabaseState(updatedCategories);
-        setNewCategoryName("");
-        showToast(`Đã thêm danh mục '${trimmedName}' thành công!`);
-      };
-
-      // BẮT ĐẦU CHỈNH SỬA DANH MỤC
-      const handleStartEditCategory = (cat) => {
-        if (cat === "Tất cả") {
-          showToast("Không thể chỉnh sửa danh mục hệ thống 'Tất cả'!", "error");
-          return;
-        }
-        setEditingCategory(cat);
-        setEditCategoryInputValue(cat);
-      };
-
-      // LƯU THAY ĐỔI DANH MỤC
-      const handleSaveCategoryEdit = (e) => {
-        e.preventDefault();
-        const trimmedNewName = editCategoryInputValue.trim();
-        if (!trimmedNewName || !editingCategory) return;
-
-        if (trimmedNewName === editingCategory) {
-          setEditingCategory(null);
-          return;
-        }
-
-        const alreadyExists = categories.some(cat => cat.toLowerCase() === trimmedNewName.toLowerCase() && cat !== editingCategory);
-        if (alreadyExists) {
-          showToast("Tên danh mục này đã tồn tại!", "error");
-          return;
-        }
-
-        const updatedCategories = categories.map(cat => cat === editingCategory ? trimmedNewName : cat);
-        updateCategoriesDatabaseState(updatedCategories);
-
-        const updatedToolsList = tools.map(tool => {
-          if (tool.category === editingCategory) {
-            return { ...tool, category: trimmedNewName };
-          }
-          return tool;
-        });
-        updateToolsDatabaseState(updatedToolsList);
-
-        setEditingCategory(null);
-        setEditCategoryInputValue("");
-        showToast(`Đã cập nhật danh mục và đồng bộ các công cụ liên quan!`);
-      };
-
-      // XÓA DANH MỤC
-      const handleDeleteCategory = (catToDelete) => {
-        if (catToDelete === "Tất cả") {
-          showToast("Không thể xóa danh mục hệ thống 'Tất cả'!", "error");
-          return;
-        }
-
-        const isCurrentlyUsed = tools.some(tool => tool.category === catToDelete);
-        if (isCurrentlyUsed) {
-          showToast(`Không thể xóa! Có tài nguyên đang thuộc danh mục '${catToDelete}'.`, "error");
-          return;
-        }
-
-        const updatedCategories = categories.filter(cat => cat !== catToDelete);
-        updateCategoriesDatabaseState(updatedCategories);
-        showToast(`Đã xóa danh mục '${catToDelete}' thành công!`);
-      };
-
-      // Sao chép liên kết chia sẻ đồng bộ
-      const copyToClipboard = () => {
-        if (!shareableUrl) return;
-        const input = document.createElement('textarea');
-        input.value = shareableUrl;
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand('copy');
-        document.body.removeChild(input);
-        showToast("Đã copy liên kết đồng bộ vào bộ nhớ tạm!");
-      };
-
-      // Bộ lọc hiển thị của người dùng
-      const filteredAndSortedTools = tools
-        .filter(t => {
-          if (isAdmin) return true;
-          return !t.hidden;
-        })
-        .filter(t => {
-          if (selectedCategory === "Tất cả") return true;
-          return t.category.toLowerCase() === selectedCategory.toLowerCase();
-        })
-        .filter(t => {
-          const query = searchQuery.toLowerCase();
-          return t.name.toLowerCase().includes(query) || (t.description && t.description.toLowerCase().includes(query));
-        })
-        .sort((a, b) => {
-          if (sortBy === "downloads") return (b.downloads || 0) - (a.downloads || 0);
-          if (sortBy === "featured") return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-          return (b.createdAt || 0) - (a.createdAt || 0);
-        });
-
-      return (
-        <div className="relative min-h-screen pb-16 bg-slate-100 text-slate-800">
-          <div className="glow-bg-1"></div>
-          <div className="glow-bg-2"></div>
-
-          {/* Hộp thông báo nổi (Toast) */}
-          {activeNotification && (
-            <div className={`fixed bottom-6 right-6 z-50 glassmorphism p-4 rounded-xl flex items-center space-x-3 shadow-2xl transition-all border-l-4 ${activeNotification.type === 'error' ? 'border-l-red-500' : 'border-l-blue-500'}`}>
-              <div className="text-slate-800 text-sm font-semibold">{activeNotification.message}</div>
-              <button onClick={() => setActiveNotification(null)} className="text-slate-400 hover:text-slate-600">
-                <Icons.Close />
-              </button>
-            </div>
-          )}
-
-          {/* Modal xác nhận xóa */}
-          {itemToDelete && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
-              <div className="w-full max-w-sm glassmorphism rounded-2xl p-6 border border-slate-200/50 shadow-2xl">
-                <h3 className="text-lg font-bold text-slate-900 mb-2">Xác nhận xóa tệp</h3>
-                <p className="text-sm text-slate-500 mb-6">Bạn có chắc chắn muốn xóa vĩnh viễn tài nguyên này khỏi cơ sở dữ liệu không?</p>
-                <div className="flex space-x-3">
-                  <button 
-                    onClick={() => setItemToDelete(null)}
-                    className="w-1/2 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-600 rounded-lg transition">
-                    Hủy bỏ
-                  </button>
-                  <button 
-                    onClick={handleConfirmDelete}
-                    className="w-1/2 py-2 bg-red-600 hover:bg-red-500 text-xs font-bold text-white rounded-lg transition shadow-lg shadow-red-500/20">
-                    Xác nhận xóa
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 1. HEADER */}
-          <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/80">
-            <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-              
-              {/* Logo Flaticon Style */}
-              <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setCurrentTab("Home")}>
-                <Icons.Logo />
-                <div>
-                  <h1 className="text-base font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-orange-500">
-                    Kho Tài Nguyên
-                  </h1>
-                  <p className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">Direct Cloud Platform</p>
-                </div>
-              </div>
-
-              {/* Menu điều hướng */}
-              <nav className="flex space-x-6 text-xs font-semibold">
-                <button 
-                  onClick={() => { setCurrentTab("Home"); setSelectedCategory("Tất cả"); }} 
-                  className={`transition ${currentTab === "Home" ? "text-blue-600 font-bold" : "text-slate-500 hover:text-slate-900"}`}>
-                  Trang chủ
-                </button>
-                {isAdmin && (
-                  <button 
-                    onClick={() => setCurrentTab("Admin")} 
-                    className={`transition flex items-center space-x-1 ${currentTab === "Admin" ? "text-orange-600 font-bold" : "text-slate-500 hover:text-slate-900"}`}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                    <span>Admin Panel</span>
-                  </button>
-                )}
-              </nav>
-
-              {/* Đăng nhập Admin */}
-              <div className="flex items-center space-x-4">
-                {isAdmin ? (
-                  <button 
-                    onClick={() => { setIsAdmin(false); setCurrentTab("Home"); showToast("Đã thoát tài khoản Admin."); }} 
-                    className="px-3 py-1.5 text-[11px] font-bold text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition">
-                    Thoát Admin
-                  </button>
-                ) : (
-                  <button 
-                    onClick={() => setShowLoginModal(true)} 
-                    className="flex items-center space-x-1.5 px-3.5 py-1.5 text-[11px] font-bold bg-white border border-slate-200 text-blue-600 shadow-sm rounded-lg hover:bg-slate-50 transition">
-                    <Icons.Admin />
-                    <span>Đăng nhập</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          </header>
-
-          {/* 2. THANH THÔNG BÁO CHẠY NGANG */}
-          <div className="w-full bg-blue-50/70 border-b border-blue-100 py-2.5 overflow-hidden relative">
-            <div className="animate-marquee-fast flex space-x-16 items-center">
-              <span className="flex items-center space-x-2 text-xs text-blue-700 font-semibold">
-                <Icons.Fire />
-                <span>[MỚI] Đã kết nối tự động tài khoản GoFile. Xuất bản cấu hình trực tuyến dễ dàng.</span>
-              </span>
-              <span className="flex items-center space-x-2 text-xs text-orange-700 font-semibold">
-                <Icons.Fire />
-                <span>Chào mừng quý khách đến với Kho Tài Nguyên. Tải dữ liệu siêu tốc độ, không quảng cáo.</span>
-              </span>
-              <span className="flex items-center space-x-2 text-xs text-blue-700 font-semibold">
-                <Icons.Fire />
-                <span>Không giới hạn băng thông download - Đồng bộ hóa tệp database tức thì.</span>
-              </span>
-              {/* Nhân đôi dòng để chạy liền mạch */}
-              <span className="flex items-center space-x-2 text-xs text-blue-700 font-semibold">
-                <Icons.Fire />
-                <span>[MỚI] Đã kết nối tự động tài khoản GoFile. Xuất bản cấu hình trực tuyến dễ dàng.</span>
-              </span>
-              <span className="flex items-center space-x-2 text-xs text-orange-700 font-semibold">
-                <Icons.Fire />
-                <span>Chào mừng quý khách đến với Kho Tài Nguyên. Tải dữ liệu siêu tốc độ, không quảng cáo.</span>
-              </span>
-            </div>
-          </div>
-
-          {/* Chỉ báo trạng thái Đồng bộ GoFile */}
-          {currentDbCode && (
-            <div className="w-full bg-slate-200/50 border-b border-slate-200 py-1.5 text-center text-[10px] text-slate-500 flex items-center justify-center space-x-2">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Đang kết nối Database GoFile: <strong>gofile.io/d/{currentDbCode}</strong></span>
-              <button 
-                onClick={() => fetchAndSyncFromGoFile(currentDbCode)}
-                className="text-blue-600 hover:underline font-bold"
-                title="Tải lại bản mới nhất từ GoFile">
-                [Tải lại dữ liệu]
-              </button>
-            </div>
-          )}
-
-          {/* Toàn bộ vùng hiển thị chính (Độ rộng tối ưu chống chói mắt) */}
-          <main className="max-w-5xl mx-auto px-4 mt-10">
-
-            {currentTab === "Home" ? (
-              <div className="min-h-[500px]">
-                {/* THANH TÌM KIẾM TÀI NGUYÊN */}
-                <div className="mb-10 max-w-2xl mx-auto animate-fadeIn">
-                  <div className="bg-white p-2 rounded-2xl flex items-center border border-slate-200/80 shadow-md">
-                    <div className="pl-3 text-slate-400">
-                      <Icons.Search />
+            const html = `
+                <div id="${id}" class="flex items-center p-3.5 rounded-xl border ${colorClasses} shadow-lg transition-all duration-350 transform translate-x-12 opacity-0">
+                    <div class="flex-shrink-0 text-sm">
+                        <i class="fa-solid ${icon}"></i>
                     </div>
-                    <input 
-                      type="text" 
-                      placeholder="Tìm kiếm nhanh phần mềm, ứng dụng, tài nguyên..." 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-transparent border-0 px-3 py-2 focus:outline-none focus:ring-0 text-slate-800 text-sm"
-                    />
-                    {searchQuery && (
-                      <button 
-                        onClick={() => setSearchQuery("")} 
-                        className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 mr-1">
-                        <Icons.Close />
-                      </button>
-                    )}
-                  </div>
+                    <div class="ml-2.5 text-[11px] font-bold flex-1 leading-relaxed">
+                        ${message}
+                    </div>
+                    <button onclick="this.parentElement.remove()" class="ml-2.5 flex-shrink-0 text-slate-400 hover:text-slate-600 text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
+            `;
 
-                {/* DANH MỤC LỌC VÀ SẮP XẾP (Cố định tuyệt đối chống xê dịch) */}
-                <div className="mb-8">
-                  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0 pb-4 border-b border-slate-200">
-                    
-                    {/* Danh mục lọc cuộn ngang mượt mà */}
-                    <div className="flex items-center space-x-1.5 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 scrollbar-none">
-                      {categories.map((cat) => (
-                        <button
-                          key={cat}
-                          onClick={() => setSelectedCategory(cat)}
-                          className={`px-3.5 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all flex-shrink-0 border border-slate-200 ${
-                            selectedCategory === cat 
-                              ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                              : 'bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                          }`}>
-                          {cat}
-                        </button>
-                      ))}
-                    </div>
+            container.insertAdjacentHTML('beforeend', html);
+            
+            // Animation slide-in
+            setTimeout(() => {
+                const toast = document.getElementById(id);
+                if (toast) {
+                    toast.classList.remove('translate-x-12', 'opacity-0');
+                }
+            }, 50);
 
-                    {/* Sắp xếp tài nguyên */}
-                    <div className="flex items-center space-x-2.5 w-full lg:w-auto justify-end">
-                      <span className="text-[11px] text-slate-400 uppercase font-bold tracking-wider">Sắp xếp:</span>
-                      <select 
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-[11px] font-bold text-slate-600 focus:outline-none focus:border-blue-500 cursor-pointer">
-                        <option value="newest">Mới cập nhật</option>
-                        <option value="downloads">Lượt tải nhiều</option>
-                        <option value="featured">Khuyên dùng</option>
-                      </select>
-                    </div>
+            // Auto-dismiss after 4s
+            setTimeout(() => {
+                const toast = document.getElementById(id);
+                if (toast) {
+                    toast.classList.add('opacity-0', 'scale-95');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+        }
 
-                  </div>
-                </div>
+        // SPA ROTATION ROUTER (Navigation Engine)
+        window.navigateTo = function(target) {
+            const viewHome = document.getElementById('view-home');
+            const viewLogin = document.getElementById('view-admin-login');
+            const viewDashboard = document.getElementById('view-admin-dashboard');
+            const guestBar = document.getElementById('admin-guest-view-bar');
 
-                {/* KHU VỰC GRID CARD TÀI NGUYÊN (Đã làm nhỏ gọn và dịu mắt) */}
-                {filteredAndSortedTools.length === 0 ? (
-                  <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-sm">
-                    <p className="text-slate-500 text-xs">Không tìm thấy tài nguyên nào phù hợp với bộ lọc hiện tại.</p>
-                  </div>
-                ) : (
-                  <div>
-                    <h3 className="text-[11px] font-extrabold text-slate-400 uppercase tracking-widest mb-6 flex items-center space-x-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                      <span>DANH SÁCH TÀI NGUYÊN HIỆN CÓ ({filteredAndSortedTools.length})</span>
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                      {filteredAndSortedTools.map((tool) => (
-                        <div 
-                          key={tool.id} 
-                          className="bg-white border border-slate-200/80 rounded-2xl p-4 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden hover:border-blue-500/50 hover:shadow-[0_0_12px_rgba(37,99,235,0.06),_0_0_8px_rgba(249,115,22,0.04)]">
-                          
-                          {tool.featured && (
-                            <div className="absolute top-0 left-0 w-full h-1 bg-blue-600"></div>
-                          )}
+            viewHome.classList.add('hidden');
+            viewLogin.classList.add('hidden');
+            viewDashboard.classList.add('hidden');
+            guestBar.classList.add('hidden');
 
-                          <div>
-                            {/* Tiêu đề tệp và danh mục */}
-                            <div className="flex items-start justify-between mb-3">
-                              <div className="flex items-center space-x-3">
-                                <img 
-                                  src={tool.iconUrl || 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=120&q=80'} 
-                                  alt={tool.name} 
-                                  className="w-9 h-9 rounded-xl object-cover border border-slate-100 flex-shrink-0"
-                                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=120&q=80' }}
-                                />
-                                <div>
-                                  <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-blue-50 text-blue-600 border border-blue-100 uppercase">
-                                    {tool.category}
-                                  </span>
-                                  <h4 className="font-extrabold text-slate-800 mt-1 line-clamp-1 text-sm">{tool.name}</h4>
-                                </div>
-                              </div>
+            const headerSearch = document.getElementById('header-search');
 
-                              {tool.featured && (
-                                <span className="text-[8px] uppercase font-extrabold px-1.5 py-0.5 rounded bg-orange-50 text-orange-600 border border-orange-100 flex-shrink-0">HOT</span>
-                              )}
-                            </div>
-
-                            {/* Mô tả chi tiết tài nguyên */}
-                            <p className="text-xs text-slate-500 line-clamp-2 mb-3 leading-relaxed">
-                              {tool.description || 'Không có mô tả bổ sung cho tài nguyên này.'}
-                            </p>
-
-                            {/* Ảnh Preview */}
-                            {tool.previewImage && (
-                              <div className="w-full h-24 rounded-xl overflow-hidden mb-3 relative bg-slate-100 border border-slate-100">
-                                <img 
-                                  src={tool.previewImage} 
-                                  alt="Preview" 
-                                  className="w-full h-full object-cover transition-opacity group-hover:opacity-95"
-                                  onError={(e) => { e.target.style.display = 'none' }}
-                                />
-                              </div>
-                            )}
-
-                            {/* Thông số dung lượng */}
-                            <div className="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-xl text-[11px] text-slate-500 mb-3 border border-slate-100">
-                              <div>
-                                <span className="text-slate-400 block text-[9px] uppercase font-extrabold">Phiên bản</span>
-                                <span className="font-semibold text-slate-700">{tool.version || 'v1.0.0'}</span>
-                              </div>
-                              <div>
-                                <span className="text-slate-400 block text-[9px] uppercase font-extrabold">Dung lượng</span>
-                                <span className="font-semibold text-slate-700">{tool.size || 'N/A'}</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Footer & Tải trực tiếp không cần trung gian */}
-                          <div className="flex items-center justify-between pt-2.5 border-t border-slate-100 mt-auto">
-                            <div className="flex items-center space-x-1">
-                              <Icons.Star filled={true} />
-                              <span className="text-xs font-semibold text-slate-700">{tool.rating || '5.0'}</span>
-                              <span className="text-[10px] text-slate-400">({tool.downloads || 0} tải)</span>
-                            </div>
-
-                            <button 
-                              onClick={() => triggerDownload(tool)}
-                              className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-xs font-bold text-white flex items-center space-x-1.5 transition duration-150 shadow-md">
-                              <Icons.Download />
-                              <span>Tải về</span>
-                            </button>
-                          </div>
-
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              /* 5. BẢNG QUẢN TRỊ ADMIN */
-              <div className="space-y-8 relative z-10 animate-fadeIn">
+            if (target === 'home') {
+                viewHome.classList.remove('hidden');
+                headerSearch.disabled = false;
+                window.location.hash = 'home';
                 
-                {/* HỆ THỐNG ĐỒNG BỘ ĐÁM MÂY GOFILE TOÀN DIỆN */}
-                <div className="bg-white p-5 rounded-2xl border border-blue-200 shadow-sm">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-3 flex items-center space-x-2">
-                    <Icons.CloudSync />
-                    <span>HỆ THỐNG ĐỒNG BỘ ĐÁM MÂY GOFILE DATABASE</span>
-                  </h3>
-                  <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                    Nhấp nút bên dưới để đóng gói toàn bộ kho ứng dụng và danh mục, sau đó tải lên lưu trữ đám mây GoFile. Chỉ cần chia sẻ đường dẫn duy nhất này tới các thiết bị khác để dữ liệu đồng bộ tự động mà không cần thêm cấu hình trung gian.
-                  </p>
+                // Show floating bar if admin is previewing home as user
+                if ((activeUser || isBypassMode) && isAdminViewingAsUser) {
+                    guestBar.classList.remove('hidden');
+                }
+            } else if (target === 'admin-login') {
+                viewLogin.classList.remove('hidden');
+                headerSearch.disabled = true;
+                window.location.hash = 'login';
+            } else if (target === 'admin-dashboard') {
+                isAdminViewingAsUser = false; // Reset view state
+                if (activeUser || isBypassMode) {
+                    viewDashboard.classList.remove('hidden');
+                    headerSearch.disabled = true;
+                    window.location.hash = 'dashboard';
+                    renderAdminResourcesTable();
+                } else {
+                    showToast('Vui lòng đăng nhập quyền quản trị viên trước.', 'warning');
+                    viewLogin.classList.remove('hidden');
+                    window.location.hash = 'login';
+                }
+            }
+            updateNavigationControls();
+        };
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-4">
-                    <div>
-                      <button
-                        onClick={handleExportDatabaseToGoFile}
-                        disabled={syncLoading}
-                        className="w-full py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold shadow-md hover:bg-blue-500 transition-all flex items-center justify-center space-x-1.5">
-                        <Icons.Upload />
-                        <span>{syncLoading ? "Đang đẩy dữ liệu lên GoFile..." : "Đồng bộ lên GoFile mới"}</span>
-                      </button>
-                    </div>
+        // Admin Specific Preview Toggle
+        window.viewHomeAsAdmin = function() {
+            isAdminViewingAsUser = true;
+            navigateTo('home');
+        };
 
-                    <form onSubmit={handleManualImport} className="flex space-x-2">
-                      <input 
-                        type="text"
-                        placeholder="Nhập mã / Link thư mục GoFile..."
-                        value={currentDbCode}
-                        onChange={(e) => setCurrentDbCode(e.target.value)}
-                        className="flex-1 px-3 py-2 glass-input rounded-xl text-xs"
-                      />
-                      <button
-                        type="submit"
-                        disabled={syncLoading}
-                        className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 transition flex-shrink-0">
-                        Nạp Link
-                      </button>
-                    </form>
-                  </div>
+        window.exitGuestModeAndReturnAdmin = function() {
+            isAdminViewingAsUser = false;
+            navigateTo('admin-dashboard');
+        };
 
-                  {shareableUrl && (
-                    <div className="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100 space-y-1.5 animate-fadeIn">
-                      <span className="block text-[10px] font-extrabold text-blue-700 uppercase tracking-widest">LIÊN KẾT ĐỒNG BỘ ĐA THIẾT BỊ:</span>
-                      <div className="flex items-center space-x-2">
-                        <input 
-                          type="text" 
-                          readOnly 
-                          value={shareableUrl} 
-                          className="flex-1 bg-white border border-blue-200 rounded-lg px-3 py-1.5 text-xs font-mono text-blue-700 focus:outline-none"
-                        />
-                        <button
-                          onClick={copyToClipboard}
-                          className="p-1.5 bg-white border border-blue-200 text-blue-600 rounded-lg hover:bg-blue-100 transition"
-                          title="Sao chép liên kết">
-                          <Icons.Copy />
-                        </button>
-                      </div>
-                      <p className="text-[10px] text-slate-500">
-                        * Bạn chỉ cần mở URL này trên máy tính khác, toàn bộ dữ liệu ứng dụng sẽ tự động được tải từ GoFile về trình duyệt kia mà không cần làm gì thêm!
-                      </p>
-                    </div>
-                  )}
-                </div>
+        // Header Auth button control logic
+        window.handleAuthAction = function() {
+            if (activeUser || isBypassMode) {
+                if (window.location.hash === '#dashboard') {
+                    performLogout();
+                } else {
+                    navigateTo('admin-dashboard');
+                }
+            } else {
+                navigateTo('admin-login');
+            }
+        };
 
-                <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4">
-                  <div>
-                    <h2 className="text-xl font-bold text-slate-900">Quản Lý Nội Dung</h2>
-                    <p className="text-xs text-slate-500">Thêm mới, sửa đổi & quản lý tệp tin trực tiếp trên GoFile Cloud.</p>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      setEditToolId(null);
-                      setIsEditing(false);
-                      setToolForm({
-                        name: "",
-                        description: "",
-                        category: categories[1] || "Windows",
-                        version: "v1.0.0",
-                        size: "",
-                        iconUrl: "",
-                        fileUrl: "",
-                        previewImage: "",
-                        featured: false,
-                        hidden: false
-                      });
-                    }}
-                    className="px-3.5 py-2 bg-blue-600 text-xs font-bold text-white rounded-lg hover:bg-blue-500 transition-all flex items-center space-x-1.5 shadow-md self-start">
-                    <Icons.Plus />
-                    <span>Làm sạch biểu mẫu</span>
-                  </button>
-                </div>
+        function updateNavigationControls() {
+            const navBtnText = document.getElementById('nav-btn-text');
+            const actionBtn = document.getElementById('nav-action-btn');
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  
-                  {/* Cột trái: BIỂU MẪU ĐĂNG TẢI */}
-                  <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 mb-5 flex items-center space-x-2">
-                        <Icons.Upload />
-                        <span>{isEditing ? "CẬP NHẬT TÀI NGUYÊN" : "THÊM MỚI TÀI NGUYÊN TẠM THỜI"}</span>
-                      </h3>
+            if (activeUser || isBypassMode) {
+                if (window.location.hash === '#dashboard') {
+                    navBtnText.textContent = "Đăng xuất Admin";
+                    actionBtn.className = "flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white shadow-sm hover:shadow transition-all uppercase tracking-wider";
+                } else {
+                    navBtnText.textContent = "Vào Admin";
+                    actionBtn.className = "flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow transition-all uppercase tracking-wider";
+                }
+            } else {
+                navBtnText.textContent = "Quản trị viên";
+                actionBtn.className = "flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold bg-slate-900 hover:bg-slate-850 text-white shadow-sm hover:shadow transition-all uppercase tracking-wider";
+            }
 
-                      <form onSubmit={handleSaveTool} className="space-y-4">
-                        
-                        {/* Tên và Danh mục */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Tên công cụ *</label>
-                            <input 
-                              type="text" 
-                              required
-                              value={toolForm.name} 
-                              onChange={(e) => setToolForm({...toolForm, name: e.target.value})}
-                              placeholder="Ví dụ: Photoshop 2026, CCleaner..." 
-                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Danh mục</label>
-                            <select 
-                              value={toolForm.category} 
-                              onChange={(e) => setToolForm({...toolForm, category: e.target.value})}
-                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs cursor-pointer">
-                              {categories.filter(cat => cat !== "Tất cả").map(cat => (
-                                <option key={cat} value={cat}>{cat}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
+            // Update badge status UI
+            const adminStatusBadge = document.getElementById('admin-status-badge');
+            if (adminStatusBadge) {
+                if (isBypassMode) {
+                    adminStatusBadge.textContent = "Cục bộ";
+                    adminStatusBadge.className = "px-2.5 py-0.5 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-extrabold uppercase tracking-wider border border-amber-100";
+                } else if (activeUser) {
+                    adminStatusBadge.textContent = "Đã liên kết Cloud";
+                    adminStatusBadge.className = "px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-extrabold uppercase tracking-wider border border-emerald-100";
+                }
+            }
+        }
 
-                        {/* Mô tả */}
-                        <div>
-                          <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Mô tả tóm tắt (Không bắt buộc)</label>
-                          <textarea 
-                            rows="2"
-                            value={toolForm.description} 
-                            onChange={(e) => setToolForm({...toolForm, description: e.target.value})}
-                            placeholder="Mô tả công dụng hoặc ghi chú cài đặt..." 
-                            className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
-                          />
-                        </div>
 
-                        {/* Thông số */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                          <div>
-                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Phiên bản</label>
-                            <input 
-                              type="text" 
-                              value={toolForm.version} 
-                              onChange={(e) => setToolForm({...toolForm, version: e.target.value})}
-                              placeholder="v1.0.0" 
-                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Dung lượng</label>
-                            <input 
-                              type="text" 
-                              value={toolForm.size} 
-                              onChange={(e) => setToolForm({...toolForm, size: e.target.value})}
-                              placeholder="Ví dụ: 125 MB" 
-                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Lượt tải ban đầu</label>
-                            <input 
-                              type="number" 
-                              value={toolForm.downloads || 0} 
-                              onChange={(e) => setToolForm({...toolForm, downloads: parseInt(e.target.value) || 0})}
-                              placeholder="0" 
-                              className="w-full glass-input px-3.5 py-2 rounded-xl text-xs"
-                            />
-                          </div>
-                        </div>
+        // ==========================================
+        //  DATABASE INTEGRATIONS (FIREBASE / IN-MEMORY)  
+        // ==========================================
 
-                        {/* UPLOAD TỆP TIN */}
-                        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-[10px] font-extrabold uppercase text-blue-600 flex items-center">
-                              <FileTypeIcon type="file" />
-                              <span>Tệp cài đặt phần mềm *</span>
-                            </span>
-                            <div className="flex bg-slate-200/60 rounded-lg p-0.5">
-                              <button 
-                                type="button" 
-                                onClick={() => setUploadMethods({...uploadMethods, file: "upload"})}
-                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.file === "upload" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
-                                📁 Máy tính
-                              </button>
-                              <button 
-                                type="button" 
-                                onClick={() => setUploadMethods({...uploadMethods, file: "link"})}
-                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.file === "link" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
-                                🔗 Dán Link
-                              </button>
-                            </div>
-                          </div>
+        // Firebase Initializer
+        async function setupDatabase() {
+            const statusBadge = document.getElementById('db-status-badge');
+            const statusText = document.getElementById('db-status-text');
 
-                          {uploadMethods.file === "upload" ? (
-                            <div className="space-y-2">
-                              <input 
-                                type="file" 
-                                onChange={(e) => handleGoFileUpload(e, 'file')}
-                                className="hidden" 
-                                id="admin-file-upload-input" 
-                              />
-                              <label htmlFor="admin-file-upload-input" className="flex items-center justify-center p-3 rounded-lg border border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/20 bg-white cursor-pointer text-xs font-semibold text-slate-600 transition">
-                                Chọn tệp tin từ máy để đẩy lên GoFile Cloud
-                              </label>
-                              {toolForm.fileUrl && (
-                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đường dẫn GoFile: {toolForm.fileUrl}</p>
-                              )}
-                            </div>
-                          ) : (
-                            <input 
-                              type="text" 
-                              value={toolForm.fileUrl}
-                              onChange={(e) => setToolForm({...toolForm, fileUrl: e.target.value})}
-                              placeholder="Nhập liên kết tải xuống trực tiếp..." 
-                              className="w-full glass-input px-3.5 py-2 rounded-lg text-xs"
-                            />
-                          )}
-                        </div>
+            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
+                try {
+                    // Initialize Firebase Instance
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
 
-                        {/* UPLOAD ICON */}
-                        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-[10px] font-extrabold uppercase text-blue-600 flex items-center">
-                              <FileTypeIcon type="icon" />
-                              <span>Ảnh Icon hiển thị</span>
-                            </span>
-                            <div className="flex bg-slate-200/60 rounded-lg p-0.5">
-                              <button 
-                                type="button" 
-                                onClick={() => setUploadMethods({...uploadMethods, icon: "upload"})}
-                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.icon === "upload" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
-                                📁 Máy tính
-                              </button>
-                              <button 
-                                type="button" 
-                                onClick={() => setUploadMethods({...uploadMethods, icon: "link"})}
-                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.icon === "link" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
-                                🔗 Dán Link
-                              </button>
-                            </div>
-                          </div>
+                    // Execute Anonymous Auth Priority (Rule 3)
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
 
-                          {uploadMethods.icon === "upload" ? (
-                            <div className="space-y-2">
-                              <input 
-                                type="file" 
-                                accept="image/*"
-                                onChange={(e) => handleGoFileUpload(e, 'icon')}
-                                className="hidden" 
-                                id="admin-icon-upload-input" 
-                              />
-                              <label htmlFor="admin-icon-upload-input" className="flex items-center justify-center p-3 rounded-lg border border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/20 bg-white cursor-pointer text-xs font-semibold text-slate-600 transition">
-                                Chọn ảnh Icon tải lên
-                              </label>
-                              {toolForm.iconUrl && (
-                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đường dẫn Icon: {toolForm.iconUrl}</p>
-                              )}
-                            </div>
-                          ) : (
-                            <input 
-                              type="text" 
-                              value={toolForm.iconUrl}
-                              onChange={(e) => setToolForm({...toolForm, iconUrl: e.target.value})}
-                              placeholder="Nhập liên kết hình ảnh icon trực tiếp..." 
-                              className="w-full glass-input px-3.5 py-2 rounded-lg text-xs"
-                            />
-                          )}
-                        </div>
+                    // Setup Auth listener callback
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            if (!user.isAnonymous) {
+                                activeUser = user;
+                                isBypassMode = false;
+                            }
+                        } else {
+                            activeUser = null;
+                        }
+                        updateNavigationControls();
+                    });
 
-                        {/* UPLOAD ẢNH PREVIEW */}
-                        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-[10px] font-extrabold uppercase text-blue-600 flex items-center">
-                              <FileTypeIcon type="preview" />
-                              <span>Hình ảnh minh họa (Preview Image)</span>
-                            </span>
-                            <div className="flex bg-slate-200/60 rounded-lg p-0.5">
-                              <button 
-                                type="button" 
-                                onClick={() => setUploadMethods({...uploadMethods, preview: "upload"})}
-                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.preview === "upload" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
-                                📁 Máy tính
-                              </button>
-                              <button 
-                                type="button" 
-                                onClick={() => setUploadMethods({...uploadMethods, preview: "link"})}
-                                className={`px-2.5 py-1 text-[9px] font-extrabold rounded-md transition ${uploadMethods.preview === "link" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}>
-                                🔗 Dán Link
-                              </button>
-                            </div>
-                          </div>
+                    isFirebaseOnline = true;
+                    statusText.textContent = "Trực tuyến";
+                    statusBadge.className = "flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200";
+                    showToast('Đã kết nối cơ sở dữ liệu Firebase Cloud.', 'success');
 
-                          {uploadMethods.preview === "upload" ? (
-                            <div className="space-y-2">
-                              <input 
-                                type="file" 
-                                accept="image/*"
-                                onChange={(e) => handleGoFileUpload(e, 'preview')}
-                                className="hidden" 
-                                id="admin-preview-upload-input" 
-                              />
-                              <label htmlFor="admin-preview-upload-input" className="flex items-center justify-center p-3 rounded-lg border border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/20 bg-white cursor-pointer text-xs font-semibold text-slate-600 transition">
-                                Chọn ảnh minh họa tải lên
-                              </label>
-                              {toolForm.previewImage && (
-                                <p className="text-[10px] text-emerald-600 truncate font-mono">Đường dẫn Minh họa: {toolForm.previewImage}</p>
-                              )}
-                            </div>
-                          ) : (
-                            <input 
-                              type="text" 
-                              value={toolForm.previewImage}
-                              onChange={(e) => setToolForm({...toolForm, previewImage: e.target.value})}
-                              placeholder="Nhập liên kết hình ảnh xem trước..." 
-                              className="w-full glass-input px-3.5 py-2 rounded-lg text-xs"
-                            />
-                          )}
-                        </div>
+                } catch (err) {
+                    console.warn("Lỗi cấu hình Firebase, kích hoạt In-Memory Mode", err);
+                    setupInMemoryFallback(statusText, statusBadge);
+                }
+            } else {
+                setupInMemoryFallback(statusText, statusBadge);
+            }
 
-                        {/* Tiến trình Upload */}
-                        {uploadingFile.active && (
-                          <div className="bg-blue-50 p-3 rounded-xl border border-blue-200">
-                            <div className="flex justify-between items-center text-[10px] font-bold mb-1">
-                              <span className="text-blue-600 animate-pulse uppercase">ĐANG GỬI DỮ LIỆU ĐẾN TÀI KHOẢN GOFILE...</span>
-                              <span>{uploadingFile.percent}%</span>
-                            </div>
-                            <div className="w-full bg-slate-200 rounded-full h-1 overflow-hidden">
-                              <div className="bg-gradient-to-r from-blue-500 to-orange-500 h-1 transition-all" style={{ width: `${uploadingFile.percent}%` }}></div>
-                            </div>
-                          </div>
-                        )}
+            // Load data once driver has been resolved
+            loadAppData();
+        }
 
-                        {/* Tuỳ chọn nổi bật / ẩn */}
-                        <div className="flex items-center space-x-6 pt-2">
-                          <label className="flex items-center space-x-2 cursor-pointer">
-                            <input 
-                              type="checkbox" 
-                              checked={toolForm.featured}
-                              onChange={(e) => setToolForm({...toolForm, featured: e.target.checked})}
-                              className="rounded bg-slate-50 border-slate-300 text-blue-600 focus:ring-0" 
-                            />
-                            <span className="text-xs text-slate-600 font-semibold">Nhãn nổi bật (Featured)</span>
-                          </label>
+        function setupInMemoryFallback(statusText, statusBadge) {
+            isFirebaseOnline = false;
+            statusText.textContent = "Ngoại tuyến";
+            statusBadge.className = "flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-750 border border-indigo-200";
+            
+            // Populate arrays in-memory directly
+            categories = [...defaultCategories];
+            resources = [...defaultResources];
+        }
 
-                          <label className="flex items-center space-x-2 cursor-pointer">
-                            <input 
-                              type="checkbox" 
-                              checked={toolForm.hidden}
-                              onChange={(e) => setToolForm({...toolForm, hidden: e.target.checked})}
-                              className="rounded bg-slate-50 border-slate-300 text-blue-600 focus:ring-0" 
-                            />
-                            <span className="text-xs text-slate-600 font-semibold">Ẩn tài nguyên khỏi trang chính</span>
-                          </label>
-                        </div>
+        // FETCH ALL DATA (Reactive listener or safe in-memory updating)
+        async function loadAppData() {
+            if (isFirebaseOnline) {
+                // Rule 1 & Rule 2: Strict Paths & Simple query
+                // Categories loading
+                const catRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
+                onSnapshot(catRef, (snapshot) => {
+                    categories = [];
+                    snapshot.forEach(doc => {
+                        categories.push({ id: doc.id, ...doc.data() });
+                    });
+                    if (categories.length === 0) {
+                        // Seeding categories fallback in Firestore if empty
+                        seedDefaultFirestoreCategories();
+                    } else {
+                        renderCategoriesList();
+                        renderCategoryFormOptions();
+                    }
+                }, (error) => {
+                    console.error("Lỗi đồng bộ Categories:", error);
+                    showToast("Đồng bộ danh mục lỗi: " + error.message, "error");
+                });
 
-                        <div className="pt-3 flex items-center justify-end space-x-2.5">
-                          {isEditing && (
-                            <button 
-                              type="button" 
-                              onClick={() => {
-                                setIsEditing(false);
-                                setEditToolId(null);
-                                setToolForm({
-                                  name: "",
-                                  description: "",
-                                  category: categories[1] || "Windows",
-                                  version: "v1.0.0",
-                                  size: "",
-                                  iconUrl: "",
-                                  fileUrl: "",
-                                  previewImage: "",
-                                  featured: false,
-                                  hidden: false
-                                });
-                              }}
-                              className="px-4 py-2 bg-slate-100 text-xs font-bold text-slate-500 hover:bg-slate-200 rounded-lg transition">
-                              Hủy bỏ
-                            </button>
-                          )}
-                          <button 
-                            type="submit" 
-                            className="px-5 py-2.5 bg-blue-600 text-xs font-bold text-white rounded-xl shadow-sm hover:bg-blue-500">
-                            {isEditing ? "Cập nhật tài nguyên" : "Lưu vào cơ sở dữ liệu"}
-                          </button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
+                // Resources loading
+                const resRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
+                onSnapshot(resRef, (snapshot) => {
+                    resources = [];
+                    snapshot.forEach(doc => {
+                        resources.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderUserResourcesGrid();
+                    renderAdminResourcesTable();
+                    updateMetadataStats();
+                }, (error) => {
+                    console.error("Lỗi đồng bộ Resources:", error);
+                    showToast("Đồng bộ tài nguyên lỗi: " + error.message, "error");
+                });
 
-                  {/* Cột phải: THỐNG KÊ VÀ QUẢN LÝ DANH MỤC DỘNG */}
-                  <div className="space-y-6">
+            } else {
+                // In-Memory Fallback rendering
+                renderCategoriesList();
+                renderCategoryFormOptions();
+                renderUserResourcesGrid();
+                renderAdminResourcesTable();
+                updateMetadataStats();
+            }
+        }
+
+        // PRE-POPULATE DATA SYSTEM (Khởi tạo dữ liệu mẫu nếu DB trống)
+        async function seedDefaultFirestoreCategories() {
+            if (!isFirebaseOnline) return;
+            try {
+                for (const cat of defaultCategories) {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', cat.id), {
+                        name: cat.name
+                    });
+                }
+            } catch (e) {
+                console.error("Lỗi tạo mẫu Categories Firestore:", e);
+            }
+        }
+
+        window.seedInitialData = async function() {
+            if (isFirebaseOnline) {
+                try {
+                    showToast("Đang đồng bộ dữ liệu mẫu lên Firestore...", "warning");
+                    for (const res of defaultResources) {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'resources', res.id), {
+                            title: res.title,
+                            category: res.category,
+                            version: res.version,
+                            description: res.description,
+                            downloadUrl: res.downloadUrl,
+                            image: res.image,
+                            downloadsCount: res.downloadsCount,
+                            status: res.status,
+                            createdAt: res.createdAt,
+                            updatedAt: res.updatedAt
+                        });
+                    }
+                    showToast("Đã khởi tạo dữ liệu mẫu lên đám mây!", "success");
+                } catch (e) {
+                    showToast("Lỗi đẩy dữ liệu mẫu Firestore: " + e.message, "error");
+                }
+            } else {
+                categories = [...defaultCategories];
+                resources = [...defaultResources];
+                currentPage = 1; // Reset pagination page
+                renderCategoriesList();
+                renderCategoryFormOptions();
+                renderUserResourcesGrid();
+                renderAdminResourcesTable();
+                updateMetadataStats();
+                showToast("Khởi tạo lại dữ liệu mẫu trong bộ nhớ đệm!", "success");
+            }
+        };
+
+
+        // ==========================================
+        //         ADMIN AUTHENTICATION FLOW        
+        // ==========================================
+
+        window.handleEmailLogin = async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+
+            if (isFirebaseOnline) {
+                try {
+                    showToast("Đang xác thực thông tin đăng nhập...", "warning");
+                    // Try email/pass first
+                    const userCredential = await signInWithEmailAndPassword(auth, email.includes('@') ? email : `${email}@example.com`, password);
+                    activeUser = userCredential.user;
+                    isBypassMode = false;
                     
-                    {/* Thống kê quy mô */}
-                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-4 flex items-center space-x-2">
-                        <Icons.Activity />
-                        <span>QUY MÔ KHO LƯU TRỮ</span>
-                      </h3>
-                      
-                      <div className="grid grid-cols-2 gap-3.5">
-                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                          <span className="text-[9px] text-slate-400 block uppercase font-bold">Tổng tệp tin</span>
-                          <span className="text-lg font-black text-slate-800">{tools.length}</span>
-                        </div>
-                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                          <span className="text-[9px] text-slate-400 block uppercase font-bold">Lượt tải</span>
-                          <span className="text-lg font-black text-blue-600">
-                            {tools.reduce((sum, item) => sum + (item.downloads || 0), 0)}
-                          </span>
-                        </div>
-                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                          <span className="text-[9px] text-slate-400 block uppercase font-bold">Nổi bật (Hot)</span>
-                          <span className="text-lg font-black text-amber-500">
-                            {tools.filter(t => t.featured).length}
-                          </span>
-                        </div>
-                        <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                          <span className="text-[9px] text-slate-400 block uppercase font-bold">Đã ẩn</span>
-                          <span className="text-lg font-black text-red-500">
-                            {tools.filter(t => t.hidden).length}
-                          </span>
-                        </div>
-                      </div>
+                    showToast(`Đăng nhập thành công! Chào mừng Quản trị viên.`, 'success');
+                    navigateTo('admin-dashboard');
+                } catch (err) {
+                    // Fail over to mock in-memory check for ease of evaluation
+                    if ((email === "admin" || email === "admin@example.com") && password === "admin@123") {
+                        isBypassMode = true;
+                        showToast("Đăng nhập bằng tài khoản Admin (Demo mode) thành công!", "success");
+                        navigateTo('admin-dashboard');
+                    } else {
+                        showToast(`Đăng nhập thất bại: Thông tin tài khoản không chính xác.`, 'error');
+                    }
+                }
+            } else {
+                // In-Memory Credential Checks
+                if ((email === "admin" || email === "admin@example.com") && password === "admin@123") {
+                    isBypassMode = true;
+                    showToast("Đăng nhập bằng tài khoản Admin (Demo mode) thành công!", "success");
+                    navigateTo('admin-dashboard');
+                } else {
+                    showToast("Sai mật khẩu hoặc tài khoản. Hãy điền tài khoản: admin, mật khẩu: admin@123", "error");
+                }
+            }
+        };
 
-                      <div className="mt-5 p-3.5 rounded-xl bg-blue-50 border border-blue-100 text-[11px] text-slate-600 leading-relaxed space-y-2">
-                        <strong className="text-blue-600 block font-bold uppercase">Cấu hình API lưu trữ mặc định:</strong>
-                        <p className="font-mono text-[9px] break-all bg-white p-2 rounded border border-slate-200 text-slate-500">
-                          Account Token: P05BBN...32ir <br />
-                          Account ID: a92268...0700
-                        </p>
-                      </div>
-                    </div>
+        function performLogout() {
+            if (isFirebaseOnline && auth) {
+                signOut(auth).then(() => {
+                    activeUser = null;
+                    isBypassMode = false;
+                    isAdminViewingAsUser = false;
+                    showToast("Đã đăng xuất khỏi tài khoản Quản trị.", "success");
+                    navigateTo('home');
+                });
+            } else {
+                activeUser = null;
+                isBypassMode = false;
+                isAdminViewingAsUser = false;
+                showToast("Đã thoát chế độ Quản trị.", "success");
+                navigateTo('home');
+            }
+        }
 
-                    {/* Quản lý danh mục động */}
-                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-orange-600 mb-4 flex items-center space-x-2">
-                        <Icons.Globe />
-                        <span>QUẢN LÝ DANH MỤC ({categories.length})</span>
-                      </h3>
 
-                      {/* Biểu mẫu chỉnh sửa/thêm danh mục */}
-                      <form onSubmit={editingCategory ? handleSaveCategoryEdit : handleAddCategory} className="mb-4">
-                        <div className="flex space-x-2">
-                          <input 
-                            type="text"
-                            required
-                            placeholder={editingCategory ? `Đang sửa: ${editingCategory}` : "Tên danh mục mới..."}
-                            value={editingCategory ? editCategoryInputValue : newCategoryName}
-                            onChange={(e) => editingCategory ? setEditCategoryInputValue(e.target.value) : setNewCategoryName(e.target.value)}
-                            className="flex-1 px-3 py-1.5 glass-input rounded-xl text-xs focus:outline-none"
-                          />
-                          <button 
-                            type="submit"
-                            className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-50 text-xs font-bold text-white rounded-xl shadow-md transition flex-shrink-0">
-                            {editingCategory ? "Lưu" : "Thêm"}
-                          </button>
-                          {editingCategory && (
-                            <button 
-                              type="button"
-                              onClick={() => { setEditingCategory(null); setEditCategoryInputValue(""); }}
-                              className="px-2 py-1.5 bg-slate-200 hover:bg-slate-300 text-xs font-bold text-slate-600 rounded-xl transition">
-                              Hủy
-                            </button>
-                          )}
-                        </div>
-                      </form>
+        // ==========================================
+        //  UI RENDERING LOGIC & INTERACTIONS (HOME) 
+        // ==========================================
 
-                      {/* Danh sách danh mục với các thao tác */}
-                      <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
-                        {categories.map((cat) => (
-                          <div 
-                            key={cat} 
-                            className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/60 hover:bg-white transition-colors duration-150">
-                            <span className="text-xs font-bold text-slate-700">{cat}</span>
-                            
-                            {cat !== "Tất cả" && (
-                              <div className="flex items-center space-x-1">
-                                <button 
-                                  onClick={() => handleStartEditCategory(cat)}
-                                  className="p-1 text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                                  title="Chỉnh sửa danh mục">
-                                  <Icons.Edit />
-                                </button>
-                                <button 
-                                  onClick={() => handleDeleteCategory(cat)}
-                                  className="p-1 text-red-600 hover:bg-red-50 rounded-lg transition"
-                                  title="Xóa danh mục">
-                                  <Icons.Trash />
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+        // RENDER SIDEBAR CATEGORIES
+        function renderCategoriesList() {
+            const container = document.getElementById('categories-filter-list');
+            const countBadge = document.getElementById('category-count');
+            if (!container) return;
 
-                      <div className="mt-4 text-[10px] text-slate-400 italic">
-                        * Khi chỉnh sửa tên danh mục, toàn bộ các tệp tin tài nguyên trực thuộc sẽ được tự động đồng bộ sang danh mục mới.
-                      </div>
-                    </div>
+            countBadge.textContent = categories.length;
 
-                  </div>
-
-                </div>
-
-                {/* BẢNG QUẢN LÝ DANH SÁCH TÀI NGUYÊN */}
-                <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden mt-6 shadow-sm">
-                  <div className="p-5 border-b border-slate-100">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 flex items-center space-x-2">
-                      <Icons.Home />
-                      <span>Danh Sách Quản Lý Cơ Sở Dữ Liệu</span>
-                    </h3>
-                  </div>
-
-                  <div className="overflow-x-auto w-full">
-                    <table className="w-full text-left text-xs text-slate-500">
-                      <thead className="text-[10px] uppercase tracking-wider bg-slate-50 text-slate-400 font-extrabold border-b border-slate-200/80">
-                        <tr>
-                          <th className="py-3.5 px-5">ICON</th>
-                          <th className="py-3.5 px-5">TÊN TÀI NGUYÊN</th>
-                          <th className="py-3.5 px-5">DANH MỤC</th>
-                          <th className="py-3.5 px-5">VERSION</th>
-                          <th className="py-3.5 px-5">DOWNLOADS</th>
-                          <th className="py-3.5 px-5 text-right">THAO TÁC</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {tools.map((tool) => (
-                          <tr key={tool.id} className="hover:bg-slate-50/50 transition-colors">
-                            <td className="py-3.5 px-5">
-                              <img 
-                                src={tool.iconUrl || 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=120&q=80'} 
-                                alt="Icon" 
-                                className="w-8 h-8 rounded-lg object-cover border border-slate-100"
-                              />
-                            </td>
-                            <td className="py-3.5 px-5 font-bold text-slate-800">
-                              <div>{tool.name}</div>
-                              <div className="flex space-x-1.5 mt-1">
-                                {tool.featured && <span className="px-1.5 py-0.5 rounded text-[8px] bg-orange-50 text-orange-600 border border-orange-100 font-bold">HOT</span>}
-                                {tool.hidden && <span className="px-1.5 py-0.5 rounded text-[8px] bg-red-50 text-red-600 border border-red-100 font-bold">ẨN</span>}
-                              </div>
-                            </td>
-                            <td className="py-3.5 px-5 text-[11px] font-semibold">{tool.category}</td>
-                            <td className="py-3.5 px-5 text-[11px] text-blue-600 font-extrabold">{tool.version}</td>
-                            <td className="py-3.5 px-5 text-[11px] font-bold text-slate-600">{tool.downloads || 0} Lượt</td>
-                            <td className="py-3.5 px-5 text-right">
-                              <div className="flex items-center justify-end space-x-1">
-                                
-                                <button 
-                                  onClick={() => handleToggleFeatured(tool)} 
-                                  title="Đánh dấu nổi bật"
-                                  className={`p-1.5 rounded transition ${tool.featured ? 'text-amber-500 hover:bg-amber-50' : 'text-slate-400 hover:text-slate-800'}`}>
-                                  <Icons.Star filled={tool.featured} />
-                                </button>
-                                
-                                <button 
-                                  onClick={() => handleToggleHide(tool)} 
-                                  title={tool.hidden ? "Hiện" : "Ẩn"}
-                                  className={`p-1.5 rounded transition ${tool.hidden ? 'text-red-500 hover:bg-red-50' : 'text-slate-400 hover:text-slate-800'}`}>
-                                  {tool.hidden ? <Icons.EyeOff /> : <Icons.Eye />}
-                                </button>
-
-                                <button 
-                                  onClick={() => handleLoadEdit(tool)} 
-                                  title="Sửa thông tin"
-                                  className="p-1.5 rounded text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition">
-                                  <Icons.Edit />
-                                </button>
-
-                                <button 
-                                  onClick={() => setItemToDelete(tool.id)} 
-                                  title="Xóa vĩnh viễn"
-                                  className="p-1.5 rounded text-red-600 hover:text-red-700 hover:bg-red-50 transition">
-                                  <Icons.Trash />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-              </div>
-            )}
-
-          </main>
-
-          {/* FOOTER */}
-          <footer className="mt-20 border-t border-slate-200 pt-8 max-w-5xl mx-auto px-4 text-center text-xs text-slate-400 font-semibold">
-            <p>© 2026 Kho Tài Nguyên Platform. Tối ưu hóa lưu trữ đám mây qua hệ thống GoFile API.</p>
-          </footer>
-
-          {/* ĐĂNG NHẬP ADMIN */}
-          {showLoginModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
-              <div className="w-full max-w-md glassmorphism rounded-2xl p-6 relative border border-slate-200 shadow-2xl">
-                <button 
-                  onClick={() => {
-                    setShowLoginModal(false);
-                    setAdminEmail("");
-                    setAdminPassword("");
-                  }} 
-                  className="absolute top-4 right-4 p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-white transition">
-                  <Icons.Close />
+            let html = `
+                <button onclick="filterByCategory('all')" class="w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center justify-between transition-all ${currentCategoryFilter === 'all' ? 'bg-primary-600 text-white shadow-md shadow-primary-500/15' : 'text-slate-600 hover:bg-slate-50'}">
+                    <span class="flex items-center space-x-2.5">
+                        <i class="fa-solid fa-layer-group text-xs"></i>
+                        <span>Tất cả danh mục</span>
+                    </span>
+                    <span class="${currentCategoryFilter === 'all' ? 'bg-primary-700/60 text-white' : 'bg-slate-100 text-slate-500'} px-2.5 py-0.5 rounded-full text-[10px] font-extrabold">${resources.filter(r => r.status).length}</span>
                 </button>
+            `;
 
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                    <Icons.Lock />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">Đăng Nhập Quản Trị Viên</h3>
-                    <p className="text-[11px] text-slate-500">Vui lòng điền Email và mật khẩu quản trị để tiếp tục.</p>
-                  </div>
-                </div>
+            categories.forEach(cat => {
+                const countOfCat = resources.filter(r => r.category === cat.name && r.status).length;
+                html += `
+                    <button onclick="filterByCategory('${cat.name}')" class="w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center justify-between transition-all ${currentCategoryFilter === cat.name ? 'bg-primary-600 text-white shadow-md shadow-primary-500/15' : 'text-slate-600 hover:bg-slate-50'}">
+                        <span class="flex items-center space-x-2.5 truncate">
+                            <i class="fa-solid fa-folder text-xs text-amber-500"></i>
+                            <span class="truncate">${cat.name}</span>
+                        </span>
+                        <span class="${currentCategoryFilter === cat.name ? 'bg-primary-700/60 text-white' : 'bg-slate-100 text-slate-500'} px-2.5 py-0.5 rounded-full text-[10px] font-extrabold">${countOfCat}</span>
+                    </button>
+                `;
+            });
 
-                <form onSubmit={handleAdminLogin} className="space-y-4" autoCorrect="off" autoCapitalize="off" autoComplete="off">
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Email quản trị *</label>
-                    <input 
-                      type="email" 
-                      required
-                      placeholder="Email quản trị" 
-                      value={adminEmail}
-                      onChange={(e) => setAdminEmail(e.target.value)}
-                      className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs"
-                      autoComplete="new-email"
-                    />
-                  </div>
+            container.innerHTML = html;
+        }
 
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase text-slate-500 mb-1">Mật khẩu *</label>
-                    <input 
-                      type="password" 
-                      required
-                      placeholder="Mật khẩu" 
-                      value={adminPassword}
-                      onChange={(e) => setAdminPassword(e.target.value)}
-                      className="w-full glass-input px-3.5 py-2.5 rounded-xl text-xs"
-                      autoComplete="new-password"
-                    />
-                  </div>
+        // RENDER SELECT OPTIONS IN FORES
+        function renderCategoryFormOptions() {
+            const select = document.getElementById('form-category');
+            if (!select) return;
 
-                  <button 
-                    type="submit" 
-                    className="w-full py-2.5 mt-2 bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white rounded-xl transition duration-150 shadow-md">
-                    Xác nhận thông tin
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
+            let html = '<option value="" disabled selected>-- Chọn danh mục tài nguyên --</option>';
+            categories.forEach(cat => {
+                html += `<option value="${cat.name}">${cat.name}</option>`;
+            });
+            select.innerHTML = html;
+        }
 
-        </div>
-      );
-    }
+        // RENDER MAIN CARDS GRID WITH INTEGRATED PAGINATION (Prevents Layout Jumps)
+        function renderUserResourcesGrid() {
+            const grid = document.getElementById('resources-grid');
+            const countBadge = document.getElementById('resource-count-badge');
+            const emptyState = document.getElementById('empty-state-container');
+            const gridTitle = document.getElementById('resource-grid-title');
+            
+            if (!grid) return;
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+            // Apply filters
+            let filtered = resources.filter(res => res.status === true);
+
+            if (currentCategoryFilter !== 'all') {
+                filtered = filtered.filter(res => res.category === currentCategoryFilter);
+                gridTitle.textContent = currentCategoryFilter;
+            } else {
+                gridTitle.textContent = "Tất cả tài nguyên";
+            }
+
+            if (searchKeyword.trim() !== '') {
+                const kw = searchKeyword.toLowerCase();
+                filtered = filtered.filter(res => 
+                    res.title.toLowerCase().includes(kw) || 
+                    res.description.toLowerCase().includes(kw) ||
+                    res.category.toLowerCase().includes(kw)
+                );
+            }
+
+            // Sort
+            if (sortBy === 'newest') {
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            } else if (sortBy === 'oldest') {
+                filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            } else if (sortBy === 'downloads') {
+                filtered.sort((a, b) => (b.downloadsCount || 0) - (a.downloadsCount || 0));
+            } else if (sortBy === 'alphabet') {
+                filtered.sort((a, b) => a.title.localeCompare(b.title));
+            }
+
+            countBadge.textContent = `${filtered.length} kết quả`;
+
+            if (filtered.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                document.getElementById('pagination-panel').classList.add('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            document.getElementById('pagination-panel').classList.remove('hidden');
+
+            // PAGINATION MATHEMATICS
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            if (currentPage > totalPages) {
+                currentPage = Math.max(1, totalPages);
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const paginatedItems = filtered.slice(startIndex, startIndex + itemsPerPage);
+
+            // Render resources cards
+            let html = '';
+            paginatedItems.forEach(res => {
+                const hasValidImg = res.image && res.image.startsWith('http');
+                const imgPlaceholder = `
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 text-white flex items-center justify-center text-sm shadow-md font-bold shrink-0">
+                        ${res.title.charAt(0).toUpperCase()}
+                    </div>
+                `;
+                
+                // FIXED ONERROR COLLISION: Using window.handleImageError cleanly solves nested HTML single/double quotes issues
+                const imageTag = hasValidImg ? 
+                    `<img src="${res.image}" onerror="window.handleImageError(this, '${res.title.charAt(0)}')" alt="${res.title}" class="w-11 h-11 rounded-2xl object-cover shrink-0 shadow-sm border border-slate-100/50">` : 
+                    imgPlaceholder;
+
+                html += `
+                    <div class="bg-white border border-slate-200/60 rounded-3xl p-5 flex flex-col justify-between hover:shadow-hover-premium hover:border-primary-400 transition-all duration-300 h-[195px] shadow-premium group">
+                        <div class="space-y-3">
+                            <!-- Header Info -->
+                            <div class="flex items-start space-x-3">
+                                <div class="w-11 h-11 shrink-0 flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
+                                    ${imageTag}
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <span class="inline-block text-[9px] font-extrabold text-slate-400 tracking-wider uppercase">${res.category}</span>
+                                    <h3 class="text-xs font-bold text-slate-800 truncate leading-snug tracking-tight group-hover:text-primary-600 transition-colors" title="${res.title}">${res.title}</h3>
+                                    <span class="inline-flex items-center text-[9px] bg-slate-50 border border-slate-100 text-slate-500 rounded px-1.5 py-0.5 mt-0.5 font-bold">
+                                        v${res.version}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-[11px] text-slate-500 leading-relaxed line-clamp-2 font-medium">
+                                ${res.description || "Chưa có mô tả chi tiết cho phần mềm."}
+                            </p>
+                        </div>
+
+                        <!-- Card Actions -->
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                            <button onclick="openResourceDetail('${res.id}')" class="text-[10px] font-extrabold text-slate-400 hover:text-primary-600 flex items-center space-x-1.5 uppercase tracking-wider transition-colors">
+                                <i class="fa-solid fa-circle-info text-xs"></i>
+                                <span>Chi tiết</span>
+                            </button>
+
+                            <a href="${res.downloadUrl}" target="_blank" onclick="incrementDownloadCounter('${res.id}')" class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-800 text-white text-[10px] font-extrabold transition-all uppercase shadow-md shadow-primary-500/10 hover:shadow-primary-500/20 hover:scale-[1.02] tracking-wider">
+                                <i class="fa-solid fa-cloud-arrow-down"></i>
+                                <span>Tải về</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // If page is not completely full, we pad with empty transparent elements to maintain perfect height!
+            const paddedDifference = itemsPerPage - paginatedItems.length;
+            if (paddedDifference > 0 && paginatedItems.length > 0) {
+                for (let i = 0; i < paddedDifference; i++) {
+                    html += `<div class="hidden lg:block border border-transparent rounded-3xl p-5 h-[195px] pointer-events-none opacity-0"></div>`;
+                }
+            }
+
+            grid.innerHTML = html;
+
+            // RENDER PAGINATION CONTROLS
+            const infoSpan = document.getElementById('pagination-info');
+            const buttonsContainer = document.getElementById('pagination-buttons');
+            
+            infoSpan.textContent = `Trang ${currentPage} / ${totalPages}`;
+
+            let buttonsHtml = `
+                <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all">
+                    <i class="fa-solid fa-angle-left"></i>
+                </button>
+            `;
+
+            for (let i = 1; i <= totalPages; i++) {
+                buttonsHtml += `
+                    <button onclick="changePage(${i})" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${currentPage === i ? 'bg-primary-600 text-white shadow-md shadow-primary-500/10' : 'border border-slate-200 text-slate-700 hover:bg-slate-50' }">
+                        ${i}
+                    </button>
+                `;
+            }
+
+            buttonsHtml += `
+                <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all">
+                    <i class="fa-solid fa-angle-right"></i>
+                </button>
+            `;
+
+            buttonsContainer.innerHTML = buttonsHtml;
+        }
+
+        window.changePage = function(pageNumber) {
+            currentPage = pageNumber;
+            renderUserResourcesGrid();
+        };
+
+        // TRIGGER FILTERS
+        window.filterByCategory = function(category) {
+            currentCategoryFilter = category;
+            currentPage = 1; // Reset to page 1 on filter
+            renderCategoriesList();
+            renderUserResourcesGrid();
+        };
+
+        window.handleSearch = function(keyword) {
+            searchKeyword = keyword;
+            currentPage = 1; // Reset to page 1 on search
+            document.getElementById('header-search').value = keyword;
+            document.getElementById('mobile-hero-search').value = keyword;
+            renderUserResourcesGrid();
+        };
+
+        window.handleSortChange = function(value) {
+            sortBy = value;
+            currentPage = 1;
+            renderUserResourcesGrid();
+        };
+
+        window.resetFilters = function() {
+            searchKeyword = '';
+            currentCategoryFilter = 'all';
+            currentPage = 1;
+            document.getElementById('header-search').value = '';
+            document.getElementById('mobile-hero-search').value = '';
+            renderCategoriesList();
+            renderUserResourcesGrid();
+        };
+
+        function updateMetadataStats() {
+            const statTotalRes = document.getElementById('stat-total-resources');
+            const statTotalDownloads = document.getElementById('stat-total-downloads');
+            const adminResBadge = document.getElementById('admin-res-badge');
+
+            const visibleCount = resources.filter(r => r.status).length;
+            const totalDownloads = resources.reduce((acc, res) => acc + (res.downloadsCount || 0), 0);
+
+            if (statTotalRes) statTotalRes.textContent = visibleCount;
+            if (statTotalDownloads) statTotalDownloads.textContent = totalDownloads;
+            if (adminResBadge) adminResBadge.textContent = resources.length;
+        }
+
+
+        // ==========================================
+        //        RESOURCE DETAIL PANEL WINDOW       
+        // ==========================================
+
+        window.openResourceDetail = function(id) {
+            const res = resources.find(r => r.id === id);
+            if (!res) return;
+
+            document.getElementById('modal-res-title').textContent = res.title;
+            document.getElementById('modal-res-category').textContent = res.category;
+            document.getElementById('modal-res-version').textContent = `Phiên bản: ${res.version}`;
+            document.getElementById('modal-res-description').textContent = res.description;
+            document.getElementById('modal-res-downloads').textContent = res.downloadsCount || 0;
+            document.getElementById('modal-res-updated').textContent = res.updatedAt || res.createdAt || "30/05/2026";
+            document.getElementById('modal-res-created').textContent = res.createdAt || "30/05/2026";
+
+            const downloadLink = document.getElementById('modal-download-link');
+            downloadLink.href = res.downloadUrl;
+            downloadLink.setAttribute('data-target-id', res.id);
+
+            // Thumbnail inside Detail window
+            const imgContainer = document.getElementById('modal-res-image-container');
+            const hasValidImg = res.image && res.image.startsWith('http');
+            if (hasValidImg) {
+                imgContainer.innerHTML = `<img src="${res.image}" alt="${res.title}" class="w-full h-full object-cover rounded-2xl shadow-inner">`;
+            } else {
+                imgContainer.innerHTML = `
+                    <div class="w-full h-full bg-gradient-to-br from-primary-500 to-secondary-500 text-white flex items-center justify-center font-bold text-lg">
+                        ${res.title.charAt(0).toUpperCase()}
+                    </div>
+                `;
+            }
+
+            document.getElementById('modal-detail').classList.remove('hidden');
+        };
+
+        window.closeDetailModal = function() {
+            document.getElementById('modal-detail').classList.add('hidden');
+        };
+
+        // TRACK DOWNLOAD COUNT
+        window.incrementDownloadCounter = async function(id) {
+            const index = resources.findIndex(r => r.id === id);
+            if (index === -1) return;
+
+            const updatedDownloads = (resources[index].downloadsCount || 0) + 1;
+
+            if (isFirebaseOnline && db) {
+                try {
+                    const resDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
+                    await updateDoc(resDocRef, {
+                        downloadsCount: updatedDownloads
+                    });
+                } catch (e) {
+                    console.error("Lỗi cập nhật lượt tải Firebase:", e);
+                }
+            } else {
+                resources[index].downloadsCount = updatedDownloads;
+                renderUserResourcesGrid();
+                renderAdminResourcesTable();
+                updateMetadataStats();
+            }
+        };
+
+        window.incrementDownloadCounterFromModal = function() {
+            const downloadLink = document.getElementById('modal-download-link');
+            const id = downloadLink.getAttribute('data-target-id');
+            if (id) {
+                incrementDownloadCounter(id);
+                const counterSpan = document.getElementById('modal-res-downloads');
+                if (counterSpan) {
+                    const currentVal = parseInt(counterSpan.textContent) || 0;
+                    counterSpan.textContent = currentVal + 1;
+                }
+            }
+        };
+
+
+        // ==========================================
+        //      ADMIN CONTROL ACTIONS & FORMS        
+        // ==========================================
+
+        window.switchAdminTab = function(tabName) {
+            activeAdminTab = tabName;
+            renderAdminResourcesTable();
+        };
+
+        window.handleAdminSearch = function(keyword) {
+            adminSearchKeyword = keyword;
+            renderAdminResourcesTable();
+        };
+
+        // RENDER ADMIN TABLE OF CONTENT
+        function renderAdminResourcesTable() {
+            const tbody = document.getElementById('admin-resources-tbody');
+            if (!tbody) return;
+
+            let filtered = [...resources];
+
+            if (adminSearchKeyword.trim() !== '') {
+                const kw = adminSearchKeyword.toLowerCase();
+                filtered = filtered.filter(res => 
+                    res.title.toLowerCase().includes(kw) || 
+                    res.category.toLowerCase().includes(kw) ||
+                    res.version.toLowerCase().includes(kw)
+                );
+            }
+
+            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
+                            Không có tài nguyên khớp với từ khóa tìm kiếm.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(res => {
+                const badgeStatus = res.status ? 
+                    `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase tracking-wider">Hiển thị</span>` :
+                    `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-slate-100 text-slate-500 border border-slate-200 uppercase tracking-wider">Ẩn</span>`;
+
+                html += `
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="py-3 px-5 font-bold text-slate-800 text-xs">${res.title}</td>
+                        <td class="py-3 px-5 text-xs text-slate-500">${res.category}</td>
+                        <td class="py-3 px-5 text-xs font-semibold text-slate-600">v${res.version}</td>
+                        <td class="py-3 px-5 text-xs font-bold text-slate-600">${res.downloadsCount || 0}</td>
+                        <td class="py-3 px-5">${badgeStatus}</td>
+                        <td class="py-3 px-5 text-right space-x-1.5">
+                            <button onclick="toggleResourceStatus('${res.id}')" title="Ẩn/Hiện" class="p-1.5 text-xs text-slate-500 hover:text-slate-800 rounded-lg border border-slate-200 hover:bg-white transition-all">
+                                <i class="fa-solid ${res.status ? 'fa-eye-slash' : 'fa-eye'}"></i>
+                            </button>
+                            <button onclick="editResource('${res.id}')" class="p-1.5 text-xs text-blue-500 hover:text-blue-700 rounded-lg border border-blue-100 hover:bg-white transition-all">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="deleteResource('${res.id}')" class="p-1.5 text-xs text-rose-500 hover:text-rose-700 rounded-lg border border-rose-100 hover:bg-white transition-all">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // TOGGLE HIDE/SHOW ON MAIN PAGE
+        window.toggleResourceStatus = async function(id) {
+            const index = resources.findIndex(r => r.id === id);
+            if (index === -1) return;
+
+            const newStatus = !resources[index].status;
+
+            if (isFirebaseOnline && db) {
+                try {
+                    const resDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
+                    await updateDoc(resDocRef, {
+                        status: newStatus,
+                        updatedAt: "2026-05-30"
+                    });
+                    showToast(`Đã cập nhật trạng thái hiển thị của tài nguyên!`, 'success');
+                } catch (e) {
+                    showToast(`Không thể thay đổi trạng thái: ${e.message}`, 'error');
+                }
+            } else {
+                resources[index].status = newStatus;
+                resources[index].updatedAt = "2026-05-30";
+                renderUserResourcesGrid();
+                renderAdminResourcesTable();
+                updateMetadataStats();
+                showToast(`Đã cập nhật trạng thái hiển thị thành công!`, 'success');
+            }
+        };
+
+        // DELETE RESOURCE
+        window.deleteResource = async function(id) {
+            const res = resources.find(r => r.id === id);
+            if (!res) return;
+
+            const result = confirm(`Xác nhận xóa tài nguyên: "${res.title}"?`);
+            if (!result) return;
+
+            if (isFirebaseOnline && db) {
+                try {
+                    const resDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
+                    await deleteDoc(resDocRef);
+                    showToast(`Đã xóa tài nguyên "${res.title}" khỏi đám mây.`, 'success');
+                } catch (e) {
+                    showToast(`Không thể xóa tài nguyên: ${e.message}`, 'error');
+                }
+            } else {
+                resources = resources.filter(r => r.id !== id);
+                renderUserResourcesGrid();
+                renderAdminResourcesTable();
+                updateMetadataStats();
+                showToast(`Đã xóa vĩnh viễn tài nguyên "${res.title}".`, 'success');
+            }
+        };
+
+        // SUBMIT ADD/EDIT RESOURCE FORM
+        window.handleResourceSubmit = async function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById('form-resource-id').value;
+            const title = document.getElementById('form-title').value.trim();
+            const category = document.getElementById('form-category').value;
+            const version = document.getElementById('form-version').value.trim();
+            const downloadUrl = document.getElementById('form-downloadUrl').value.trim();
+            const image = document.getElementById('form-image').value.trim();
+            const description = document.getElementById('form-description').value.trim();
+            const status = document.getElementById('form-status').checked;
+
+            if (!title || !category || !version || !downloadUrl || !description) {
+                showToast("Vui lòng điền đầy đủ các thông tin bắt buộc (*)", "warning");
+                return;
+            }
+
+            const payload = {
+                title,
+                category,
+                version,
+                downloadUrl,
+                image: image || "",
+                description,
+                status,
+                updatedAt: "2026-05-30"
+            };
+
+            if (isFirebaseOnline && db) {
+                try {
+                    if (id) {
+                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
+                        await updateDoc(docRef, payload);
+                        showToast(`Cập nhật tài nguyên "${title}" thành công!`, 'success');
+                    } else {
+                        const newPayload = {
+                            ...payload,
+                            downloadsCount: 0,
+                            createdAt: "2026-05-30"
+                        };
+                        const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
+                        await addDoc(colRef, newPayload);
+                        showToast(`Lưu và tải lên tài nguyên "${title}" thành công!`, 'success');
+                    }
+                    closeResourceModal();
+                } catch (err) {
+                    showToast(`Lỗi lưu dữ liệu: ${err.message}`, 'error');
+                }
+            } else {
+                if (id) {
+                    const idx = resources.findIndex(r => r.id === id);
+                    if (idx !== -1) {
+                        resources[idx] = { ...resources[idx], ...payload };
+                        showToast(`Cập nhật tài nguyên "${title}" thành công!`, 'success');
+                    }
+                } else {
+                    const newLocalId = 'local-res-' + Math.random().toString(36).substr(2, 9);
+                    const newLocalRes = {
+                        id: newLocalId,
+                        ...payload,
+                        downloadsCount: 0,
+                        createdAt: "2026-05-30"
+                    };
+                    resources.push(newLocalRes);
+                    showToast(`Thêm tài nguyên "${title}" thành công!`, 'success');
+                }
+                currentPage = 1;
+                renderUserResourcesGrid();
+                renderAdminResourcesTable();
+                updateMetadataStats();
+                closeResourceModal();
+            }
+        };
+
+        // OPEN FOR ADD
+        window.openResourceModal = function() {
+            document.getElementById('form-resource-id').value = "";
+            document.getElementById('resource-form').reset();
+            document.getElementById('form-modal-title').textContent = "Thêm tài nguyên mới";
+            document.getElementById('form-status').checked = true;
+
+            document.getElementById('modal-resource-form').classList.remove('hidden');
+        };
+
+        // OPEN FOR EDIT
+        window.editResource = function(id) {
+            const res = resources.find(r => r.id === id);
+            if (!res) return;
+
+            document.getElementById('form-resource-id').value = res.id;
+            document.getElementById('form-title').value = res.title;
+            document.getElementById('form-category').value = res.category;
+            document.getElementById('form-version').value = res.version;
+            document.getElementById('form-downloadUrl').value = res.downloadUrl;
+            document.getElementById('form-image').value = res.image || "";
+            document.getElementById('form-description').value = res.description;
+            document.getElementById('form-status').checked = res.status;
+
+            document.getElementById('form-modal-title').textContent = `Chỉnh sửa tài nguyên: ${res.title}`;
+            document.getElementById('modal-resource-form').classList.remove('hidden');
+        };
+
+        window.closeResourceModal = function() {
+            document.getElementById('modal-resource-form').classList.add('hidden');
+        };
+
+
+        // ==========================================
+        //         CATEGORY MANAGEMENT ACTIONS       
+        // ==========================================
+
+        window.openCategoryManager = function() {
+            renderModalCategoryList();
+            document.getElementById('modal-category-manager').classList.remove('hidden');
+        };
+
+        window.closeCategoryManager = function() {
+            document.getElementById('modal-category-manager').classList.add('hidden');
+        };
+
+        function renderModalCategoryList() {
+            const list = document.getElementById('modal-category-list');
+            if (!list) return;
+
+            if (categories.length === 0) {
+                list.innerHTML = `<div class="text-slate-400 text-xs text-center py-4">Chưa có danh mục nào.</div>`;
+                return;
+            }
+
+            let html = '';
+            categories.forEach(cat => {
+                const count = resources.filter(r => r.category === cat.name).length;
+                html += `
+                    <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-white text-xs transition-colors">
+                        <span class="font-semibold text-slate-700 flex items-center space-x-1.5">
+                            <i class="fa-solid fa-folder text-amber-500"></i>
+                            <span>${cat.name}</span>
+                            <span class="text-[9px] text-slate-400 font-normal">(${count} tài nguyên)</span>
+                        </span>
+                        <button onclick="deleteCategory('${cat.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Xóa danh mục">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        window.handleCategoryAdd = async function(event) {
+            event.preventDefault();
+            const input = document.getElementById('form-new-cat-name');
+            const newCatName = input.value.trim();
+
+            if (!newCatName) return;
+
+            // Check if duplicate
+            const exists = categories.some(c => c.name.toLowerCase() === newCatName.toLowerCase());
+            if (exists) {
+                showToast("Danh mục này đã tồn tại!", "warning");
+                return;
+            }
+
+            const newId = 'cat-' + Math.random().toString(36).substr(2, 9);
+
+            if (isFirebaseOnline && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', newId);
+                    await setDoc(docRef, { name: newCatName });
+                    showToast(`Đã thêm danh mục "${newCatName}" lên Firestore!`, 'success');
+                } catch (e) {
+                    showToast(`Không thể lưu danh mục: ${e.message}`, 'error');
+                }
+            } else {
+                categories.push({ id: newId, name: newCatName });
+                renderCategoriesList();
+                renderCategoryFormOptions();
+                renderUserResourcesGrid();
+                showToast(`Đã thêm danh mục "${newCatName}"!`, 'success');
+            }
+
+            input.value = '';
+            renderModalCategoryList();
+        };
+
+        window.deleteCategory = async function(id) {
+            const cat = categories.find(c => c.id === id);
+            if (!cat) return;
+
+            // Check if category currently contains active resources
+            const resourcesInCat = resources.filter(r => r.category === cat.name);
+            if (resourcesInCat.length > 0) {
+                showToast(`Không thể xóa! Danh mục "${cat.name}" đang chứa ${resourcesInCat.length} tài nguyên. Bạn cần xóa các tài nguyên này trước.`, 'warning');
+                return;
+            }
+
+            const result = confirm(`Xác nhận xóa danh mục "${cat.name}"?`);
+            if (!result) return;
+
+            if (isFirebaseOnline && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', id);
+                    await deleteDoc(docRef);
+                    showToast(`Đã xóa danh mục "${cat.name}" khỏi đám mây.`, 'success');
+                } catch (e) {
+                    showToast(`Lỗi xóa danh mục: ${e.message}`, 'error');
+                }
+            } else {
+                categories = categories.filter(c => c.id !== id);
+                renderCategoriesList();
+                renderCategoryFormOptions();
+                renderUserResourcesGrid();
+                showToast(`Đã xóa danh mục "${cat.name}".`, 'success');
+            }
+
+            renderModalCategoryList();
+        };
+
+
+        // ==========================================
+        //        BOOTSTRAP LIFE CYCLE MANAGER       
+        // ==========================================
+
+        window.onload = function() {
+            // Setup dynamic Favicon using inline SVG data
+            const linkFav = document.createElement('link');
+            linkFav.rel = 'icon';
+            linkFav.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>';
+            document.head.appendChild(linkFav);
+
+            setupDatabase();
+
+            const hash = window.location.hash;
+            if (hash === '#login') {
+                navigateTo('admin-login');
+            } else if (hash === '#dashboard') {
+                navigateTo('admin-dashboard');
+            } else {
+                navigateTo('home');
+            }
+        };
+
+    </script>
 </body>
 </html>
