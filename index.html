@@ -33,24 +33,19 @@
             }
         }
     </script>
-    <!-- Google Fonts -->
+    <!-- Google Fonts - Inter Unified Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
         /* Anti-layout shift styles */
         .resources-container-min-height {
             min-height: 590px;
-        }
-        /* Grid overlay decor for banner */
-        .grid-decor {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0);
-            background-size: 24px 24px;
         }
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
@@ -67,9 +62,25 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* Continuous CSS Marquee Animation without pause on hover */
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+        .marquee-inner {
+            display: inline-block;
+            animation: marquee var(--marquee-speed, 18s) linear infinite;
+        }
     </style>
 </head>
-<body class="h-full flex flex-col bg-slate-50/50 text-slate-800">
+<body class="h-full flex flex-col bg-slate-50/50 text-slate-800 transition-all duration-300">
 
     <!-- TOAST NOTIFICATION SYSTEM -->
     <div id="toast-container" class="fixed top-4 right-4 z-[70] flex flex-col gap-2 max-w-sm w-full"></div>
@@ -87,21 +98,20 @@
     <div class="flex-grow flex flex-col min-h-screen">
         
         <!-- HEADER / NAVIGATION BAR -->
-        <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100 transition-all duration-200 shadow-sm">
+        <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 transition-all duration-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-20">
-                    <!-- Logo & Brand Name (Enlarged and premium) -->
+                    <!-- Logo & Brand Name -->
                     <div class="flex items-center space-x-3.5 cursor-pointer" onclick="navigateTo('home')">
                         <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-800 text-white shadow-lg shadow-primary-500/25 transform hover:scale-105 transition-all duration-200">
                             <i class="fa-solid fa-cloud-arrow-down text-xl"></i>
                         </div>
                         <div>
-                            <span class="text-xl sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-800 bg-clip-text text-transparent">KHO TÀI NGUYÊN</span>
-                            <span class="hidden sm:inline-block text-[9px] block font-bold text-slate-400 tracking-widest uppercase ml-0.5">HỆ THỐNG TẢI VỀ CHÍNH THỨC</span>
+                            <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-800 bg-clip-text text-transparent">KHO TÀI NGUYÊN</span>
                         </div>
                     </div>
 
-                    <!-- Search Input (Header center - hidden on mobile) -->
+                    <!-- Search Input (Header center - ALWAYS UNLOCKED) -->
                     <div class="hidden md:flex flex-1 max-w-md mx-10">
                         <div class="relative w-full">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
@@ -129,42 +139,31 @@
             </div>
         </header>
 
+        <!-- HORIZONTAL MARQUEE TICKER (REPLACED HERO BANNER) -->
+        <div id="news-marquee" class="bg-gradient-to-r from-indigo-600 via-primary-600 to-indigo-800 text-white py-3.5 border-b border-indigo-700 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center space-x-4">
+                    <!-- Badge tag indicator -->
+                    <span class="shrink-0 bg-white/25 border border-white/20 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider flex items-center space-x-1.5 shadow-inner">
+                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping"></span>
+                        <span>Thông báo</span>
+                    </span>
+                    <!-- Scrolling Marquee - Hover-Through (No Pause) -->
+                    <div class="flex-grow marquee-container">
+                        <div id="marquee-text" class="marquee-inner text-xs sm:text-sm font-semibold tracking-wide">
+                            Đang tải thông báo hệ thống...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- MAIN VIEWPORT PANELS -->
         <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             <!-- PAGE 1: USER HOME PAGE VIEW -->
             <section id="view-home" class="space-y-8">
-                <!-- HERO BANNER SECTION (VIP GLOWING GRADIENT STYLE) -->
-                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-950 text-white p-6 sm:p-10 shadow-xl shadow-indigo-950/10">
-                    <!-- Subtle Tech Grid Overlay -->
-                    <div class="absolute inset-0 grid-decor opacity-40"></div>
-                    <!-- Ambient Glows -->
-                    <div class="absolute -right-20 -top-20 w-80 h-80 bg-primary-600/20 rounded-full blur-3xl"></div>
-                    <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-secondary-500/10 rounded-full blur-3xl"></div>
-                    
-                    <div class="relative max-w-4xl space-y-4">
-                        <span class="inline-flex items-center px-3.5 py-1 rounded-full text-[10px] font-extrabold tracking-wider bg-white/10 text-indigo-300 border border-white/10 uppercase backdrop-blur-sm">
-                            <i class="fa-solid fa-sparkles mr-1.5 text-yellow-400"></i>Phiên bản nâng cấp 2026
-                        </span>
-                        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-                            Hệ Thống Tải Về <span class="bg-gradient-to-r from-indigo-300 via-primary-300 to-cyan-300 bg-clip-text text-transparent font-black">Tài Nguyên Doanh Nghiệp</span>
-                        </h1>
-                        <p class="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
-                            Cung cấp tốc độ tải tối đa cho các công cụ nghiệp vụ quan trọng: Chữ ký số, Hóa đơn điện tử, Thuế điện tử, BHXH, Driver cài đặt và tài liệu hướng dẫn chuẩn hóa.
-                        </p>
-                        
-                        <!-- Search container for mobile/tablet -->
-                        <div class="pt-2 md:hidden max-w-md">
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                                </div>
-                                <input type="text" id="mobile-hero-search" oninput="handleSearch(this.value)" placeholder="Tìm kiếm nhanh phần mềm..." class="block w-full pl-10 pr-4 py-3 bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 text-xs transition-all">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                
                 <!-- MAIN WORKSPACE: SIDEBAR CATEGORY + CARDS GRID -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                     
@@ -253,7 +252,7 @@
                                 </button>
                             </div>
 
-                            <!-- PAGINATION CONTROLS PANEL (Anti-Shift Bottom Aligned) -->
+                            <!-- PAGINATION CONTROLS PANEL -->
                             <div id="pagination-panel" class="pt-6 border-t border-slate-200/60 flex items-center justify-between mt-auto">
                                 <span id="pagination-info" class="text-xs text-slate-400 font-bold uppercase tracking-wider">Trang 1 / 1</span>
                                 <div class="flex items-center space-x-1.5" id="pagination-buttons">
@@ -265,37 +264,51 @@
                 </div>
             </section>
 
-            <!-- PAGE 2: ADMIN LOGIN VIEW -->
-            <section id="view-admin-login" class="hidden max-w-md mx-auto my-12">
-                <div class="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-premium space-y-6">
-                    <div class="text-center space-y-2">
-                        <div class="w-14 h-14 bg-gradient-to-br from-primary-600 to-indigo-700 text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-primary-500/20">
-                            <i class="fa-solid fa-lock text-lg"></i>
+            <!-- PAGE 2: ADMIN LOGIN VIEW (REDESIGNED PREMIUM GLOW LOOK) -->
+            <section id="view-admin-login" class="hidden max-w-md mx-auto my-14">
+                <div class="bg-white border border-slate-100 rounded-3xl p-10 shadow-premium space-y-8 relative">
+                    <!-- Subtle brand background circle -->
+                    <div class="absolute -top-12 -right-12 w-32 h-32 bg-primary-100/50 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-secondary-100/50 rounded-full blur-2xl pointer-events-none"></div>
+
+                    <div class="text-center space-y-3 relative z-10">
+                        <div class="w-16 h-16 bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-800 text-white rounded-2xl flex items-center justify-center mx-auto shadow-xl shadow-primary-500/20 transform hover:rotate-6 transition-all duration-300">
+                            <i class="fa-solid fa-shield-halved text-2xl"></i>
                         </div>
-                        <h2 class="text-xl font-extrabold text-slate-800">Đăng nhập Quản trị viên</h2>
-                        <p class="text-slate-500 text-xs">Vui lòng nhập tài khoản quản trị để tiếp tục thao tác.</p>
+                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Hệ thống Quản trị</h2>
+                        <p class="text-slate-400 text-xs font-medium max-w-[280px] mx-auto leading-relaxed">Xác thực tài khoản của bạn để truy cập giao diện quản trị viên.</p>
                     </div>
 
-                    <!-- Login Form -->
-                    <form id="admin-login-form" class="space-y-4.5" onsubmit="handleEmailLogin(event)">
-                        <div class="space-y-1.5">
+                    <!-- Login Form (Balanced Clean Padding) -->
+                    <form id="admin-login-form" class="space-y-6 relative z-10" onsubmit="handleEmailLogin(event)">
+                        <div class="space-y-2">
                             <label for="login-email" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-0.5">Tên tài khoản / Email</label>
-                            <input type="text" id="login-email" required placeholder="admin" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:bg-white text-xs transition-all">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-user text-sm"></i>
+                                </div>
+                                <input type="text" id="login-email" required placeholder="Nhập user" class="block w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/10 focus:border-primary-600 focus:bg-white text-xs font-medium transition-all">
+                            </div>
                         </div>
-                        <div class="space-y-1.5">
-                            <label for="login-password" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-0.5">Mật khẩu</label>
-                            <input type="password" id="login-password" required placeholder="••••••••" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:bg-white text-xs transition-all">
+                        <div class="space-y-2">
+                            <label for="login-password" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-0.5">Mật khẩu bảo mật</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-lock text-sm"></i>
+                                </div>
+                                <input type="password" id="login-password" required placeholder="Nhập pass" class="block w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/10 focus:border-primary-600 focus:bg-white text-xs font-medium transition-all">
+                            </div>
                         </div>
 
-                        <button type="submit" class="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-800 text-white font-extrabold text-xs shadow-md shadow-primary-500/20 hover:shadow-primary-500/30 transition-all duration-150 uppercase tracking-wider">
-                            <span>Xác nhận đăng nhập</span>
+                        <button type="submit" class="w-full flex items-center justify-center space-x-2 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-800 hover:from-primary-700 hover:to-indigo-900 text-white font-black text-xs shadow-lg shadow-primary-500/25 hover:shadow-primary-500/35 hover:scale-[1.01] transition-all duration-150 uppercase tracking-widest">
+                            <span>Đăng nhập hệ thống</span>
                             <i class="fa-solid fa-right-to-bracket text-xs"></i>
                         </button>
                     </form>
 
                     <!-- Back link -->
-                    <div class="text-center pt-2">
-                        <button onclick="navigateTo('home')" class="inline-flex items-center space-x-1.5 text-xs font-bold text-slate-400 hover:text-primary-600 transition-colors">
+                    <div class="text-center pt-2 relative z-10">
+                        <button onclick="navigateTo('home')" class="inline-flex items-center space-x-2 text-xs font-extrabold text-slate-400 hover:text-primary-600 transition-colors">
                             <i class="fa-solid fa-arrow-left text-[10px]"></i>
                             <span>Quay lại trang chủ</span>
                         </button>
@@ -314,7 +327,7 @@
                                 <span id="admin-status-badge" class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-extrabold uppercase tracking-wider border border-emerald-100">Đang hoạt động</span>
                             </div>
                             <h2 class="text-xl font-extrabold text-slate-800">Hệ Thống Quản Trị Viên</h2>
-                            <p class="text-slate-500 text-xs">Thêm mới, sửa đổi thông tin hoặc ẩn/hiện và sắp xếp danh mục tài nguyên.</p>
+                            <p class="text-slate-500 text-xs">Cấu hình hệ thống, ẩn/hiện tin tức, chỉnh sửa và cấu hình danh mục dữ liệu.</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <button onclick="viewHomeAsAdmin()" class="flex items-center space-x-1.5 px-4 py-2.5 border border-indigo-200 hover:bg-indigo-50 text-indigo-700 rounded-2xl text-xs font-bold transition-all">
@@ -358,6 +371,31 @@
                                 <span>Khởi tạo dữ liệu mẫu</span>
                             </button>
                         </div>
+
+                        <!-- CẤU HÌNH THÔNG BÁO CHẠY CHỮ (ADDITIONAL FEATURES IN ADMIN PANEL) -->
+                        <div class="bg-white border border-slate-200/60 rounded-3xl p-5 space-y-4 shadow-premium">
+                            <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider flex items-center space-x-2">
+                                <i class="fa-solid fa-bullhorn text-primary-600"></i>
+                                <span>Cấu hình Chạy Chữ</span>
+                            </h4>
+                            <form id="announcement-config-form" onsubmit="saveAnnouncementSettings(event)" class="space-y-3">
+                                <div class="space-y-1">
+                                    <label class="text-[9px] font-extrabold text-slate-400 uppercase">Văn bản tin tức</label>
+                                    <textarea id="announcement-text-input" rows="2" required placeholder="Nhập văn bản thông báo mới..." class="block w-full p-2.5 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary-500"></textarea>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[9px] font-extrabold text-slate-400 uppercase">Tốc độ chạy chữ</label>
+                                    <select id="announcement-speed-select" class="block w-full p-2 rounded-xl border border-slate-200 text-xs font-semibold bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer">
+                                        <option value="x1">Chậm (x1)</option>
+                                        <option value="x2" selected>Trung bình (x2)</option>
+                                        <option value="x3">Nhanh (x3)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all">
+                                    Cập nhật thông báo
+                                </button>
+                            </form>
+                        </div>
                     </div>
 
                     <!-- Main Dashboard Table Area -->
@@ -368,17 +406,30 @@
                                     <i class="fa-solid fa-list-check text-primary-600 text-sm"></i>
                                     <span class="uppercase tracking-wider">Danh Sách Quản Lý Tài Nguyên</span>
                                 </span>
-                                <!-- Table search -->
-                                <div class="relative max-w-xs w-full">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
-                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                <!-- Table search & row options wrapper -->
+                                <div class="flex items-center flex-wrap gap-2">
+                                    <!-- Dynamic Per-page Limit selector -->
+                                    <div class="flex items-center space-x-1">
+                                        <span class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide">Hiển thị:</span>
+                                        <select id="admin-per-page-select" onchange="handleAdminPerPageChange(this.value)" class="text-xs bg-white border border-slate-200 rounded-xl px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer font-bold">
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="30">30</option>
+                                            <option value="50">50</option>
+                                        </select>
                                     </div>
-                                    <input type="text" id="admin-table-search" oninput="handleAdminSearch(this.value)" placeholder="Tìm nhanh theo tên..." class="block w-full pl-9 pr-3 py-2 border border-slate-200 bg-white rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary-500 text-xs">
+                                    <!-- Admin table search -->
+                                    <div class="relative max-w-xs w-full">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </div>
+                                        <input type="text" id="admin-table-search" oninput="handleAdminSearch(this.value)" placeholder="Tìm nhanh theo tên..." class="block w-full pl-9 pr-3 py-2 border border-slate-200 bg-white rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary-500 text-xs">
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Responsive Admin Table -->
-                            <div class="overflow-x-auto">
+                            <!-- Responsive Admin Table with dynamic custom scrollbar to prevent shifts -->
+                            <div class="overflow-x-auto min-h-[380px] max-h-[580px] overflow-y-auto">
                                 <table class="w-full text-left border-collapse text-sm">
                                     <thead>
                                         <tr class="bg-slate-50 text-slate-500 text-[10px] font-extrabold uppercase tracking-wider border-b border-slate-100">
@@ -398,6 +449,10 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <!-- Embedded Admin Table Footer Pagination -->
+                            <div id="admin-pagination-panel" class="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/30">
+                                <!-- Rendered dynamically -->
+                            </div>
                         </div>
                     </div>
 
@@ -406,33 +461,21 @@
 
         </main>
 
-        <!-- FOOTER SECTION -->
-        <footer class="bg-white border-t border-slate-100 text-slate-600 py-10 transition-colors">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Branding and info -->
-                <div class="space-y-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-600 to-secondary-600 text-white flex items-center justify-center shadow-md shadow-primary-500/10">
-                            <i class="fa-solid fa-cloud-arrow-down text-base"></i>
-                        </div>
-                        <span class="text-base font-extrabold tracking-tight bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">KHO TÀI NGUYÊN</span>
+        <!-- FOOTER SECTION (TINH GỌN, CHUYÊN NGHIỆP HƠN) -->
+        <footer class="bg-[#0f172a] text-slate-400 py-6 mt-auto border-t border-slate-800 text-[11px]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-primary-600 to-indigo-600 text-white flex items-center justify-center">
+                        <i class="fa-solid fa-cloud-arrow-down text-xs"></i>
                     </div>
-                    <p class="text-[11px] leading-relaxed text-slate-400 max-w-md">
-                        Cổng chia sẻ tài nguyên hỗ trợ doanh nghiệp và cá nhân phổ biến hàng đầu. Lưu trữ bộ công cụ thiết lập Chữ ký số, Hóa đơn điện tử, Thuế điện tử và Bảo hiểm xã hội chính quy.
-                    </p>
-                    <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">© 2026 Kho Tài Nguyên. Tải dữ liệu an toàn và tối ưu hóa cao.</p>
+                    <span class="font-extrabold text-white uppercase tracking-wider">KHO TÀI NGUYÊN DOANH NGHIỆP</span>
                 </div>
-
-                <!-- Technical information -->
-                <div class="space-y-4">
-                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-widest">Hạ tầng hệ thống đám mây</h3>
-                    <p class="text-[11px] leading-relaxed text-slate-400">
-                        Ứng dụng hoạt động dựa trên cơ chế đơn trang SPA, loại bỏ độ trễ phản hồi trang. Cơ sở dữ liệu đám mây Firebase Realtime và Firestore tự động đồng bộ hóa thông tin và lượt tải của tài nguyên.
-                    </p>
-                    <div class="flex space-x-2">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-100 uppercase tracking-wider">Single Page App</span>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[9px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase tracking-wider">Firebase Cloud</span>
-                    </div>
+                <div class="text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                    © 2026 Toàn bộ tài nguyên được quét virus 100% trước khi xuất bản.
+                </div>
+                <div class="flex space-x-3">
+                    <span class="bg-slate-800/60 text-slate-400 px-2.5 py-0.5 rounded border border-slate-700/50 uppercase font-extrabold text-[9px]">Cloud Active</span>
+                    <span class="bg-emerald-950/40 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-900/30 uppercase font-extrabold text-[9px]">SSL Secured</span>
                 </div>
             </div>
         </footer>
@@ -678,11 +721,19 @@
         let sortBy = 'newest';
         let activeAdminTab = 'resources';
 
-        // Pagination State
+        // Pagination State (User)
         let currentPage = 1;
         const itemsPerPage = 6;
 
-        // DEFAULT FALLBACK IN-MEMORY DATA (No Local Storage)
+        // Pagination State (Admin)
+        let adminCurrentPage = 1;
+        let adminItemsPerPage = 10;
+
+        // Active Announcement configurations
+        let activeAnnouncementText = "Chào mừng bạn đến với Kho Tài Nguyên - Hệ thống chia sẻ phần mềm hỗ trợ doanh nghiệp chính thức năm 2026!";
+        let activeAnnouncementSpeed = "x2";
+
+        // DEFAULT FALLBACK IN-MEMORY DATA
         const defaultCategories = [
             { id: "tool", name: "Tool hỗ trợ" },
             { id: "signature", name: "Chữ ký số" },
@@ -820,11 +871,8 @@
             viewDashboard.classList.add('hidden');
             guestBar.classList.add('hidden');
 
-            const headerSearch = document.getElementById('header-search');
-
             if (target === 'home') {
                 viewHome.classList.remove('hidden');
-                headerSearch.disabled = false;
                 window.location.hash = 'home';
                 
                 // Show floating bar if admin is previewing home as user
@@ -833,13 +881,11 @@
                 }
             } else if (target === 'admin-login') {
                 viewLogin.classList.remove('hidden');
-                headerSearch.disabled = true;
                 window.location.hash = 'login';
             } else if (target === 'admin-dashboard') {
                 isAdminViewingAsUser = false; // Reset view state
                 if (activeUser || isBypassMode) {
                     viewDashboard.classList.remove('hidden');
-                    headerSearch.disabled = true;
                     window.location.hash = 'dashboard';
                     renderAdminResourcesTable();
                 } else {
@@ -944,8 +990,7 @@
 
                     isFirebaseOnline = true;
                     statusText.textContent = "Trực tuyến";
-                    statusBadge.className = "flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200";
-                    showToast('Đã kết nối cơ sở dữ liệu Firebase Cloud.', 'success');
+                    statusBadge.className = "flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100";
 
                 } catch (err) {
                     console.warn("Lỗi cấu hình Firebase, kích hoạt In-Memory Mode", err);
@@ -967,6 +1012,9 @@
             // Populate arrays in-memory directly
             categories = [...defaultCategories];
             resources = [...defaultResources];
+
+            // Set dynamic ticker defaults
+            updateMarqueeUI(activeAnnouncementText, activeAnnouncementSpeed);
         }
 
         // FETCH ALL DATA (Reactive listener or safe in-memory updating)
@@ -980,12 +1028,13 @@
                     snapshot.forEach(doc => {
                         categories.push({ id: doc.id, ...doc.data() });
                     });
+                    
+                    // Always execute these updates to keep form selects and navigation filters synchronized
+                    renderCategoriesList();
+                    renderCategoryFormOptions();
+                    
                     if (categories.length === 0) {
-                        // Seeding categories fallback in Firestore if empty
                         seedDefaultFirestoreCategories();
-                    } else {
-                        renderCategoriesList();
-                        renderCategoryFormOptions();
                     }
                 }, (error) => {
                     console.error("Lỗi đồng bộ Categories:", error);
@@ -1002,9 +1051,29 @@
                     renderUserResourcesGrid();
                     renderAdminResourcesTable();
                     updateMetadataStats();
+                    
+                    // Re-render categories list to dynamically recalculate and instantly display correct counts
+                    renderCategoriesList();
                 }, (error) => {
                     console.error("Lỗi đồng bộ Resources:", error);
                     showToast("Đồng bộ tài nguyên lỗi: " + error.message, "error");
+                });
+
+                // Announcement Real-time syncing (Strict Paths - Rule 1)
+                const announcementRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'announcement');
+                onSnapshot(announcementRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.data();
+                        activeAnnouncementText = data.text || activeAnnouncementText;
+                        activeAnnouncementSpeed = data.speed || activeAnnouncementSpeed;
+                        updateMarqueeUI(activeAnnouncementText, activeAnnouncementSpeed);
+                    } else {
+                        // Seed default dynamic announcement on cloud
+                        setDoc(announcementRef, { text: activeAnnouncementText, speed: activeAnnouncementSpeed });
+                        updateMarqueeUI(activeAnnouncementText, activeAnnouncementSpeed);
+                    }
+                }, (error) => {
+                    console.error("Lỗi đồng bộ thông báo chạy chữ:", error);
                 });
 
             } else {
@@ -1014,6 +1083,7 @@
                 renderUserResourcesGrid();
                 renderAdminResourcesTable();
                 updateMetadataStats();
+                updateMarqueeUI(activeAnnouncementText, activeAnnouncementSpeed);
             }
         }
 
@@ -1056,7 +1126,8 @@
             } else {
                 categories = [...defaultCategories];
                 resources = [...defaultResources];
-                currentPage = 1; // Reset pagination page
+                currentPage = 1; // Reset user pagination page
+                adminCurrentPage = 1; // Reset admin pagination page
                 renderCategoriesList();
                 renderCategoryFormOptions();
                 renderUserResourcesGrid();
@@ -1079,7 +1150,6 @@
             if (isFirebaseOnline) {
                 try {
                     showToast("Đang xác thực thông tin đăng nhập...", "warning");
-                    // Try email/pass first
                     const userCredential = await signInWithEmailAndPassword(auth, email.includes('@') ? email : `${email}@example.com`, password);
                     activeUser = userCredential.user;
                     isBypassMode = false;
@@ -1087,7 +1157,6 @@
                     showToast(`Đăng nhập thành công! Chào mừng Quản trị viên.`, 'success');
                     navigateTo('admin-dashboard');
                 } catch (err) {
-                    // Fail over to mock in-memory check for ease of evaluation
                     if ((email === "admin" || email === "admin@example.com") && password === "admin@123") {
                         isBypassMode = true;
                         showToast("Đăng nhập bằng tài khoản Admin (Demo mode) thành công!", "success");
@@ -1131,6 +1200,56 @@
         //  UI RENDERING LOGIC & INTERACTIONS (HOME) 
         // ==========================================
 
+        // DYNAMIC MARQUEE UI RENDERER
+        window.updateMarqueeUI = function(text, speed) {
+            const marqueeTextEl = document.getElementById('marquee-text');
+            if (!marqueeTextEl) return;
+
+            // Map speeds to standard CSS animation durations
+            let seconds = '18s';
+            if (speed === 'x1') seconds = '30s';       // Slow
+            else if (speed === 'x2') seconds = '18s';  // Normal
+            else if (speed === 'x3') seconds = '9s';   // Fast
+
+            marqueeTextEl.textContent = text;
+            marqueeTextEl.style.setProperty('--marquee-speed', seconds);
+
+            // Populate settings inputs in Admin dashboard with current values
+            const adminInput = document.getElementById('announcement-text-input');
+            const adminSelect = document.getElementById('announcement-speed-select');
+            if (adminInput) adminInput.value = text;
+            if (adminSelect) adminSelect.value = speed;
+        };
+
+        // ADMIN ANNOUNCEMENT WRITER (Strict Paths compliant - Rule 1)
+        window.saveAnnouncementSettings = async function(event) {
+            event.preventDefault();
+            const text = document.getElementById('announcement-text-input').value.trim();
+            const speed = document.getElementById('announcement-speed-select').value;
+
+            if (!text) {
+                showToast("Nội dung thông báo không được để trống!", "warning");
+                return;
+            }
+
+            if (isFirebaseOnline && db) {
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'announcement');
+                    await setDoc(docRef, { text, speed });
+                    showToast("Đã cập nhật thông báo chạy chữ thời gian thực!", "success");
+                } catch (e) {
+                    console.error("Lỗi cập nhật Firestore:", e);
+                    showToast("Không thể cập nhật cấu hình: " + e.message, "error");
+                }
+            } else {
+                // In-Memory Update
+                activeAnnouncementText = text;
+                activeAnnouncementSpeed = speed;
+                updateMarqueeUI(text, speed);
+                showToast("Đã cập nhật thông báo chạy chữ cục bộ!", "success");
+            }
+        };
+
         // RENDER SIDEBAR CATEGORIES
         function renderCategoriesList() {
             const container = document.getElementById('categories-filter-list');
@@ -1165,7 +1284,7 @@
             container.innerHTML = html;
         }
 
-        // RENDER SELECT OPTIONS IN FORES
+        // RENDER SELECT OPTIONS IN FORMS
         function renderCategoryFormOptions() {
             const select = document.getElementById('form-category');
             if (!select) return;
@@ -1248,7 +1367,6 @@
                     </div>
                 `;
                 
-                // FIXED ONERROR COLLISION: Using window.handleImageError cleanly solves nested HTML single/double quotes issues
                 const imageTag = hasValidImg ? 
                     `<img src="${res.image}" onerror="window.handleImageError(this, '${res.title.charAt(0)}')" alt="${res.title}" class="w-11 h-11 rounded-2xl object-cover shrink-0 shadow-sm border border-slate-100/50">` : 
                     imgPlaceholder;
@@ -1263,7 +1381,10 @@
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <span class="inline-block text-[9px] font-extrabold text-slate-400 tracking-wider uppercase">${res.category}</span>
-                                    <h3 class="text-xs font-bold text-slate-800 truncate leading-snug tracking-tight group-hover:text-primary-600 transition-colors" title="${res.title}">${res.title}</h3>
+                                    
+                                    <!-- Clickable Resource Title to inspect detail modal -->
+                                    <h3 onclick="openResourceDetail('${res.id}')" class="text-xs font-bold text-slate-800 hover:text-primary-600 hover:underline cursor-pointer transition-colors truncate leading-snug tracking-tight" title="Bấm vào để xem chi tiết ${res.title}">${res.title}</h3>
+                                    
                                     <span class="inline-flex items-center text-[9px] bg-slate-50 border border-slate-100 text-slate-500 rounded px-1.5 py-0.5 mt-0.5 font-bold">
                                         v${res.version}
                                     </span>
@@ -1276,12 +1397,12 @@
                             </p>
                         </div>
 
-                        <!-- Card Actions -->
+                        <!-- Card Actions (Downloads Counter Indicator) -->
                         <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                            <button onclick="openResourceDetail('${res.id}')" class="text-[10px] font-extrabold text-slate-400 hover:text-primary-600 flex items-center space-x-1.5 uppercase tracking-wider transition-colors">
-                                <i class="fa-solid fa-circle-info text-xs"></i>
-                                <span>Chi tiết</span>
-                            </button>
+                            <span class="inline-flex items-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider space-x-1">
+                                <i class="fa-solid fa-circle-down text-primary-500"></i>
+                                <span>${res.downloadsCount || 0} lượt tải</span>
+                            </span>
 
                             <a href="${res.downloadUrl}" target="_blank" onclick="incrementDownloadCounter('${res.id}')" class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-800 text-white text-[10px] font-extrabold transition-all uppercase shadow-md shadow-primary-500/10 hover:shadow-primary-500/20 hover:scale-[1.02] tracking-wider">
                                 <i class="fa-solid fa-cloud-arrow-down"></i>
@@ -1292,7 +1413,7 @@
                 `;
             });
 
-            // If page is not completely full, we pad with empty transparent elements to maintain perfect height!
+            // Pad with empty transparent elements to maintain perfect layout height
             const paddedDifference = itemsPerPage - paginatedItems.length;
             if (paddedDifference > 0 && paginatedItems.length > 0) {
                 for (let i = 0; i < paddedDifference; i++) {
@@ -1344,11 +1465,20 @@
             renderUserResourcesGrid();
         };
 
+        // Header Search - redirect to home page and process instant searching
         window.handleSearch = function(keyword) {
             searchKeyword = keyword;
-            currentPage = 1; // Reset to page 1 on search
             document.getElementById('header-search').value = keyword;
-            document.getElementById('mobile-hero-search').value = keyword;
+            
+            const mobileSearch = document.getElementById('mobile-hero-search');
+            if (mobileSearch) mobileSearch.value = keyword;
+            
+            // Unlocked redirect: Always switch tabs to home so results can be evaluated
+            if (window.location.hash !== '#home' && window.location.hash !== '') {
+                navigateTo('home');
+            }
+            
+            currentPage = 1;
             renderUserResourcesGrid();
         };
 
@@ -1363,7 +1493,8 @@
             currentCategoryFilter = 'all';
             currentPage = 1;
             document.getElementById('header-search').value = '';
-            document.getElementById('mobile-hero-search').value = '';
+            const mobileSearch = document.getElementById('mobile-hero-search');
+            if (mobileSearch) mobileSearch.value = '';
             renderCategoriesList();
             renderUserResourcesGrid();
         };
@@ -1471,12 +1602,25 @@
 
         window.handleAdminSearch = function(keyword) {
             adminSearchKeyword = keyword;
+            adminCurrentPage = 1; // Reset to first page of results on search
             renderAdminResourcesTable();
         };
 
-        // RENDER ADMIN TABLE OF CONTENT
+        window.handleAdminPerPageChange = function(value) {
+            adminItemsPerPage = parseInt(value);
+            adminCurrentPage = 1;
+            renderAdminResourcesTable();
+        };
+
+        window.changeAdminPage = function(pageNumber) {
+            adminCurrentPage = pageNumber;
+            renderAdminResourcesTable();
+        };
+
+        // RENDER ADMIN TABLE OF CONTENT (With Integrated Professional Pagination & Scroll Lock)
         function renderAdminResourcesTable() {
             const tbody = document.getElementById('admin-resources-tbody');
+            const paginationPanel = document.getElementById('admin-pagination-panel');
             if (!tbody) return;
 
             let filtered = [...resources];
@@ -1492,7 +1636,16 @@
 
             filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-            if (filtered.length === 0) {
+            // Paginate filtered elements on Admin side
+            const totalAdminPages = Math.ceil(filtered.length / adminItemsPerPage);
+            if (adminCurrentPage > totalAdminPages) {
+                adminCurrentPage = Math.max(1, totalAdminPages);
+            }
+
+            const startIdx = (adminCurrentPage - 1) * adminItemsPerPage;
+            const paginatedAdminItems = filtered.slice(startIdx, startIdx + adminItemsPerPage);
+
+            if (paginatedAdminItems.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
@@ -1500,11 +1653,12 @@
                         </td>
                     </tr>
                 `;
+                if (paginationPanel) paginationPanel.innerHTML = '';
                 return;
             }
 
             let html = '';
-            filtered.forEach(res => {
+            paginatedAdminItems.forEach(res => {
                 const badgeStatus = res.status ? 
                     `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase tracking-wider">Hiển thị</span>` :
                     `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-slate-100 text-slate-500 border border-slate-200 uppercase tracking-wider">Ẩn</span>`;
@@ -1532,6 +1686,36 @@
             });
 
             tbody.innerHTML = html;
+
+            // Render Admin Table Pagination Controls dynamically inside the stable footer block
+            if (paginationPanel) {
+                if (totalAdminPages <= 1) {
+                    paginationPanel.innerHTML = `<span class="text-xs text-slate-400 font-bold uppercase">Hiển thị ${filtered.length} tài nguyên</span>`;
+                } else {
+                    let buttonsHtml = `
+                        <button onclick="changeAdminPage(${adminCurrentPage - 1})" ${adminCurrentPage === 1 ? 'disabled' : ''} class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all">
+                            Trước
+                        </button>
+                    `;
+                    for (let i = 1; i <= totalAdminPages; i++) {
+                        buttonsHtml += `
+                            <button onclick="changeAdminPage(${i})" class="px-2.5 py-1 rounded text-xs font-bold transition-all ${adminCurrentPage === i ? 'bg-primary-600 text-white shadow-md' : 'border border-slate-200 text-slate-700 hover:bg-slate-50'}">
+                                ${i}
+                            </button>
+                        `;
+                    }
+                    buttonsHtml += `
+                        <button onclick="changeAdminPage(${adminCurrentPage + 1})" ${adminCurrentPage === totalAdminPages ? 'disabled' : ''} class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all">
+                            Sau
+                        </button>
+                    `;
+
+                    paginationPanel.innerHTML = `
+                        <span class="text-xs text-slate-400 font-bold uppercase">Hiển thị ${startIdx + 1} - ${Math.min(startIdx + adminItemsPerPage, filtered.length)} / ${filtered.length}</span>
+                        <div class="flex items-center space-x-1">${buttonsHtml}</div>
+                    `;
+                }
+            }
         }
 
         // TOGGLE HIDE/SHOW ON MAIN PAGE
@@ -1548,9 +1732,9 @@
                         status: newStatus,
                         updatedAt: "2026-05-30"
                     });
-                    showToast(`Đã cập nhật trạng thái hiển thị của tài nguyên!`, 'success');
+                    showToast("Đã cập nhật trạng thái hiển thị của tài nguyên!", "success");
                 } catch (e) {
-                    showToast(`Không thể thay đổi trạng thái: ${e.message}`, 'error');
+                    showToast("Không thể thay đổi trạng thái: " + e.message, "error");
                 }
             } else {
                 resources[index].status = newStatus;
@@ -1558,7 +1742,7 @@
                 renderUserResourcesGrid();
                 renderAdminResourcesTable();
                 updateMetadataStats();
-                showToast(`Đã cập nhật trạng thái hiển thị thành công!`, 'success');
+                showToast("Đã cập nhật trạng thái hiển thị thành công!", "success");
             }
         };
 
@@ -1574,16 +1758,16 @@
                 try {
                     const resDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
                     await deleteDoc(resDocRef);
-                    showToast(`Đã xóa tài nguyên "${res.title}" khỏi đám mây.`, 'success');
+                    showToast(`Đã xóa tài nguyên "${res.title}" khỏi đám mây.`, "success");
                 } catch (e) {
-                    showToast(`Không thể xóa tài nguyên: ${e.message}`, 'error');
+                    showToast("Không thể xóa tài nguyên: " + e.message, "error");
                 }
             } else {
                 resources = resources.filter(r => r.id !== id);
                 renderUserResourcesGrid();
                 renderAdminResourcesTable();
                 updateMetadataStats();
-                showToast(`Đã xóa vĩnh viễn tài nguyên "${res.title}".`, 'success');
+                showToast(`Đã xóa vĩnh viễn tài nguyên "${res.title}".`, "success");
             }
         };
 
@@ -1621,7 +1805,7 @@
                     if (id) {
                         const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
                         await updateDoc(docRef, payload);
-                        showToast(`Cập nhật tài nguyên "${title}" thành công!`, 'success');
+                        showToast(`Cập nhật tài nguyên "${title}" thành công!`, "success");
                     } else {
                         const newPayload = {
                             ...payload,
@@ -1630,18 +1814,18 @@
                         };
                         const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
                         await addDoc(colRef, newPayload);
-                        showToast(`Lưu và tải lên tài nguyên "${title}" thành công!`, 'success');
+                        showToast(`Lưu và tải lên tài nguyên "${title}" thành công!`, "success");
                     }
                     closeResourceModal();
                 } catch (err) {
-                    showToast(`Lỗi lưu dữ liệu: ${err.message}`, 'error');
+                    showToast("Lỗi lưu dữ liệu: " + err.message, "error");
                 }
             } else {
                 if (id) {
                     const idx = resources.findIndex(r => r.id === id);
                     if (idx !== -1) {
                         resources[idx] = { ...resources[idx], ...payload };
-                        showToast(`Cập nhật tài nguyên "${title}" thành công!`, 'success');
+                        showToast(`Cập nhật tài nguyên "${title}" thành công!`, "success");
                     }
                 } else {
                     const newLocalId = 'local-res-' + Math.random().toString(36).substr(2, 9);
@@ -1652,7 +1836,7 @@
                         createdAt: "2026-05-30"
                     };
                     resources.push(newLocalRes);
-                    showToast(`Thêm tài nguyên "${title}" thành công!`, 'success');
+                    showToast(`Thêm tài nguyên "${title}" thành công!`, "success");
                 }
                 currentPage = 1;
                 renderUserResourcesGrid();
@@ -1756,16 +1940,16 @@
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', newId);
                     await setDoc(docRef, { name: newCatName });
-                    showToast(`Đã thêm danh mục "${newCatName}" lên Firestore!`, 'success');
+                    showToast(`Đã thêm danh mục "${newCatName}" lên Firestore!`, "success");
                 } catch (e) {
-                    showToast(`Không thể lưu danh mục: ${e.message}`, 'error');
+                    showToast("Không thể lưu danh mục: " + e.message, "error");
                 }
             } else {
                 categories.push({ id: newId, name: newCatName });
                 renderCategoriesList();
                 renderCategoryFormOptions();
                 renderUserResourcesGrid();
-                showToast(`Đã thêm danh mục "${newCatName}"!`, 'success');
+                showToast(`Đã thêm danh mục "${newCatName}"!`, "success");
             }
 
             input.value = '';
@@ -1779,7 +1963,7 @@
             // Check if category currently contains active resources
             const resourcesInCat = resources.filter(r => r.category === cat.name);
             if (resourcesInCat.length > 0) {
-                showToast(`Không thể xóa! Danh mục "${cat.name}" đang chứa ${resourcesInCat.length} tài nguyên. Bạn cần xóa các tài nguyên này trước.`, 'warning');
+                showToast(`Không thể xóa! Danh mục "${cat.name}" đang chứa ${resourcesInCat.length} tài nguyên. Bạn cần xóa các tài nguyên này trước.`, "warning");
                 return;
             }
 
@@ -1790,16 +1974,16 @@
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', id);
                     await deleteDoc(docRef);
-                    showToast(`Đã xóa danh mục "${cat.name}" khỏi đám mây.`, 'success');
+                    showToast(`Đã xóa danh mục "${cat.name}" khỏi đám mây.`, "success");
                 } catch (e) {
-                    showToast(`Lỗi xóa danh mục: ${e.message}`, 'error');
+                    showToast("Lỗi xóa danh mục: " + e.message, "error");
                 }
             } else {
                 categories = categories.filter(c => c.id !== id);
                 renderCategoriesList();
                 renderCategoryFormOptions();
                 renderUserResourcesGrid();
-                showToast(`Đã xóa danh mục "${cat.name}".`, 'success');
+                showToast(`Đã xóa danh mục "${cat.name}".`, "success");
             }
 
             renderModalCategoryList();
