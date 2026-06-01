@@ -130,7 +130,7 @@
                         </div>
 
                         <!-- User/Admin Login Control -->
-                        <button id="nav-action-btn" onclick="handleAuthAction()" class="flex items-center space-x-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-sm hover:shadow transition-all duration-150 uppercase tracking-wider">
+                        <button id="nav-action-btn" onclick="handleAuthAction()" class="flex items-center space-x-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-slate-900 hover:bg-slate-850 text-white shadow-sm hover:shadow transition-all duration-150 uppercase tracking-wider">
                             <i class="fa-solid fa-user-shield text-xs"></i>
                             <span id="nav-btn-text">Quản trị viên</span>
                         </button>
@@ -264,7 +264,7 @@
                 </div>
             </section>
 
-            <!-- PAGE 2: ADMIN LOGIN VIEW (REDESIGNED PREMIUM GLOW LOOK) -->
+            <!-- PAGE 2: ADMIN LOGIN VIEW -->
             <section id="view-admin-login" class="hidden max-w-md mx-auto my-14">
                 <div class="bg-white border border-slate-100 rounded-3xl p-10 shadow-premium space-y-8 relative">
                     <!-- Subtle brand background circle -->
@@ -372,7 +372,7 @@
                             </button>
                         </div>
 
-                        <!-- CẤU HÌNH THÔNG BÁO CHẠY CHỮ (ADDITIONAL FEATURES IN ADMIN PANEL) -->
+                        <!-- CẤU HÌNH THÔNG BÁO CHẠY CHỮ -->
                         <div class="bg-white border border-slate-200/60 rounded-3xl p-5 space-y-4 shadow-premium">
                             <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider flex items-center space-x-2">
                                 <i class="fa-solid fa-bullhorn text-primary-600"></i>
@@ -428,7 +428,7 @@
                                 </div>
                             </div>
 
-                            <!-- Responsive Admin Table with dynamic custom scrollbar to prevent shifts -->
+                            <!-- Responsive Admin Table with dynamic custom scrollbar -->
                             <div class="overflow-x-auto min-h-[380px] max-h-[580px] overflow-y-auto">
                                 <table class="w-full text-left border-collapse text-sm">
                                     <thead>
@@ -535,10 +535,10 @@
                             <span id="modal-res-created" class="font-bold text-slate-700 mt-1 block">-</span>
                         </div>
                         <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-2xl">
-                            <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-extrabold">Xác thực mã nguồn:</span>
+                            <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-extrabold">Xác thực mã nguồn / Kích thước:</span>
                             <span class="font-bold text-emerald-600 flex items-center space-x-1.5 mt-1">
                                 <i class="fa-solid fa-shield-halved text-sm"></i>
-                                <span>Đã kiểm duyệt sạch 100%</span>
+                                <span>Sạch 100% / <strong id="modal-res-size">--</strong></span>
                             </span>
                         </div>
                     </div>
@@ -558,72 +558,159 @@
         </div>
     </div>
 
-    <!-- ADD/EDIT RESOURCE MODAL (ADMIN ONLY) -->
+    <!-- ADD/EDIT RESOURCE MODAL (ADMIN ONLY) - REDESIGNED ULTIMATE FORM -->
     <div id="modal-resource-form" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div onclick="closeResourceModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             
-            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 transition-colors">
+            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-100 transition-colors">
                 <div class="h-2 bg-gradient-to-r from-primary-600 to-secondary-600"></div>
                 
-                <form id="resource-form" onsubmit="handleResourceSubmit(event)" class="p-6 sm:p-8 space-y-4">
-                    <h3 id="form-modal-title" class="text-lg font-extrabold text-slate-900">Thêm tài nguyên mới</h3>
+                <form id="resource-form" onsubmit="handleResourceSubmit(event)" class="p-6 sm:p-8 space-y-6">
+                    <div class="pb-3 border-b border-slate-100">
+                        <h3 id="form-modal-title" class="text-xl font-extrabold text-slate-900">Thêm tài nguyên mới</h3>
+                        <p class="text-slate-400 text-xs mt-1 font-medium">Vui lòng điền thông tin chi tiết và tải lên tệp tin an toàn.</p>
+                    </div>
                     
                     <input type="hidden" id="form-resource-id">
 
-                    <!-- Title -->
-                    <div class="space-y-1">
-                        <label for="form-title" class="text-xs font-bold text-slate-500 uppercase">Tên tài nguyên <span class="text-rose-500">*</span></label>
-                        <input type="text" id="form-title" required placeholder="Ví dụ: TeamViewer, eSigner..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
-                    </div>
+                    <!-- SECTION 1: BASIC INFORMATION (GRID 2 COLUMNS) -->
+                    <div class="space-y-4">
+                        <h4 class="text-[10px] font-extrabold text-primary-600 uppercase tracking-wider">1. Thông tin cơ bản</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Title -->
+                            <div class="space-y-1">
+                                <label for="form-title" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider ml-0.5">Tên tài nguyên <span class="text-rose-500">*</span></label>
+                                <input type="text" id="form-title" required placeholder="Ví dụ: TeamViewer, eSigner..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 text-xs focus:ring-4 focus:ring-primary-600/10 focus:border-primary-500 focus:bg-white focus:outline-none transition-all font-medium">
+                            </div>
 
-                    <!-- Category & Version Grid -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label for="form-category" class="text-xs font-bold text-slate-500 uppercase">Danh mục <span class="text-rose-500">*</span></label>
-                            <select id="form-category" required class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none cursor-pointer">
-                                <!-- Loaded dynamically -->
-                            </select>
+                            <!-- Category -->
+                            <div class="space-y-1">
+                                <label for="form-category" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider ml-0.5">Danh mục phân loại <span class="text-rose-500">*</span></label>
+                                <select id="form-category" required class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 text-xs focus:ring-4 focus:ring-primary-600/10 focus:border-primary-500 focus:bg-white focus:outline-none transition-all font-bold cursor-pointer">
+                                    <!-- Loaded dynamically -->
+                                </select>
+                            </div>
+
+                            <!-- Version -->
+                            <div class="space-y-1">
+                                <label for="form-version" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider ml-0.5">Phiên bản <span class="text-rose-500">*</span></label>
+                                <input type="text" id="form-version" required placeholder="Ví dụ: 15.0 hoặc Mới nhất" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 text-xs focus:ring-4 focus:ring-primary-600/10 focus:border-primary-500 focus:bg-white focus:outline-none transition-all font-medium">
+                            </div>
+
+                            <!-- File Size (Readonly on Upload / Manual on Paste) -->
+                            <div class="space-y-1">
+                                <label for="form-size" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider ml-0.5">Dung lượng tệp <span class="text-rose-500">*</span></label>
+                                <input type="text" id="form-size" required placeholder="Ví dụ: 15.4 MB, 1.2 GB" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 text-xs focus:ring-4 focus:ring-primary-600/10 focus:border-primary-500 focus:bg-white focus:outline-none transition-all font-bold">
+                            </div>
                         </div>
+                    </div>
+
+                    <!-- SECTION 2: FILE SOURCE (TABS SELECTOR) -->
+                    <div class="space-y-3.5">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-[10px] font-extrabold text-primary-600 uppercase tracking-wider">2. Phương thức liên kết tệp tải về</h4>
+                            <!-- Soft badge limit hint for Spark free storage -->
+                            <span class="text-[9px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded-md font-bold border border-amber-100">Hỗ trợ tối đa 5,000MB (Gói Spark)</span>
+                        </div>
+                        
+                        <!-- Tabs Navigation -->
+                        <div class="flex bg-slate-100 p-1 rounded-2xl">
+                            <button type="button" id="btn-file-tab-upload" onclick="switchFileSourceTab('upload')" class="flex-1 py-2 text-xs font-bold rounded-xl bg-primary-600 text-white shadow-sm transition-all">
+                                <i class="fa-solid fa-file-arrow-up mr-1.5"></i>Tải tệp lên từ máy tính
+                            </button>
+                            <button type="button" id="btn-file-tab-link" onclick="switchFileSourceTab('link')" class="flex-1 py-2 text-xs font-bold rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
+                                <i class="fa-solid fa-link mr-1.5"></i>Dán liên kết trực tiếp
+                            </button>
+                        </div>
+
+                        <!-- Upload Zone Area -->
+                        <div id="container-file-upload" class="p-5 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/30 text-center space-y-3 hover:border-primary-400 transition-colors">
+                            <input type="file" id="form-file-upload" class="hidden" onchange="handleAdminFileUpload(event)">
+                            <div class="mx-auto w-12 h-12 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center cursor-pointer" onclick="document.getElementById('form-file-upload').click()">
+                                <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                            </div>
+                            <div>
+                                <button type="button" onclick="document.getElementById('form-file-upload').click()" class="text-xs font-bold text-primary-600 hover:text-primary-700 hover:underline">Nhấn vào đây để chọn tệp tin</button>
+                                <p class="text-[10px] text-slate-400 mt-1 font-medium">Hỗ trợ tất cả định dạng .zip, .rar, .exe, .msi, .pdf, .docx, .xlsx...</p>
+                            </div>
+                            <span id="form-file-name" class="inline-block text-xs font-bold text-slate-500 truncate max-w-[320px] bg-slate-100 px-3 py-1 rounded-full">Chưa có tệp tin được tải lên</span>
+
+                            <!-- Real-time Upload Progress Bar -->
+                            <div id="upload-progress-container" class="hidden space-y-1.5 text-left bg-white p-3.5 rounded-xl border border-indigo-100 shadow-sm">
+                                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                    <div id="upload-progress-bar" class="bg-gradient-to-r from-primary-600 to-secondary-500 h-2 w-0 transition-all duration-150"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] font-bold text-slate-400">
+                                    <span id="upload-progress-percent" class="text-primary-600">0%</span>
+                                    <span>Đang đồng bộ dữ liệu lên Firebase Storage...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Download Link URL Input -->
                         <div class="space-y-1">
-                            <label for="form-version" class="text-xs font-bold text-slate-500 uppercase">Phiên bản <span class="text-rose-500">*</span></label>
-                            <input type="text" id="form-version" required placeholder="15.0 hoặc Mới nhất" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
+                            <input type="url" id="form-downloadUrl" required placeholder="Tệp tải lên sẽ tự động điền đường dẫn tại đây..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 text-xs focus:ring-4 focus:ring-primary-600/10 focus:border-primary-500 focus:bg-white focus:outline-none transition-all font-medium">
                         </div>
                     </div>
 
-                    <!-- Download URL -->
-                    <div class="space-y-1">
-                        <label for="form-downloadUrl" class="text-xs font-bold text-slate-500 uppercase">Liên kết tải về (URL) <span class="text-rose-500">*</span></label>
-                        <input type="url" id="form-downloadUrl" required placeholder="Dán link Google Drive, Mediafire, OneDrive..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
+                    <!-- SECTION 3: ICON/IMAGE SOURCE (TABS SELECTOR) -->
+                    <div class="space-y-3.5">
+                        <h4 class="text-[10px] font-extrabold text-primary-600 uppercase tracking-wider">3. Ảnh đại diện / Icon tài nguyên</h4>
+                        
+                        <!-- Tabs Navigation -->
+                        <div class="flex bg-slate-100 p-1 rounded-2xl">
+                            <button type="button" id="btn-image-tab-upload" onclick="switchImageSourceTab('upload')" class="flex-1 py-2 text-xs font-bold rounded-xl bg-primary-600 text-white shadow-sm transition-all">
+                                <i class="fa-solid fa-image mr-1.5"></i>Tải ảnh lên từ thiết bị
+                            </button>
+                            <button type="button" id="btn-image-tab-link" onclick="switchImageSourceTab('link')" class="flex-1 py-2 text-xs font-bold rounded-xl text-slate-500 hover:bg-slate-50 transition-all">
+                                <i class="fa-solid fa-link mr-1.5"></i>Dán liên kết ảnh trực tuyến
+                            </button>
+                        </div>
+
+                        <!-- Image Upload Area -->
+                        <div id="container-image-upload" class="p-4 border border-dashed border-slate-200 rounded-2xl bg-slate-50/30 text-center space-y-2 hover:border-primary-450 transition-colors">
+                            <input type="file" id="form-image-upload" accept="image/*" class="hidden" onchange="handleAdminImageUpload(event)">
+                            <div class="mx-auto w-10 h-10 rounded-full bg-primary-50 text-primary-600 flex items-center justify-center cursor-pointer" onclick="document.getElementById('form-image-upload').click()">
+                                <i class="fa-solid fa-image text-base"></i>
+                            </div>
+                            <div>
+                                <button type="button" onclick="document.getElementById('form-image-upload').click()" class="text-xs font-bold text-primary-600 hover:text-primary-700 hover:underline">Chọn ảnh đại diện</button>
+                            </div>
+                            <span id="form-image-file-name" class="inline-block text-[11px] font-semibold text-slate-400 truncate max-w-[280px]">Chưa chọn ảnh</span>
+                        </div>
+
+                        <!-- Image URL Input -->
+                        <div class="space-y-1">
+                            <input type="text" id="form-image" placeholder="Nhập liên kết https://... hoặc tải ảnh lên để tự động điền" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50/50 text-slate-900 text-xs focus:ring-4 focus:ring-primary-600/10 focus:border-primary-500 focus:bg-white focus:outline-none transition-all font-medium">
+                        </div>
                     </div>
 
-                    <!-- Thumbnail / Icon Selector -->
-                    <div class="space-y-1">
-                        <label for="form-image" class="text-xs font-bold text-slate-500 uppercase">Đường dẫn ảnh/icon đại diện (URL)</label>
-                        <input type="text" id="form-image" placeholder="Dán link ảnh https://... hoặc để trống để tạo icon tự động" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
-                    </div>
+                    <!-- SECTION 4: DESCRIPTION & STATUS -->
+                    <div class="space-y-4">
+                        <h4 class="text-[10px] font-extrabold text-primary-600 uppercase tracking-wider">4. Mô tả & Trạng thái hoạt động</h4>
+                        <!-- Description -->
+                        <div class="space-y-1">
+                            <label for="form-description" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider ml-0.5">Mô tả chi tiết & Hướng dẫn cài đặt <span class="text-rose-500">*</span></label>
+                            <textarea id="form-description" required rows="3" placeholder="Ví dụ: Công cụ điều khiển máy tính từ xa tiện dụng..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-4 focus:ring-primary-600/10 focus:border-primary-500 focus:bg-white focus:outline-none transition-all font-medium"></textarea>
+                        </div>
 
-                    <!-- Description -->
-                    <div class="space-y-1">
-                        <label for="form-description" class="text-xs font-bold text-slate-500 uppercase">Mô tả ngắn & Hướng dẫn <span class="text-rose-500">*</span></label>
-                        <textarea id="form-description" required rows="3" placeholder="Ví dụ: Công cụ điều khiển máy tính từ xa tiện dụng..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none"></textarea>
-                    </div>
-
-                    <!-- Active status & Highlight -->
-                    <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
-                        <div class="flex items-center space-x-2">
-                            <input type="checkbox" id="form-status" checked class="w-4 h-4 text-primary-600 border-slate-300 rounded focus:ring-primary-500">
-                            <label for="form-status" class="text-xs font-bold text-slate-700">Cho phép hiển thị ra Trang Chủ</label>
+                        <!-- Active status -->
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <div class="flex items-center space-x-2.5">
+                                <input type="checkbox" id="form-status" checked class="w-4 h-4 text-primary-600 border-slate-300 rounded-lg focus:ring-primary-500">
+                                <label for="form-status" class="text-xs font-bold text-slate-700 select-none cursor-pointer">Cho phép hiển thị trực tiếp ra Trang Chủ</label>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Footer Action buttons -->
-                    <div class="flex space-x-2 pt-2">
-                        <button type="submit" class="flex-grow py-3 px-4 bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-850 text-white font-bold text-xs rounded-2xl transition-all shadow-md">
+                    <div class="flex space-x-3 pt-4 border-t border-slate-100">
+                        <button type="submit" class="flex-grow py-3.5 px-4 bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-850 text-white font-black text-xs rounded-2xl transition-all shadow-md shadow-primary-500/15 uppercase tracking-wider">
                             Lưu cấu hình tài nguyên
                         </button>
-                        <button type="button" onclick="closeResourceModal()" class="px-5 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-2xl transition-all">
+                        <button type="button" onclick="closeResourceModal()" class="px-6 py-3.5 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold rounded-2xl transition-all uppercase tracking-wider">
                             Hủy bỏ
                         </button>
                     </div>
@@ -687,6 +774,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        // TÍCH HỢP THÊM MODULE FIREBASE STORAGE ĐỂ TẢI LÊN TỆP TIN
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         // APP INITIAL STATE VARIABLES
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'resource-download-center-viet';
@@ -707,6 +797,7 @@
         // Active Application variables
         let db = null;
         let auth = null;
+        let storage = null; // Storage handler reference
         let isFirebaseOnline = false;
         let activeUser = null;
         let isBypassMode = false; // Bypass mode for simulated admin logic
@@ -753,6 +844,7 @@
                 title: "TeamViewer",
                 category: "Tool hỗ trợ",
                 version: "15.0",
+                size: "28.4 MB",
                 description: "Phần mềm điều khiển máy tính từ xa phổ biến nhất thế giới. Hỗ trợ kỹ thuật viên đăng nhập trực quan và khắc phục sự cố phần mềm tức thì cho khách hàng.",
                 downloadUrl: "https://www.teamviewer.com/vi/tai-ve/windows/",
                 image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=150",
@@ -766,6 +858,7 @@
                 title: "eSigner",
                 category: "Chữ ký số",
                 version: "2.0",
+                size: "4.8 MB",
                 description: "Công cụ hỗ trợ người dùng ký số các tờ khai thuế trực tuyến. Cài đặt trực tiếp vào trình duyệt hỗ trợ dịch vụ khai thuế Tổng cục thuế Việt Nam.",
                 downloadUrl: "https://thuedientu.gdt.gov.vn/",
                 image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150",
@@ -779,6 +872,7 @@
                 title: "iTaxViewer",
                 category: "Thuế điện tử",
                 version: "2.3.1",
+                size: "18.2 MB",
                 description: "Phần mềm đọc tờ khai thuế định dạng XML của Tổng cục Thuế Việt Nam. Đáp ứng yêu cầu mở và xem nội dung báo cáo tài chính, tờ khai giá trị gia tăng, thuế TNCN.",
                 downloadUrl: "https://thuedientu.gdt.gov.vn/",
                 image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=150",
@@ -967,6 +1061,7 @@
                     const app = initializeApp(firebaseConfig);
                     auth = getAuth(app);
                     db = getFirestore(app);
+                    storage = getStorage(app); // Khởi tạo cổng truyền tải dữ liệu Firebase Storage
 
                     // Execute Anonymous Auth Priority (Rule 3)
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -1110,6 +1205,7 @@
                             title: res.title,
                             category: res.category,
                             version: res.version,
+                            size: res.size || "N/A",
                             description: res.description,
                             downloadUrl: res.downloadUrl,
                             image: res.image,
@@ -1385,9 +1481,14 @@
                                     <!-- Clickable Resource Title to inspect detail modal -->
                                     <h3 onclick="openResourceDetail('${res.id}')" class="text-xs font-bold text-slate-800 hover:text-primary-600 hover:underline cursor-pointer transition-colors truncate leading-snug tracking-tight" title="Bấm vào để xem chi tiết ${res.title}">${res.title}</h3>
                                     
-                                    <span class="inline-flex items-center text-[9px] bg-slate-50 border border-slate-100 text-slate-500 rounded px-1.5 py-0.5 mt-0.5 font-bold">
-                                        v${res.version}
-                                    </span>
+                                    <div class="flex items-center space-x-1.5 mt-1">
+                                        <span class="inline-flex items-center text-[9px] bg-slate-50 border border-slate-100 text-slate-500 rounded px-1.5 py-0.5 font-bold">
+                                            v${res.version}
+                                        </span>
+                                        <span class="inline-flex items-center text-[9px] bg-indigo-50/50 border border-indigo-100 text-indigo-600 rounded px-1.5 py-0.5 font-bold">
+                                            <i class="fa-solid fa-weight-hanging mr-1 text-[8px]"></i>${res.size || 'N/A'}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -1397,7 +1498,7 @@
                             </p>
                         </div>
 
-                        <!-- Card Actions (Downloads Counter Indicator) -->
+                        <!-- Card Actions -->
                         <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
                             <span class="inline-flex items-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider space-x-1">
                                 <i class="fa-solid fa-circle-down text-primary-500"></i>
@@ -1528,6 +1629,7 @@
             document.getElementById('modal-res-downloads').textContent = res.downloadsCount || 0;
             document.getElementById('modal-res-updated').textContent = res.updatedAt || res.createdAt || "30/05/2026";
             document.getElementById('modal-res-created').textContent = res.createdAt || "30/05/2026";
+            document.getElementById('modal-res-size').textContent = res.size || "Chưa xác định";
 
             const downloadLink = document.getElementById('modal-download-link');
             downloadLink.href = res.downloadUrl;
@@ -1615,6 +1717,184 @@
         window.changeAdminPage = function(pageNumber) {
             adminCurrentPage = pageNumber;
             renderAdminResourcesTable();
+        };
+
+        // TAB SWITCHER FOR RESOURCE FILE SOURCE (FORM MODAL)
+        window.switchFileSourceTab = function(type) {
+            const btnUpload = document.getElementById('btn-file-tab-upload');
+            const btnLink = document.getElementById('btn-file-tab-link');
+            const containerUpload = document.getElementById('container-file-upload');
+            const urlInput = document.getElementById('form-downloadUrl');
+            const sizeInput = document.getElementById('form-size');
+
+            if (type === 'upload') {
+                btnUpload.className = "flex-grow py-2 text-xs font-bold rounded-xl bg-primary-600 text-white shadow-sm transition-all";
+                btnLink.className = "flex-grow py-2 text-xs font-bold rounded-xl text-slate-500 hover:bg-slate-50 transition-all";
+                containerUpload.classList.remove('hidden');
+                
+                urlInput.readOnly = true;
+                urlInput.placeholder = "Tệp tải lên máy tính sẽ tự động sinh đường dẫn tải về tại đây...";
+                urlInput.classList.add('bg-slate-100/50', 'text-slate-400');
+                
+                sizeInput.readOnly = true;
+                sizeInput.placeholder = "Dung lượng tự tính...";
+                sizeInput.classList.add('bg-slate-100/50', 'text-slate-400');
+            } else {
+                btnUpload.className = "flex-grow py-2 text-xs font-bold rounded-xl text-slate-500 hover:bg-slate-50 transition-all";
+                btnLink.className = "flex-grow py-2 text-xs font-bold rounded-xl bg-primary-600 text-white shadow-sm transition-all";
+                containerUpload.classList.add('hidden');
+                
+                urlInput.readOnly = false;
+                urlInput.placeholder = "Dán liên kết tải về: Google Drive, OneDrive, Mega...";
+                urlInput.classList.remove('bg-slate-100/50', 'text-slate-400');
+                
+                sizeInput.readOnly = false;
+                sizeInput.placeholder = "Ví dụ: 15.4 MB, 1.2 GB";
+                sizeInput.classList.remove('bg-slate-100/50', 'text-slate-400');
+            }
+        };
+
+        // TAB SWITCHER FOR RESOURCE IMAGE/ICON SOURCE (FORM MODAL)
+        window.switchImageSourceTab = function(type) {
+            const btnUpload = document.getElementById('btn-image-tab-upload');
+            const btnLink = document.getElementById('btn-image-tab-link');
+            const containerUpload = document.getElementById('container-image-upload');
+            const imgInput = document.getElementById('form-image');
+
+            if (type === 'upload') {
+                btnUpload.className = "flex-grow py-2 text-xs font-bold rounded-xl bg-primary-600 text-white shadow-sm transition-all";
+                btnLink.className = "flex-grow py-2 text-xs font-bold rounded-xl text-slate-500 hover:bg-slate-50 transition-all";
+                containerUpload.classList.remove('hidden');
+                
+                imgInput.readOnly = true;
+                imgInput.placeholder = "Ảnh đại diện tải lên sẽ tự động điền đường dẫn tại đây...";
+                imgInput.classList.add('bg-slate-100/50', 'text-slate-400');
+            } else {
+                btnUpload.className = "flex-grow py-2 text-xs font-bold rounded-xl text-slate-500 hover:bg-slate-50 transition-all";
+                btnLink.className = "flex-grow py-2 text-xs font-bold rounded-xl bg-primary-600 text-white shadow-sm transition-all";
+                containerUpload.classList.add('hidden');
+                
+                imgInput.readOnly = false;
+                imgInput.placeholder = "Nhập liên kết hình ảnh trực tuyến (https://...)";
+                imgInput.classList.remove('bg-slate-100/50', 'text-slate-400');
+            }
+        };
+
+        // TÍCH HỢP TẢI LÊN FILE TÀI NGUYÊN LÊN FIREBASE STORAGE (Hoặc Base64 nếu offline)
+        window.handleAdminFileUpload = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('form-file-name').textContent = file.name;
+
+            // Auto-calculate file size (Quy đổi thông minh KB hoặc MB)
+            const sizeInBytes = file.size;
+            let formattedSize = "";
+            if (sizeInBytes < 1024 * 1024) {
+                formattedSize = (sizeInBytes / 1024).toFixed(1) + " KB";
+            } else {
+                formattedSize = (sizeInBytes / (1024 * 1024)).toFixed(1) + " MB";
+            }
+            document.getElementById('form-size').value = formattedSize;
+
+            const sizeInMB = file.size / (1024 * 1024);
+            // Spark Free Storage Tier warning (Tối ưu hóa tài nguyên đám mây miễn phí)
+            if (sizeInMB > 500) {
+                showToast(`Cảnh báo: Tệp tin khá lớn (${sizeInMB.toFixed(1)} MB). Dung lượng tối đa của gói Spark là 5,000MB.`, 'warning');
+            }
+
+            const progressContainer = document.getElementById('upload-progress-container');
+            const progressBar = document.getElementById('upload-progress-bar');
+            const progressPercent = document.getElementById('upload-progress-percent');
+
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            progressPercent.textContent = '0%';
+
+            if (isFirebaseOnline && storage) {
+                // Tạo Ref an toàn tuân thủ Rule 1
+                const fileRef = ref(storage, `artifacts/${appId}/resources/${Date.now()}_${file.name}`);
+                const uploadTask = uploadBytesResumable(fileRef, file);
+
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        progressBar.style.width = progress + '%';
+                        progressPercent.textContent = Math.round(progress) + '%';
+                    }, 
+                    (error) => {
+                        console.error("Lỗi tải tệp tin lên Firebase Storage:", error);
+                        showToast("Lỗi tải tệp: " + error.message, "error");
+                        progressContainer.classList.add('hidden');
+                    }, 
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            document.getElementById('form-downloadUrl').value = downloadURL;
+                            showToast("Đã tải tệp lên Firebase Storage thành công!", "success");
+                            progressContainer.classList.add('hidden');
+                        });
+                    }
+                );
+            } else {
+                // Hỗ trợ chế độ Local/Offline mã hóa Base64 dự phòng
+                if (file.size > 30 * 1024 * 1024) { // Giới hạn 30MB để tránh lag trình duyệt khi chuyển base64
+                    showToast("Môi trường offline cục bộ giới hạn kích thước file tải lên dưới 30MB để tránh gián đoạn bộ nhớ.", "warning");
+                    progressContainer.classList.add('hidden');
+                    return;
+                }
+
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    progressBar.style.width = progress + '%';
+                    progressPercent.textContent = progress + '%';
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            document.getElementById('form-downloadUrl').value = e.target.result; // Lưu base64 url
+                            showToast("Đã mã hóa tệp cục bộ (Base64) thành công!", "success");
+                            progressContainer.classList.add('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }, 100);
+            }
+        };
+
+        // TÍCH HỢP TẢI LÊN ẢNH ĐẠI DIỆN LÊN FIREBASE STORAGE (Hoặc Base64 nếu offline)
+        window.handleAdminImageUpload = function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('form-image-file-name').textContent = file.name;
+
+            if (isFirebaseOnline && storage) {
+                showToast("Đang tải ảnh đại diện lên đám mây...", "warning");
+                const imageRef = ref(storage, `artifacts/${appId}/images/${Date.now()}_${file.name}`);
+                const uploadTask = uploadBytesResumable(imageRef, file);
+
+                uploadTask.on('state_changed', null, 
+                    (error) => {
+                        console.error("Lỗi tải ảnh đại diện:", error);
+                        showToast("Lỗi tải ảnh: " + error.message, "error");
+                    }, 
+                    () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            document.getElementById('form-image').value = downloadURL;
+                            showToast("Đã tải ảnh đại diện lên đám mây thành công!", "success");
+                        });
+                    }
+                );
+            } else {
+                // Cục bộ Base64
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('form-image').value = e.target.result;
+                    showToast("Đã mã hóa ảnh đại diện cục bộ thành công!", "success");
+                };
+                reader.readAsDataURL(file);
+            }
         };
 
         // RENDER ADMIN TABLE OF CONTENT (With Integrated Professional Pagination & Scroll Lock)
@@ -1730,7 +2010,7 @@
                     const resDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
                     await updateDoc(resDocRef, {
                         status: newStatus,
-                        updatedAt: "2026-05-30"
+                        updatedAt: "2026-06-01"
                     });
                     showToast("Đã cập nhật trạng thái hiển thị của tài nguyên!", "success");
                 } catch (e) {
@@ -1738,7 +2018,7 @@
                 }
             } else {
                 resources[index].status = newStatus;
-                resources[index].updatedAt = "2026-05-30";
+                resources[index].updatedAt = "2026-06-01";
                 renderUserResourcesGrid();
                 renderAdminResourcesTable();
                 updateMetadataStats();
@@ -1779,12 +2059,13 @@
             const title = document.getElementById('form-title').value.trim();
             const category = document.getElementById('form-category').value;
             const version = document.getElementById('form-version').value.trim();
+            const size = document.getElementById('form-size').value.trim();
             const downloadUrl = document.getElementById('form-downloadUrl').value.trim();
             const image = document.getElementById('form-image').value.trim();
             const description = document.getElementById('form-description').value.trim();
             const status = document.getElementById('form-status').checked;
 
-            if (!title || !category || !version || !downloadUrl || !description) {
+            if (!title || !category || !version || !downloadUrl || !description || !size) {
                 showToast("Vui lòng điền đầy đủ các thông tin bắt buộc (*)", "warning");
                 return;
             }
@@ -1793,11 +2074,12 @@
                 title,
                 category,
                 version,
+                size,
                 downloadUrl,
                 image: image || "",
                 description,
                 status,
-                updatedAt: "2026-05-30"
+                updatedAt: "2026-06-01"
             };
 
             if (isFirebaseOnline && db) {
@@ -1810,7 +2092,7 @@
                         const newPayload = {
                             ...payload,
                             downloadsCount: 0,
-                            createdAt: "2026-05-30"
+                            createdAt: "2026-06-01"
                         };
                         const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
                         await addDoc(colRef, newPayload);
@@ -1833,7 +2115,7 @@
                         id: newLocalId,
                         ...payload,
                         downloadsCount: 0,
-                        createdAt: "2026-05-30"
+                        createdAt: "2026-06-01"
                     };
                     resources.push(newLocalRes);
                     showToast(`Thêm tài nguyên "${title}" thành công!`, "success");
@@ -1850,8 +2132,14 @@
         window.openResourceModal = function() {
             document.getElementById('form-resource-id').value = "";
             document.getElementById('resource-form').reset();
+            document.getElementById('form-file-name').textContent = "Chưa chọn tệp nào";
+            document.getElementById('form-image-file-name').textContent = "Chưa chọn ảnh";
             document.getElementById('form-modal-title').textContent = "Thêm tài nguyên mới";
             document.getElementById('form-status').checked = true;
+
+            // Default to computer upload tabs
+            switchFileSourceTab('upload');
+            switchImageSourceTab('upload');
 
             document.getElementById('modal-resource-form').classList.remove('hidden');
         };
@@ -1865,10 +2153,18 @@
             document.getElementById('form-title').value = res.title;
             document.getElementById('form-category').value = res.category;
             document.getElementById('form-version').value = res.version;
+            document.getElementById('form-size').value = res.size || "";
             document.getElementById('form-downloadUrl').value = res.downloadUrl;
             document.getElementById('form-image').value = res.image || "";
             document.getElementById('form-description').value = res.description;
             document.getElementById('form-status').checked = res.status;
+
+            document.getElementById('form-file-name').textContent = "Sử dụng tệp tin cũ hoặc tải lên đè";
+            document.getElementById('form-image-file-name').textContent = "Sử dụng ảnh cũ hoặc tải lên đè";
+
+            // Default edit mode to paste URL tabs so they can see existing URLs immediately
+            switchFileSourceTab('link');
+            switchImageSourceTab('link');
 
             document.getElementById('form-modal-title').textContent = `Chỉnh sửa tài nguyên: ${res.title}`;
             document.getElementById('modal-resource-form').classList.remove('hidden');
