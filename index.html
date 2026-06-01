@@ -643,7 +643,7 @@
                                     <div id="upload-progress-bar" class="bg-gradient-to-r from-primary-600 to-secondary-500 h-2 w-0 transition-all duration-150"></div>
                                 </div>
                                 <div class="flex justify-between text-[10px] font-bold text-slate-400">
-                                    <span id="upload-progress-percent" class="text-primary-600">0%</span>
+                                    <span id="upload-progress-percent" class="text-primary-600 font-extrabold">0%</span>
                                     <span>Đang đồng bộ dữ liệu lên Firebase Storage...</span>
                                 </div>
                             </div>
@@ -1061,7 +1061,9 @@
                     const app = initializeApp(firebaseConfig);
                     auth = getAuth(app);
                     db = getFirestore(app);
-                    storage = getStorage(app); // Khởi tạo cổng truyền tải dữ liệu Firebase Storage
+                    
+                    // KHỞI TẠO STORAGE VỚI THAM SỐ gs:// CHÍNH XÁC ĐỂ TRÁNH LỖI PHÂN GIẢI AUTO-CONFIG
+                    storage = getStorage(app, `gs://${firebaseConfig.storageBucket}`);
 
                     // Execute Anonymous Auth Priority (Rule 3)
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -1824,7 +1826,9 @@
                     }, 
                     (error) => {
                         console.error("Lỗi tải tệp tin lên Firebase Storage:", error);
-                        showToast("Lỗi tải tệp: " + error.message, "error");
+                        
+                        // HIỂN THỊ HƯỚNG DẪN CHI TIẾT TRÊN TOAST NẾU TẢI LÊN THẤT BẠI
+                        showToast(`Lỗi Storage: ${error.message}. Hãy chắc chắn bạn đã bật Anonymous Auth, cập nhật quy tắc Rules và cấu hình CORS trên Firebase!`, "error");
                         progressContainer.classList.add('hidden');
                     }, 
                     () => {
@@ -1877,7 +1881,7 @@
                 uploadTask.on('state_changed', null, 
                     (error) => {
                         console.error("Lỗi tải ảnh đại diện:", error);
-                        showToast("Lỗi tải ảnh: " + error.message, "error");
+                        showToast(`Lỗi Storage: ${error.message}. Vui lòng cấu hình CORS và Rules cho Storage của bạn.`, "error");
                     }, 
                     () => {
                         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
