@@ -1,53 +1,31 @@
 <!DOCTYPE html>
-<html lang="vi" class="h-full bg-slate-50">
+<html lang="vi" class="">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kho Tài Nguyên Tải Về - Hệ Thống Chia Sẻ Tài Liệu & Phần Mềm</title>
+    <title>ShareTech Premium - Kho Tài Nguyên Tốc Độ Cao</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        primary: {
-                            50: '#f5f7ff',
-                            100: '#ebf0ff',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            800: '#3730a3',
-                            900: '#312e81',
-                        },
-                        secondary: {
-                            500: '#06b6d4',
-                            600: '#0891b2',
-                            700: '#0e7490',
-                        }
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
                     },
-                    boxShadow: {
-                        'premium': '0 4px 20px -2px rgba(79, 70, 229, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.04)',
-                        'hover-premium': '0 12px 30px -4px rgba(79, 70, 229, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06)'
-                    }
                 }
             }
         }
     </script>
-    <!-- Google Fonts - Inter Unified Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Anti-layout shift styles */
-        .resources-container-min-height {
-            min-height: 590px;
-        }
-        /* Custom Scrollbar */
+        /* Custom scrollbar for better visual experience */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -57,642 +35,367 @@
         }
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
-            border-radius: 8px;
+            border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
         }
-
-        /* Continuous CSS Marquee Animation without pause on hover */
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+        /* Custom Animations */
+        .animate-fade-in {
+            animation: fadeIn 0.2s ease-out forwards;
         }
-        .marquee-container {
-            overflow: hidden;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-        }
-        .marquee-inner {
-            display: inline-block;
-            animation: marquee var(--marquee-speed, 18s) linear infinite;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
-<body class="h-full flex flex-col bg-slate-50/50 text-slate-800 transition-all duration-300">
+<body class="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
 
-    <!-- TOAST NOTIFICATION SYSTEM -->
-    <div id="toast-container" class="fixed top-4 right-4 z-[70] flex flex-col gap-2 max-w-sm w-full"></div>
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5"></div>
 
-    <!-- FLOATING ADMIN VIEWING AS GUEST BAR (PREMIUM FLOATING PILL BUTTON) -->
-    <div id="admin-guest-view-bar" class="hidden fixed bottom-6 right-6 z-50 transition-all">
-        <button onclick="exitGuestModeAndReturnAdmin()" class="flex items-center space-x-2.5 bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-800 text-white px-6 py-4 rounded-full shadow-2xl shadow-primary-500/20 hover:shadow-primary-500/35 transition-all duration-300 transform hover:scale-105 border border-white/10 group">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span class="text-xs font-bold uppercase tracking-wider">Quay lại Admin Panel</span>
-            <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
-        </button>
-    </div>
-
-    <!-- MAIN APP WRAPPER -->
-    <div class="flex-grow flex flex-col min-h-screen">
-        
-        <!-- HEADER / NAVIGATION BAR -->
-        <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 transition-all duration-200 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-20">
-                    <!-- Logo & Brand Name -->
-                    <div class="flex items-center space-x-3.5 cursor-pointer" onclick="navigateTo('home')">
-                        <div class="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-800 text-white shadow-lg shadow-primary-500/25 transform hover:scale-105 transition-all duration-200">
-                            <i class="fa-solid fa-cloud-arrow-down text-xl"></i>
-                        </div>
-                        <div>
-                            <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-800 bg-clip-text text-transparent">KHO TÀI NGUYÊN</span>
-                        </div>
-                    </div>
-
-                    <!-- Search Input (Header center - ALWAYS UNLOCKED) -->
-                    <div class="hidden md:flex flex-1 max-w-md mx-10">
-                        <div class="relative w-full">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                <i class="fa-solid fa-magnifying-glass text-sm"></i>
-                            </div>
-                            <input type="text" id="header-search" oninput="handleSearch(this.value)" placeholder="Tìm kiếm công cụ, phần mềm, tài liệu..." class="block w-full pl-11 pr-4 py-2.5 border border-slate-200/80 rounded-2xl bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-600/20 focus:border-primary-600 focus:bg-white text-sm transition-all duration-150">
-                        </div>
-                    </div>
-
-                    <!-- Navigation Action Buttons -->
-                    <div class="flex items-center space-x-3 sm:space-x-5">
-                        <!-- Connection Status Badge -->
-                        <div id="db-status-badge" class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 shadow-sm shadow-emerald-500/5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span id="db-status-text" class="font-medium tracking-wide">Đang kết nối...</span>
-                        </div>
-
-                        <!-- User/Admin Login Control -->
-                        <button id="nav-action-btn" onclick="handleAuthAction()" class="flex items-center space-x-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-sm hover:shadow transition-all duration-150 uppercase tracking-wider">
-                            <i class="fa-solid fa-user-shield text-xs"></i>
-                            <span id="nav-btn-text">Quản trị viên</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- HORIZONTAL MARQUEE TICKER (REPLACED HERO BANNER) -->
-        <div id="news-marquee" class="bg-gradient-to-r from-indigo-600 via-primary-600 to-indigo-800 text-white py-3.5 border-b border-indigo-700 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center space-x-4">
-                    <!-- Badge tag indicator -->
-                    <span class="shrink-0 bg-white/25 border border-white/20 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider flex items-center space-x-1.5 shadow-inner">
-                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping"></span>
-                        <span>Thông báo</span>
-                    </span>
-                    <!-- Scrolling Marquee - Hover-Through (No Pause) -->
-                    <div class="flex-grow marquee-container">
-                        <div id="marquee-text" class="marquee-inner text-xs sm:text-sm font-semibold tracking-wide">
-                            Đang tải thông báo hệ thống...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MAIN VIEWPORT PANELS -->
-        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-            <!-- PAGE 1: USER HOME PAGE VIEW -->
-            <section id="view-home" class="space-y-8">
+    <!-- HEADER SECTION -->
+    <header class="sticky top-0 z-40 border-b backdrop-blur-md bg-white/90 border-slate-200 dark:bg-slate-900/90 dark:border-slate-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
                 
-                <!-- MAIN WORKSPACE: SIDEBAR CATEGORY + CARDS GRID -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Logo & Brand Name -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-tr from-indigo-600 to-cyan-500 p-2.5 rounded-xl shadow-lg shadow-indigo-500/20 text-white">
+                        <i data-lucide="file-down" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent dark:from-indigo-400 dark:to-cyan-300">
+                            ShareTech Free
+                        </h1>
+                        <p class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Tải trực tiếp bằng File ID</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex items-center gap-4">
+                    <a href="#resource-section" class="hidden sm:inline-block text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Kho Tài Nguyên</a>
                     
-                    <!-- LEFT COLUMN: CATEGORIES FILTER -->
-                    <aside class="lg:col-span-3 space-y-4 lg:sticky lg:top-[6.5rem] z-30">
-                        <div class="bg-white border border-slate-200/60 rounded-3xl p-5 transition-all shadow-premium">
-                            <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
-                                <span class="font-extrabold text-slate-800 text-xs uppercase tracking-wider flex items-center space-x-2.5">
-                                    <i class="fa-solid fa-folder-tree text-primary-600 text-sm"></i>
-                                    <span>Danh mục tài nguyên</span>
-                                </span>
-                                <span id="category-count" class="text-xs bg-slate-50 text-slate-500 font-extrabold px-2.5 py-0.5 rounded-full border border-slate-100">0</span>
-                            </div>
-                            
-                            <!-- Dynamic Categories List Container -->
-                            <div id="categories-filter-list" class="space-y-1.5 max-h-[300px] lg:max-h-none overflow-y-auto pr-1">
-                                <!-- Loading skeleton -->
-                                <div class="animate-pulse space-y-2">
-                                    <div class="h-9 bg-slate-100 rounded-xl"></div>
-                                    <div class="h-9 bg-slate-100 rounded-xl"></div>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Dark mode toggle -->
+                    <button id="theme-toggle" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-500 dark:text-slate-400" title="Chuyển chế độ giao diện">
+                        <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                        <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-amber-400"></i>
+                    </button>
 
-                        <!-- Statistics Counter Widget -->
-                        <div class="bg-gradient-to-br from-slate-50 to-white border border-slate-200/60 rounded-3xl p-4 flex justify-around text-center shadow-premium">
-                            <div>
-                                <span class="block text-2xl font-black text-primary-600" id="stat-total-resources">0</span>
-                                <span class="text-[9px] uppercase font-extrabold text-slate-400 tracking-wider">Tài nguyên</span>
-                            </div>
-                            <div class="border-l border-slate-200/80"></div>
-                            <div>
-                                <span class="block text-2xl font-black text-secondary-600" id="stat-total-downloads">0</span>
-                                <span class="text-[9px] uppercase font-extrabold text-slate-400 tracking-wider">Lượt tải về</span>
-                            </div>
-                        </div>
-                    </aside>
-
-                    <!-- RIGHT COLUMN: RESOURCES CONTENT GRID WITH PAGINATION AND HEIGHT FIX -->
-                    <section class="lg:col-span-9 space-y-5">
-                        <!-- Active Filters Status Bar -->
-                        <div class="flex items-center justify-between flex-wrap gap-2">
-                            <div class="flex items-center space-x-2.5">
-                                <h2 class="text-base font-extrabold text-slate-800 tracking-tight" id="resource-grid-title">Tất cả tài nguyên</h2>
-                                <span id="resource-count-badge" class="bg-primary-50 text-primary-700 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-primary-100">0 kết quả</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <label for="sort-select" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Sắp xếp:</label>
-                                <select id="sort-select" onchange="handleSortChange(this.value)" class="text-xs bg-white border border-slate-200 text-slate-700 rounded-xl px-3 py-2 font-semibold focus:ring-2 focus:ring-primary-600/10 focus:border-primary-600 focus:outline-none cursor-pointer">
-                                    <option value="newest">Mới cập nhật</option>
-                                    <option value="oldest">Cũ nhất</option>
-                                    <option value="downloads">Lượt tải cao</option>
-                                    <option value="alphabet">Theo tên A-Z</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Fixed height grid area to prevent layout shifting -->
-                        <div class="resources-container-min-height flex flex-col justify-between">
-                            
-                            <!-- Main Resources Grid Grid -->
-                            <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                                <!-- Card Loading Skeleton -->
-                                <div class="bg-white border border-slate-100 rounded-3xl p-5 space-y-4 animate-pulse">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="w-11 h-11 bg-slate-200 rounded-2xl"></div>
-                                        <div class="flex-1 space-y-2">
-                                            <div class="h-3 bg-slate-200 rounded w-3/4"></div>
-                                            <div class="h-2 bg-slate-200 rounded w-1/2"></div>
-                                        </div>
-                                    </div>
-                                    <div class="h-3 bg-slate-200 rounded w-5/6"></div>
-                                </div>
-                            </div>
-
-                            <!-- Empty State Screen -->
-                            <div id="empty-state-container" class="hidden text-center py-20 bg-white border border-dashed border-slate-300 rounded-3xl transition-colors my-auto shadow-sm">
-                                <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-3.5 text-slate-400 border border-slate-100">
-                                    <i class="fa-solid fa-folder-open text-xl"></i>
-                                </div>
-                                <h3 class="text-sm font-bold text-slate-800">Không tìm thấy tài nguyên nào</h3>
-                                <p class="text-slate-500 text-xs mt-1.5 max-w-xs mx-auto leading-relaxed">Vui lòng thử tìm kiếm bằng từ khóa khác hoặc lọc danh mục khác.</p>
-                                <button onclick="resetFilters()" class="mt-4 inline-flex items-center space-x-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-150">
-                                    <i class="fa-solid fa-arrow-rotate-left text-[10px]"></i>
-                                    <span>Đặt lại bộ lọc</span>
-                                </button>
-                            </div>
-
-                            <!-- PAGINATION CONTROLS PANEL -->
-                            <div id="pagination-panel" class="pt-6 border-t border-slate-200/60 flex items-center justify-between mt-auto">
-                                <span id="pagination-info" class="text-xs text-slate-400 font-bold uppercase tracking-wider">Trang 1 / 1</span>
-                                <div class="flex items-center space-x-1.5" id="pagination-buttons">
-                                    <!-- Back and Next will render here dynamically -->
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </section>
-
-            <!-- PAGE 2: ADMIN LOGIN VIEW (REDESIGNED PREMIUM GLOW LOOK) -->
-            <section id="view-admin-login" class="hidden max-w-md mx-auto my-14">
-                <div class="bg-white border border-slate-100 rounded-3xl p-10 shadow-premium space-y-8 relative">
-                    <!-- Subtle brand background circle -->
-                    <div class="absolute -top-12 -right-12 w-32 h-32 bg-primary-100/50 rounded-full blur-2xl pointer-events-none"></div>
-                    <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-secondary-100/50 rounded-full blur-2xl pointer-events-none"></div>
-
-                    <div class="text-center space-y-3 relative z-10">
-                        <div class="w-16 h-16 bg-gradient-to-br from-primary-600 via-primary-700 to-indigo-800 text-white rounded-2xl flex items-center justify-center mx-auto shadow-xl shadow-primary-500/20 transform hover:rotate-6 transition-all duration-300">
-                            <i class="fa-solid fa-shield-halved text-2xl"></i>
-                        </div>
-                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Hệ thống Quản trị</h2>
-                        <p class="text-slate-400 text-xs font-medium max-w-[280px] mx-auto leading-relaxed">Xác thực tài khoản của bạn để truy cập giao diện quản trị viên.</p>
-                    </div>
-
-                    <!-- Login Form (Balanced Clean Padding) -->
-                    <form id="admin-login-form" class="space-y-6 relative z-10" onsubmit="handleEmailLogin(event)">
-                        <div class="space-y-2">
-                            <label for="login-email" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-0.5">Tên tài khoản / Email</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-user text-sm"></i>
-                                </div>
-                                <input type="text" id="login-email" required placeholder="Nhập user" class="block w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/10 focus:border-primary-600 focus:bg-white text-xs font-medium transition-all">
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <label for="login-password" class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest ml-0.5">Mật khẩu bảo mật</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-lock text-sm"></i>
-                                </div>
-                                <input type="password" id="login-password" required placeholder="Nhập pass" class="block w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200/80 bg-slate-50/50 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary-600/10 focus:border-primary-600 focus:bg-white text-xs font-medium transition-all">
-                            </div>
-                        </div>
-
-                        <button type="submit" class="w-full flex items-center justify-center space-x-2 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-800 hover:from-primary-700 hover:to-indigo-900 text-white font-black text-xs shadow-lg shadow-primary-500/25 hover:shadow-primary-500/35 hover:scale-[1.01] transition-all duration-150 uppercase tracking-widest">
-                            <span>Đăng nhập hệ thống</span>
-                            <i class="fa-solid fa-right-to-bracket text-xs"></i>
-                        </button>
-                    </form>
-
-                    <!-- Back link -->
-                    <div class="text-center pt-2 relative z-10">
-                        <button onclick="navigateTo('home')" class="inline-flex items-center space-x-2 text-xs font-extrabold text-slate-400 hover:text-primary-600 transition-colors">
-                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
-                            <span>Quay lại trang chủ</span>
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- PAGE 3: ADMIN DASHBOARD VIEW -->
-            <section id="view-admin-dashboard" class="hidden space-y-6">
-                <!-- Admin Header Card -->
-                <div class="bg-white border border-slate-200/60 rounded-3xl p-6 transition-colors shadow-premium">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <div class="space-y-1">
-                            <div class="flex items-center space-x-2">
-                                <span class="px-2.5 py-0.5 rounded-lg bg-indigo-50 text-indigo-700 text-[10px] font-extrabold uppercase tracking-wider border border-indigo-100">BẢNG ĐIỀU KHIỂN</span>
-                                <span id="admin-status-badge" class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-extrabold uppercase tracking-wider border border-emerald-100">Đang hoạt động</span>
-                            </div>
-                            <h2 class="text-xl font-extrabold text-slate-800">Hệ Thống Quản Trị Viên</h2>
-                            <p class="text-slate-500 text-xs">Cấu hình hệ thống, ẩn/hiện tin tức, chỉnh sửa và cấu hình danh mục dữ liệu.</p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="viewHomeAsAdmin()" class="flex items-center space-x-1.5 px-4 py-2.5 border border-indigo-200 hover:bg-indigo-50 text-indigo-700 rounded-2xl text-xs font-bold transition-all">
-                                <i class="fa-solid fa-eye text-xs"></i>
-                                <span>Xem Trang Chủ</span>
-                            </button>
-                            <button onclick="openResourceModal()" class="flex items-center space-x-1.5 px-4 py-2.5 bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-800 text-white rounded-2xl text-xs font-bold shadow-md shadow-primary-500/10 hover:shadow-primary-500/25 transition-all">
-                                <i class="fa-solid fa-plus text-xs"></i>
-                                <span>Thêm tài nguyên</span>
-                            </button>
-                            <button onclick="openCategoryManager()" class="flex items-center space-x-1.5 px-4 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-2xl text-xs font-bold transition-all">
-                                <i class="fa-solid fa-folder-plus text-xs"></i>
-                                <span>Danh mục</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Admin Tabs Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-                    
-                    <!-- Sidebar: Mini Navigation & System Stats -->
-                    <div class="lg:col-span-1 space-y-4">
-                        <div class="bg-white border border-slate-200/60 rounded-3xl p-5 space-y-1.5 shadow-premium">
-                            <button onclick="switchAdminTab('resources')" id="btn-tab-res" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all bg-primary-50 text-primary-600">
-                                <span class="flex items-center space-x-2">
-                                    <i class="fa-solid fa-box-archive text-sm"></i>
-                                    <span>Tất cả tài nguyên</span>
-                                </span>
-                                <span id="admin-res-badge" class="text-xs bg-primary-100 px-2.5 py-0.5 rounded-full font-extrabold">0</span>
-                            </button>
-                            <button onclick="openCategoryManager()" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all text-slate-600 hover:bg-slate-50">
-                                <span class="flex items-center space-x-2">
-                                    <i class="fa-solid fa-tags text-sm"></i>
-                                    <span>Quản lý danh mục</span>
-                                </span>
-                                <i class="fa-solid fa-angle-right text-slate-400 text-[10px]"></i>
-                            </button>
-                            <button onclick="seedInitialData()" class="w-full flex items-center space-x-2 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-amber-600 hover:bg-amber-50/50 transition-all border border-dashed border-amber-300 mt-4">
-                                <i class="fa-solid fa-database animate-pulse"></i>
-                                <span>Khởi tạo dữ liệu mẫu</span>
-                            </button>
-                        </div>
-
-                        <!-- CẤU HÌNH THÔNG BÁO CHẠY CHỮ (ADDITIONAL FEATURES IN ADMIN PANEL) -->
-                        <div class="bg-white border border-slate-200/60 rounded-3xl p-5 space-y-4 shadow-premium">
-                            <h4 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider flex items-center space-x-2">
-                                <i class="fa-solid fa-bullhorn text-primary-600"></i>
-                                <span>Cấu hình Chạy Chữ</span>
-                            </h4>
-                            <form id="announcement-config-form" onsubmit="saveAnnouncementSettings(event)" class="space-y-3">
-                                <div class="space-y-1">
-                                    <label class="text-[9px] font-extrabold text-slate-400 uppercase">Văn bản tin tức</label>
-                                    <textarea id="announcement-text-input" rows="2" required placeholder="Nhập văn bản thông báo mới..." class="block w-full p-2.5 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary-500"></textarea>
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="text-[9px] font-extrabold text-slate-400 uppercase">Tốc độ chạy chữ</label>
-                                    <select id="announcement-speed-select" class="block w-full p-2 rounded-xl border border-slate-200 text-xs font-semibold bg-slate-50 focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer">
-                                        <option value="x1">Chậm (x1)</option>
-                                        <option value="x2" selected>Trung bình (x2)</option>
-                                        <option value="x3">Nhanh (x3)</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all">
-                                    Cập nhật thông báo
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Main Dashboard Table Area -->
-                    <div class="lg:col-span-3 space-y-4">
-                        <div class="bg-white border border-slate-200/60 rounded-3xl overflow-hidden shadow-premium transition-colors">
-                            <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-50/30">
-                                <span class="font-extrabold text-slate-800 text-xs flex items-center space-x-2.5">
-                                    <i class="fa-solid fa-list-check text-primary-600 text-sm"></i>
-                                    <span class="uppercase tracking-wider">Danh Sách Quản Lý Tài Nguyên</span>
-                                </span>
-                                <!-- Table search & row options wrapper -->
-                                <div class="flex items-center flex-wrap gap-2">
-                                    <!-- Dynamic Per-page Limit selector -->
-                                    <div class="flex items-center space-x-1">
-                                        <span class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide">Hiển thị:</span>
-                                        <select id="admin-per-page-select" onchange="handleAdminPerPageChange(this.value)" class="text-xs bg-white border border-slate-200 rounded-xl px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer font-bold">
-                                            <option value="10">10</option>
-                                            <option value="20">20</option>
-                                            <option value="30">30</option>
-                                            <option value="50">50</option>
-                                        </select>
-                                    </div>
-                                    <!-- Admin table search -->
-                                    <div class="relative max-w-xs w-full">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">
-                                            <i class="fa-solid fa-magnifying-glass"></i>
-                                        </div>
-                                        <input type="text" id="admin-table-search" oninput="handleAdminSearch(this.value)" placeholder="Tìm nhanh theo tên..." class="block w-full pl-9 pr-3 py-2 border border-slate-200 bg-white rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary-500 text-xs">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Responsive Admin Table with dynamic custom scrollbar to prevent shifts -->
-                            <div class="overflow-x-auto min-h-[380px] max-h-[580px] overflow-y-auto">
-                                <table class="w-full text-left border-collapse text-sm">
-                                    <thead>
-                                        <tr class="bg-slate-50 text-slate-500 text-[10px] font-extrabold uppercase tracking-wider border-b border-slate-100">
-                                            <th class="py-3.5 px-5">Tài nguyên</th>
-                                            <th class="py-3.5 px-5">Danh mục</th>
-                                            <th class="py-3.5 px-5">Phiên bản</th>
-                                            <th class="py-3.5 px-5">Lượt tải</th>
-                                            <th class="py-3.5 px-5">Trạng thái</th>
-                                            <th class="py-3.5 px-5 text-right">Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="admin-resources-tbody" class="divide-y divide-slate-100">
-                                        <!-- Resource row templates render here -->
-                                        <tr>
-                                            <td colspan="6" class="py-10 text-center text-slate-400 text-xs">Đang tải tài nguyên quản trị...</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- Embedded Admin Table Footer Pagination -->
-                            <div id="admin-pagination-panel" class="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/30">
-                                <!-- Rendered dynamically -->
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-        </main>
-
-        <!-- FOOTER SECTION (TINH GỌN, CHUYÊN NGHIỆP HƠN) -->
-        <footer class="bg-[#0f172a] text-slate-400 py-6 mt-auto border-t border-slate-800 text-[11px]">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center space-x-2.5">
-                    <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-primary-600 to-indigo-600 text-white flex items-center justify-center">
-                        <i class="fa-solid fa-cloud-arrow-down text-xs"></i>
-                    </div>
-                    <span class="font-extrabold text-white uppercase tracking-wider">KHO TÀI NGUYÊN DOANH NGHIỆP</span>
-                </div>
-                <div class="text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
-                    © 2026 Toàn bộ tài nguyên được quét virus 100% trước khi xuất bản.
-                </div>
-                <div class="flex space-x-3">
-                    <span class="bg-slate-800/60 text-slate-400 px-2.5 py-0.5 rounded border border-slate-700/50 uppercase font-extrabold text-[9px]">Cloud Active</span>
-                    <span class="bg-emerald-950/40 text-emerald-400 px-2.5 py-0.5 rounded border border-emerald-900/30 uppercase font-extrabold text-[9px]">SSL Secured</span>
-                </div>
-            </div>
-        </footer>
-
-    </div>
-
-    <!-- VIEW RESOURCE DETAILS MODAL -->
-    <div id="modal-detail" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Background overlay -->
-            <div onclick="closeDetailModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
-            
-            <!-- Modal panel content spacer -->
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            
-            <!-- Detail Card Panel -->
-            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-100">
-                <!-- Top Header banner color -->
-                <div class="h-2 bg-gradient-to-r from-primary-600 to-secondary-600"></div>
-                
-                <div class="p-6 sm:p-8 space-y-6 relative">
-                    <!-- Close button -->
-                    <div class="absolute top-5 right-5">
-                        <button onclick="closeDetailModal()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors">
-                            <i class="fa-solid fa-xmark text-sm"></i>
-                        </button>
-                    </div>
-
-                    <!-- Header core info -->
-                    <div class="flex flex-col sm:flex-row gap-5 items-start pt-2">
-                        <div id="modal-res-image-container" class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center text-primary-600 text-3xl shrink-0 shadow-inner border border-primary-200/20">
-                            <i class="fa-solid fa-file-arrow-down"></i>
-                        </div>
-                        <div class="space-y-1.5">
-                            <div class="flex items-center flex-wrap gap-2">
-                                <span id="modal-res-category" class="px-2.5 py-0.5 rounded bg-primary-50 text-primary-600 text-[10px] font-bold uppercase tracking-wider">Category</span>
-                                <span id="modal-res-version" class="px-2.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold">v1.0</span>
-                            </div>
-                            <h3 id="modal-res-title" class="text-xl font-extrabold text-slate-900 leading-tight">Tên tài nguyên</h3>
-                            <div class="flex items-center space-x-3 text-xs text-slate-400 font-medium">
-                                <span><i class="fa-regular fa-calendar mr-1.5"></i>Cập nhật: <span id="modal-res-updated">30/05/2026</span></span>
-                                <span><i class="fa-solid fa-circle-down mr-1.5"></i>Lượt tải: <span id="modal-res-downloads">0</span></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Detailed Description block -->
-                    <div class="space-y-2.5 bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                        <h4 class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">Thông tin chi tiết và Hướng dẫn cài đặt</h4>
-                        <div id="modal-res-description" class="text-xs text-slate-700 leading-relaxed whitespace-pre-wrap font-medium">Mô tả của tài nguyên...</div>
-                    </div>
-
-                    <!-- Technical Meta Data -->
-                    <div class="grid grid-cols-2 gap-4 text-xs font-semibold">
-                        <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-2xl">
-                            <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-extrabold">Ngày phát hành:</span>
-                            <span id="modal-res-created" class="font-bold text-slate-700 mt-1 block">-</span>
-                        </div>
-                        <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-2xl">
-                            <span class="block text-slate-400 text-[10px] uppercase tracking-wider font-extrabold">Xác thực mã nguồn:</span>
-                            <span class="font-bold text-emerald-600 flex items-center space-x-1.5 mt-1">
-                                <i class="fa-solid fa-shield-halved text-sm"></i>
-                                <span>Đã kiểm duyệt sạch 100%</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Actions Panel (Enlarged Buttons) -->
-                    <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                        <a id="modal-download-link" href="#" target="_blank" onclick="incrementDownloadCounterFromModal()" class="flex-grow flex items-center justify-center space-x-2 py-4 px-6 bg-gradient-to-r from-primary-600 via-primary-700 to-indigo-800 hover:from-primary-700 hover:to-indigo-900 text-white font-bold text-xs rounded-2xl shadow-lg shadow-primary-500/20 hover:shadow-primary-500/30 transition-all uppercase tracking-wider">
-                            <i class="fa-solid fa-cloud-arrow-down text-sm"></i>
-                            <span>Liên kết Tải Xuống (Mở tab mới)</span>
-                        </a>
-                        <button onclick="closeDetailModal()" class="px-6 py-4 border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-2xl transition-all uppercase tracking-wider">
-                            Đóng lại
+                    <!-- Admin Session Control -->
+                    <div id="admin-header-status" class="flex items-center gap-2">
+                        <button id="btn-open-login" class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-xl transition-all border border-indigo-200 dark:border-indigo-900/30">
+                            <i data-lucide="lock" class="w-4 h-4"></i> Admin quản trị
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <!-- ADD/EDIT RESOURCE MODAL (ADMIN ONLY) -->
-    <div id="modal-resource-form" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div onclick="closeResourceModal()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    <!-- MAIN WRAPPER CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- INTRO & STATS MINI BOARD (MINIMALIST) -->
+        <section class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200 dark:border-slate-800">
+            <div>
+                <h2 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                    Hệ Thống Tải Tài Nguyên Trực Tiếp
+                </h2>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    Hỗ trợ trích xuất liên kết Google Drive nhanh chóng, ổn định và an toàn bảo mật.
+                </p>
+            </div>
             
-            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-slate-100 transition-colors">
-                <div class="h-2 bg-gradient-to-r from-primary-600 to-secondary-600"></div>
+            <!-- Compact horizontal counter system -->
+            <div class="flex gap-6 text-sm">
+                <div class="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-800 px-4 py-2 rounded-2xl shadow-sm">
+                    <span class="text-xs text-slate-400 font-semibold uppercase block">Tài nguyên</span>
+                    <span id="stat-resources-count" class="text-lg font-bold text-indigo-600 dark:text-indigo-400">0</span>
+                </div>
+                <div class="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-800 px-4 py-2 rounded-2xl shadow-sm">
+                    <span class="text-xs text-slate-400 font-semibold uppercase block">Danh mục</span>
+                    <span id="stat-categories-count" class="text-lg font-bold text-cyan-500">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= ADMIN CONTROL BOARD (HIDDEN BY DEFAULT) ======================= -->
+        <section id="admin-board" class="hidden mb-10 p-6 rounded-2xl border bg-white dark:bg-slate-800 border-indigo-100 dark:border-indigo-950/50 shadow-xl transition-all duration-300">
+            
+            <!-- Admin Header Tabs -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div class="bg-indigo-100 dark:bg-indigo-950/50 p-2.5 rounded-xl text-indigo-600 dark:text-indigo-400">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold">Bảng Điều Khiển Admin</h3>
+                        <p class="text-xs text-slate-400">Đăng tải tài nguyên, cấu hình danh mục dữ liệu</p>
+                    </div>
+                </div>
+
+                <!-- Admin sub tabs -->
+                <div class="flex gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl self-start sm:self-center">
+                    <button id="tab-btn-resources" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm">
+                        Tài Nguyên
+                    </button>
+                    <button id="tab-btn-categories" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700">
+                        Danh Mục
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 1: RESOURCES MANAGEMENT -->
+            <div id="admin-tab-resources-content" class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                <form id="resource-form" onsubmit="handleResourceSubmit(event)" class="p-6 sm:p-8 space-y-4">
-                    <h3 id="form-modal-title" class="text-lg font-extrabold text-slate-900">Thêm tài nguyên mới</h3>
-                    
-                    <input type="hidden" id="form-resource-id">
+                <!-- Resource Action Form -->
+                <form id="resource-form" class="lg:col-span-5 space-y-4">
+                    <h4 id="resource-form-title" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 uppercase tracking-wide">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Thêm Tài Nguyên Mới
+                    </h4>
 
                     <!-- Title -->
-                    <div class="space-y-1">
-                        <label for="form-title" class="text-xs font-bold text-slate-500 uppercase">Tên tài nguyên <span class="text-rose-500">*</span></label>
-                        <input type="text" id="form-title" required placeholder="Ví dụ: TeamViewer, eSigner..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Tên tài nguyên <span class="text-rose-500">*</span></label>
+                        <input type="text" id="res-title" required placeholder="VD: Bộ Ký Số Thuế Điện Tử VNPT" 
+                            class="w-full px-3.5 py-2 text-sm rounded-xl border bg-transparent border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white">
                     </div>
 
-                    <!-- Category & Version Grid -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1">
-                            <label for="form-category" class="text-xs font-bold text-slate-500 uppercase">Danh mục <span class="text-rose-500">*</span></label>
-                            <select id="form-category" required class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none cursor-pointer">
-                                <!-- Loaded dynamically -->
-                            </select>
+                    <!-- Category Selection -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Phân loại danh mục <span class="text-rose-500">*</span></label>
+                        <select id="res-category" required class="w-full px-3.5 py-2 text-sm rounded-xl border bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white">
+                            <option value="">-- Chọn danh mục --</option>
+                            <!-- Dynamic rendering -->
+                        </select>
+                    </div>
+
+                    <!-- Direct Download Link URL -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1 flex items-center gap-1">
+                            <i data-lucide="link" class="w-3 h-3 text-indigo-500"></i> Đường dẫn Google Drive bất kỳ <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="url" id="res-url" required placeholder="Dán link share Drive bất kỳ của file..." 
+                            class="w-full px-3.5 py-2 text-sm rounded-xl border bg-transparent border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white">
+                        <span class="text-[10px] text-slate-400 block mt-1">Hệ thống tự động phân tách mã FILE_ID để tạo link tải trực tiếp.</span>
+                    </div>
+
+                    <!-- Custom Icon Logo Panel -->
+                    <div class="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl space-y-3 border border-slate-100 dark:border-slate-800">
+                        <span class="block text-xs font-bold text-slate-600 dark:text-slate-400">Hình ảnh đại diện / Biểu tượng logo</span>
+                        
+                        <!-- Toggle selection of url / upload icon -->
+                        <div class="flex gap-4">
+                            <label class="flex items-center gap-1.5 text-xs cursor-pointer text-slate-600 dark:text-slate-300">
+                                <input type="radio" name="icon-type-group" value="url" checked class="text-indigo-600 focus:ring-indigo-500">
+                                Nhập URL liên kết ảnh
+                            </label>
+                            <label class="flex items-center gap-1.5 text-xs cursor-pointer text-slate-600 dark:text-slate-300">
+                                <input type="radio" name="icon-type-group" value="upload" class="text-indigo-600 focus:ring-indigo-500">
+                                Tải ảnh lên từ thiết bị
+                            </label>
                         </div>
-                        <div class="space-y-1">
-                            <label for="form-version" class="text-xs font-bold text-slate-500 uppercase">Phiên bản <span class="text-rose-500">*</span></label>
-                            <input type="text" id="form-version" required placeholder="15.0 hoặc Mới nhất" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
+
+                        <!-- URL input field -->
+                        <div id="icon-url-field">
+                            <input type="url" id="res-icon-url" placeholder="Nhập địa chỉ ảnh (https://...)" 
+                                class="w-full px-3 py-1.5 text-xs rounded-lg border bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 dark:text-white focus:outline-none">
+                        </div>
+
+                        <!-- Device File Upload field -->
+                        <div id="icon-upload-field" class="hidden space-y-2">
+                            <input type="file" id="res-icon-file" accept="image/*" 
+                                class="block w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 dark:file:bg-indigo-950/40 dark:file:text-indigo-300 hover:file:bg-indigo-100 cursor-pointer">
+                            <div id="preview-image-container" class="hidden items-center gap-2">
+                                <span class="text-[10px] text-slate-400">Xem trước:</span>
+                                <img id="uploaded-image-preview" src="" alt="preview" class="w-8 h-8 rounded-lg object-cover border border-slate-200 dark:border-slate-700">
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Download URL -->
-                    <div class="space-y-1">
-                        <label for="form-downloadUrl" class="text-xs font-bold text-slate-500 uppercase">Liên kết tải về (URL) <span class="text-rose-500">*</span></label>
-                        <input type="url" id="form-downloadUrl" required placeholder="Dán link Google Drive, Mediafire, OneDrive..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
-                    </div>
-
-                    <!-- Thumbnail / Icon Selector -->
-                    <div class="space-y-1">
-                        <label for="form-image" class="text-xs font-bold text-slate-500 uppercase">Đường dẫn ảnh/icon đại diện (URL)</label>
-                        <input type="text" id="form-image" placeholder="Dán link ảnh https://... hoặc để trống để tạo icon tự động" class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none">
-                    </div>
-
-                    <!-- Description -->
-                    <div class="space-y-1">
-                        <label for="form-description" class="text-xs font-bold text-slate-500 uppercase">Mô tả ngắn & Hướng dẫn <span class="text-rose-500">*</span></label>
-                        <textarea id="form-description" required rows="3" placeholder="Ví dụ: Công cụ điều khiển máy tính từ xa tiện dụng..." class="block w-full px-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 text-xs focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 focus:outline-none"></textarea>
-                    </div>
-
-                    <!-- Active status & Highlight -->
-                    <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-100">
-                        <div class="flex items-center space-x-2">
-                            <input type="checkbox" id="form-status" checked class="w-4 h-4 text-primary-600 border-slate-300 rounded focus:ring-primary-500">
-                            <label for="form-status" class="text-xs font-bold text-slate-700">Cho phép hiển thị ra Trang Chủ</label>
-                        </div>
-                    </div>
-
-                    <!-- Footer Action buttons -->
-                    <div class="flex space-x-2 pt-2">
-                        <button type="submit" class="flex-grow py-3 px-4 bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-850 text-white font-bold text-xs rounded-2xl transition-all shadow-md">
-                            Lưu cấu hình tài nguyên
+                    <!-- Action buttons -->
+                    <div class="flex gap-2.5 pt-2">
+                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-xl text-sm transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/15">
+                            <i data-lucide="upload" class="w-4 h-4"></i> <span id="res-submit-text">Đăng Tải Tài Nguyên</span>
                         </button>
-                        <button type="button" onclick="closeResourceModal()" class="px-5 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-2xl transition-all">
-                            Hủy bỏ
+                        <button type="button" id="btn-cancel-res-edit" class="hidden px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+                            Hủy
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
 
-    <!-- CATEGORY MANAGEMENT MODAL -->
-    <div id="modal-category-manager" class="hidden fixed inset-0 z-[60] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div onclick="closeCategoryManager()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity" aria-hidden="true"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            
-            <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-100 transition-colors">
-                <div class="h-2 bg-gradient-to-r from-primary-600 to-secondary-600"></div>
-                
-                <div class="p-6 space-y-4">
-                    <div class="flex justify-between items-center pb-2 border-b border-slate-100">
-                        <h3 class="text-base font-extrabold text-slate-900">Quản lý Danh mục</h3>
-                        <button onclick="closeCategoryManager()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-
-                    <!-- Category additions form -->
-                    <form id="category-add-form" onsubmit="handleCategoryAdd(event)" class="space-y-2">
-                        <label for="form-new-cat-name" class="text-xs font-bold text-slate-500 uppercase">Thêm danh mục mới</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="form-new-cat-name" required placeholder="Tên danh mục..." class="flex-grow px-3.5 py-2.5 text-xs rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                            <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl text-xs font-bold transition-all shrink-0">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </div>
-                    </form>
-
-                    <!-- Category Items list container -->
-                    <div class="space-y-2">
-                        <h4 class="text-xs font-bold text-slate-500 uppercase">Danh sách danh mục hiện có</h4>
-                        <div id="modal-category-list" class="space-y-1.5 max-h-[220px] overflow-y-auto border border-slate-100 rounded-2xl p-2 bg-slate-50">
-                            <!-- Populated dynamically -->
-                            <div class="text-slate-400 text-xs text-center py-4">Chưa có danh mục nào.</div>
-                        </div>
-                    </div>
-
-                    <!-- Modal footer -->
-                    <div class="pt-2 flex justify-end">
-                        <button onclick="closeCategoryManager()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition-all">
-                            Hoàn tất
-                        </button>
+                <!-- Admin Resource Display List -->
+                <div class="lg:col-span-7 space-y-4">
+                    <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wide">Danh sách file đã đăng tải</h4>
+                    <div id="admin-resources-list" class="space-y-2.5 max-h-[580px] overflow-y-auto pr-1.5">
+                        <!-- Dynamic rendering via JS -->
                     </div>
                 </div>
+
             </div>
+
+            <!-- TAB CONTENT 2: CATEGORIES MANAGEMENT -->
+            <div id="admin-tab-categories-content" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8 hidden">
+                
+                <!-- Category Add/Edit Form -->
+                <form id="category-form" class="space-y-4">
+                    <h4 id="category-form-title" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 uppercase tracking-wide">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Thêm Danh Mục Mới
+                    </h4>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Tên danh mục mới <span class="text-rose-500">*</span></label>
+                        <input type="text" id="cat-name" required placeholder="VD: Sách Lập Trình Web, Công cụ Ký số" 
+                            class="w-full px-3.5 py-2 text-sm rounded-xl border bg-transparent border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white">
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-5 rounded-xl text-sm transition-colors shadow-lg shadow-indigo-600/10">
+                            <span id="cat-submit-text">Tạo Danh Mục</span>
+                        </button>
+                        <button type="button" id="btn-cancel-cat-edit" class="hidden px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+                            Hủy
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Categories List -->
+                <div class="space-y-4">
+                    <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wide">Danh mục hiện đang hoạt động</h4>
+                    <div id="admin-categories-list" class="space-y-2 max-h-[300px] overflow-y-auto pr-1.5">
+                        <!-- Dynamic rendering -->
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ======================= USER VIEW INTERFACE ======================= -->
+        
+        <!-- Filter Bar (Search & Categories list) -->
+        <section id="resource-section" class="mb-8 space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm transition-colors">
+                
+                <!-- Search Input Field -->
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                    <input type="text" id="search-input" placeholder="Tìm kiếm tên tài nguyên số cần tải..." 
+                        class="w-full pl-11 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all">
+                    <button id="btn-clear-search" class="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Fast update indicator -->
+                <div class="flex gap-2">
+                    <button id="btn-refresh" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-slate-500 dark:text-slate-400" title="Đồng bộ lại">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Categories Horizontal Filter Tags -->
+            <div id="category-filter-tags" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+                <!-- Will render 'All' and other categories dynamically -->
+            </div>
+        </section>
+
+        <!-- Main Display Cards Grid -->
+        <section class="space-y-6">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="layers" class="w-4 h-4"></i> Danh Sách Tài Nguyên Đang Hiển Thị (<span id="results-count">0</span>)
+                </h3>
+            </div>
+
+            <!-- Cards Container -->
+            <div id="resources-grid-display" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Rendering cards from JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-20 border-t border-slate-200 dark:border-slate-800 py-8 bg-white dark:bg-slate-900 text-slate-400 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div class="flex items-center gap-2">
+                <div class="bg-indigo-600 text-white p-1.5 rounded-lg">
+                    <i data-lucide="file-down" class="w-4 h-4"></i>
+                </div>
+                <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">ShareTech Premium</span>
+            </div>
+            <p class="text-xs">
+                © 2026 ShareTech Resources. Trực tiếp - Tối giản - Bảo mật.
+            </p>
+            <div class="text-xs flex gap-4">
+                <button id="footer-admin-trigger" class="hover:text-indigo-500 transition-colors">Cấu hình hệ thống</button>
+                <span>•</span>
+                <span>Tốc độ tải Google Drive trực tiếp</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ======================= LOGIN ADMINISTRATOR MODAL (NO HINT IN UI) ======================= -->
+    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm hidden">
+        <div class="w-full max-w-sm bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-700 space-y-4 relative animate-fade-in">
+            
+            <!-- Close Modal -->
+            <button id="btn-close-login" class="absolute right-4 top-4 p-1.5 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Icon Header -->
+            <div class="flex flex-col items-center text-center space-y-2 pt-2">
+                <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-2xl text-indigo-600 dark:text-indigo-400">
+                    <i data-lucide="lock" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-lg font-bold">Xác Thực Quản Trị</h3>
+                <p class="text-xs text-slate-400">Vui lòng nhập tài khoản quản trị viên</p>
+            </div>
+
+            <!-- Login Input Form -->
+            <form id="login-form" class="space-y-4">
+                <!-- Alert error directly in form -->
+                <div id="login-error-container" class="hidden p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
+                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                    <span>Tài khoản hoặc mật khẩu không chính xác!</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Tên tài khoản</label>
+                    <input type="text" id="login-username" required placeholder="Nhập tài khoản" 
+                        class="w-full px-4 py-2.5 text-sm rounded-xl border bg-transparent border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 mb-1">Mật khẩu</label>
+                    <input type="password" id="login-password" required placeholder="Nhập mật khẩu" 
+                        class="w-full px-4 py-2.5 text-sm rounded-xl border bg-transparent border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white">
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button type="button" id="btn-close-login-cancel" class="w-1/2 py-2.5 text-sm font-semibold border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 transition-colors">
+                        Hủy bỏ
+                    </button>
+                    <button type="submit" class="w-1/2 py-2.5 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/15 transition-colors">
+                        Xác nhận
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-
-    <!-- ========================================== -->
-    <!--          FIREBASE CORE INTEGRATIONS       -->
-    <!-- ========================================== -->
+    <!-- ======================= FIREBASE ENGINE & SYSTEM SCRIPTS ======================= -->
     <script type="module">
-        // Import Firebase JS modules from the official Google CDN ESM endpoints
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // Import Firebase v11 JavaScript SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // APP INITIAL STATE VARIABLES
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'resource-download-center-viet';
-        
-        // GIỮ CẤU HÌNH FIREBASE THỰC TẾ TRONG HỆ THỐNG
-        const defaultFirebaseConfig = {
+        // Firebase Configuration
+        const firebaseConfig = {
             apiKey: "AIzaSyALT8o8hQtVuSVn6A_hQSE4SvDHsg_y80I",
             authDomain: "khotainguyen-5d8b8.firebaseapp.com",
             projectId: "khotainguyen-5d8b8",
@@ -702,1317 +405,758 @@
             measurementId: "G-X73FSSCR12"
         };
 
-        let firebaseConfig = defaultFirebaseConfig;
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Active Application variables
-        let db = null;
-        let auth = null;
-        let isFirebaseOnline = false;
-        let activeUser = null;
-        let isBypassMode = false; // Bypass mode for simulated admin logic
-        let isAdminViewingAsUser = false; // Toggle view home as guest for admins
-        
-        // Dynamic States
+        // Retrieve sandbox AppId
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'khotainguyen-5d8b8';
+
+        // State variables
         let categories = [];
         let resources = [];
-        let currentCategoryFilter = 'all';
-        let searchKeyword = '';
-        let adminSearchKeyword = '';
-        let sortBy = 'newest';
-        let activeAdminTab = 'resources';
+        let user = null;
+        let isAdmin = false;
+        
+        let editingResourceId = null;
+        let editingCategoryId = null;
+        let base64IconContent = "";
 
-        // Pagination State (User)
-        let currentPage = 1;
-        const itemsPerPage = 6;
+        let activeAdminTab = "resources"; // "resources" | "categories"
+        let selectedCategoryFilter = "all";
+        let searchTerm = "";
 
-        // Pagination State (Admin)
-        let adminCurrentPage = 1;
-        let adminItemsPerPage = 10;
+        // UI Selectors
+        const toastContainer = document.getElementById("toast-container");
+        const btnOpenLogin = document.getElementById("btn-open-login");
+        const adminHeaderStatus = document.getElementById("admin-header-status");
+        const adminBoard = document.getElementById("admin-board");
+        const loginModal = document.getElementById("login-modal");
+        const loginForm = document.getElementById("login-form");
+        const loginErrorContainer = document.getElementById("login-error-container");
+        const btnCloseLogin = document.getElementById("btn-close-login");
+        const btnCloseLoginCancel = document.getElementById("btn-close-login-cancel");
+        const footerAdminTrigger = document.getElementById("footer-admin-trigger");
+        
+        // Admin Tab contents
+        const tabBtnResources = document.getElementById("tab-btn-resources");
+        const tabBtnCategories = document.getElementById("tab-btn-categories");
+        const adminTabResourcesContent = document.getElementById("admin-tab-resources-content");
+        const adminTabCategoriesContent = document.getElementById("admin-tab-categories-content");
 
-        // Active Announcement configurations
-        let activeAnnouncementText = "Chào mừng bạn đến với Kho Tài Nguyên - Hệ thống chia sẻ phần mềm hỗ trợ doanh nghiệp chính thức năm 2026!";
-        let activeAnnouncementSpeed = "x2";
-
-        // DEFAULT FALLBACK IN-MEMORY DATA
-        const defaultCategories = [
-            { id: "tool", name: "Tool hỗ trợ" },
-            { id: "signature", name: "Chữ ký số" },
-            { id: "invoice", name: "Hóa đơn điện tử" },
-            { id: "insurance", name: "BHXH điện tử" },
-            { id: "tax", name: "Thuế điện tử" },
-            { id: "driver", name: "Driver" },
-            { id: "guide", name: "Tài liệu hướng dẫn" },
-            { id: "form", name: "Biểu mẫu" },
-            { id: "software", name: "Phần mềm" },
-            { id: "other", name: "Khác" }
-        ];
-
-        const defaultResources = [
-            {
-                id: "def-tv",
-                title: "TeamViewer",
-                category: "Tool hỗ trợ",
-                version: "15.0",
-                description: "Phần mềm điều khiển máy tính từ xa phổ biến nhất thế giới. Hỗ trợ kỹ thuật viên đăng nhập trực quan và khắc phục sự cố phần mềm tức thì cho khách hàng.",
-                downloadUrl: "https://www.teamviewer.com/vi/tai-ve/windows/",
-                image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=150",
-                downloadsCount: 142,
-                status: true,
-                createdAt: "2026-05-30",
-                updatedAt: "2026-05-30"
-            },
-            {
-                id: "def-esign",
-                title: "eSigner",
-                category: "Chữ ký số",
-                version: "2.0",
-                description: "Công cụ hỗ trợ người dùng ký số các tờ khai thuế trực tuyến. Cài đặt trực tiếp vào trình duyệt hỗ trợ dịch vụ khai thuế Tổng cục thuế Việt Nam.",
-                downloadUrl: "https://thuedientu.gdt.gov.vn/",
-                image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150",
-                downloadsCount: 89,
-                status: true,
-                createdAt: "2026-05-30",
-                updatedAt: "2026-05-30"
-            },
-            {
-                id: "def-itax",
-                title: "iTaxViewer",
-                category: "Thuế điện tử",
-                version: "2.3.1",
-                description: "Phần mềm đọc tờ khai thuế định dạng XML của Tổng cục Thuế Việt Nam. Đáp ứng yêu cầu mở và xem nội dung báo cáo tài chính, tờ khai giá trị gia tăng, thuế TNCN.",
-                downloadUrl: "https://thuedientu.gdt.gov.vn/",
-                image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=150",
-                downloadsCount: 315,
-                status: true,
-                createdAt: "2026-05-30",
-                updatedAt: "2026-05-30"
-            }
-        ];
-
-        // Global fallback handler to replace broken images with beautiful gradient placeholder
-        window.handleImageError = function(img, initial) {
-            img.onerror = null; // Prevent loop
-            const parent = img.parentElement;
-            if (parent) {
-                const placeholder = document.createElement('div');
-                placeholder.className = "w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 text-white flex items-center justify-center text-sm shadow-md font-bold shrink-0";
-                placeholder.textContent = initial.toUpperCase();
-                parent.replaceChild(placeholder, img);
-            }
-        };
-
-        // ==========================================
-        //      UI SENSITIVE UTILITIES / ACTIONS      
-        // ==========================================
-
-        // TOAST NOTIFICATIONS ENGINE
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            if (!container) return;
-
-            const id = 'toast-' + Math.random().toString(36).substr(2, 9);
-            let icon = 'fa-circle-info';
-            let colorClasses = 'bg-white text-slate-800 border-slate-200';
+        // Helper: Parse Google Drive URLs to generate direct download links
+        function parseDriveUrl(url) {
+            if (!url) return "#";
             
-            if (type === 'success') {
-                icon = 'fa-circle-check';
-                colorClasses = 'bg-emerald-50 text-emerald-800 border-emerald-200';
-            } else if (type === 'error') {
-                icon = 'fa-triangle-exclamation';
-                colorClasses = 'bg-rose-50 text-rose-800 border-rose-200';
-            } else if (type === 'warning') {
-                icon = 'fa-circle-exclamation';
-                colorClasses = 'bg-amber-50 text-amber-800 border-amber-200';
+            // Try to match standard file ID from view/edit share link format
+            const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]{25,})/);
+            if (fileIdMatch && fileIdMatch[1]) {
+                return `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
             }
 
-            const html = `
-                <div id="${id}" class="flex items-center p-3.5 rounded-xl border ${colorClasses} shadow-lg transition-all duration-350 transform translate-x-12 opacity-0">
-                    <div class="flex-shrink-0 text-sm">
-                        <i class="fa-solid ${icon}"></i>
-                    </div>
-                    <div class="ml-2.5 text-[11px] font-bold flex-1 leading-relaxed">
-                        ${message}
-                    </div>
-                    <button onclick="this.parentElement.remove()" class="ml-2.5 flex-shrink-0 text-slate-400 hover:text-slate-600 text-xs">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+            // Try to match query parameter style (e.g., id=1A2B3C_4D5E6F)
+            const queryIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
+            if (queryIdMatch && queryIdMatch[1]) {
+                return `https://drive.google.com/uc?export=download&id=${queryIdMatch[1]}`;
+            }
+
+            // Folder link pattern (Keep original folder link because folders can't be downloaded directly)
+            const folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]{25,})/);
+            if (folderMatch) {
+                return url;
+            }
+
+            return url;
+        }
+
+        // Custom notification Toast helper
+        function showToast(message, type = "success") {
+            const toast = document.createElement("div");
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 animate-fade-in`;
+            
+            const icon = type === "success" 
+                ? `<i data-lucide="check-circle" class="text-emerald-500 w-5 h-5"></i>`
+                : `<i data-lucide="alert-circle" class="text-rose-500 w-5 h-5"></i>`;
+
+            toast.innerHTML = `
+                ${icon}
+                <span class="text-xs font-semibold text-slate-800 dark:text-white">${message}</span>
             `;
+            toastContainer.appendChild(toast);
+            lucide.createIcons();
 
-            container.insertAdjacentHTML('beforeend', html);
-            
-            // Animation slide-in
             setTimeout(() => {
-                const toast = document.getElementById(id);
-                if (toast) {
-                    toast.classList.remove('translate-x-12', 'opacity-0');
-                }
-            }, 50);
-
-            // Auto-dismiss after 4s
-            setTimeout(() => {
-                const toast = document.getElementById(id);
-                if (toast) {
-                    toast.classList.add('opacity-0', 'scale-95');
-                    setTimeout(() => toast.remove(), 300);
-                }
-            }, 4000);
+                toast.classList.add("opacity-0", "transition-opacity", "duration-300");
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
         }
 
-        // SPA ROTATION ROUTER (Navigation Engine)
-        window.navigateTo = function(target) {
-            const viewHome = document.getElementById('view-home');
-            const viewLogin = document.getElementById('view-admin-login');
-            const viewDashboard = document.getElementById('view-admin-dashboard');
-            const guestBar = document.getElementById('admin-guest-view-bar');
-
-            viewHome.classList.add('hidden');
-            viewLogin.classList.add('hidden');
-            viewDashboard.classList.add('hidden');
-            guestBar.classList.add('hidden');
-
-            if (target === 'home') {
-                viewHome.classList.remove('hidden');
-                window.location.hash = 'home';
-                
-                // Show floating bar if admin is previewing home as user
-                if ((activeUser || isBypassMode) && isAdminViewingAsUser) {
-                    guestBar.classList.remove('hidden');
-                }
-            } else if (target === 'admin-login') {
-                viewLogin.classList.remove('hidden');
-                window.location.hash = 'login';
-            } else if (target === 'admin-dashboard') {
-                isAdminViewingAsUser = false; // Reset view state
-                if (activeUser || isBypassMode) {
-                    viewDashboard.classList.remove('hidden');
-                    window.location.hash = 'dashboard';
-                    renderAdminResourcesTable();
-                } else {
-                    showToast('Vui lòng đăng nhập quyền quản trị viên trước.', 'warning');
-                    viewLogin.classList.remove('hidden');
-                    window.location.hash = 'login';
-                }
-            }
-            updateNavigationControls();
-        };
-
-        // Admin Specific Preview Toggle
-        window.viewHomeAsAdmin = function() {
-            isAdminViewingAsUser = true;
-            navigateTo('home');
-        };
-
-        window.exitGuestModeAndReturnAdmin = function() {
-            isAdminViewingAsUser = false;
-            navigateTo('admin-dashboard');
-        };
-
-        // Header Auth button control logic
-        window.handleAuthAction = function() {
-            if (activeUser || isBypassMode) {
-                if (window.location.hash === '#dashboard') {
-                    performLogout();
-                } else {
-                    navigateTo('admin-dashboard');
-                }
-            } else {
-                navigateTo('admin-login');
-            }
-        };
-
-        function updateNavigationControls() {
-            const navBtnText = document.getElementById('nav-btn-text');
-            const actionBtn = document.getElementById('nav-action-btn');
-
-            if (activeUser || isBypassMode) {
-                if (window.location.hash === '#dashboard') {
-                    navBtnText.textContent = "Đăng xuất Admin";
-                    actionBtn.className = "flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold bg-rose-500 hover:bg-rose-600 text-white shadow-sm hover:shadow transition-all uppercase tracking-wider";
-                } else {
-                    navBtnText.textContent = "Vào Admin";
-                    actionBtn.className = "flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow transition-all uppercase tracking-wider";
-                }
-            } else {
-                navBtnText.textContent = "Quản trị viên";
-                actionBtn.className = "flex items-center space-x-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold bg-slate-900 hover:bg-slate-850 text-white shadow-sm hover:shadow transition-all uppercase tracking-wider";
-            }
-
-            // Update badge status UI
-            const adminStatusBadge = document.getElementById('admin-status-badge');
-            if (adminStatusBadge) {
-                if (isBypassMode) {
-                    adminStatusBadge.textContent = "Cục bộ";
-                    adminStatusBadge.className = "px-2.5 py-0.5 rounded-lg bg-amber-50 text-amber-700 text-[10px] font-extrabold uppercase tracking-wider border border-amber-100";
-                } else if (activeUser) {
-                    adminStatusBadge.textContent = "Đã liên kết Cloud";
-                    adminStatusBadge.className = "px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-extrabold uppercase tracking-wider border border-emerald-100";
-                }
-            }
-        }
-
-
-        // ==========================================
-        //  DATABASE INTEGRATIONS (FIREBASE / IN-MEMORY)  
-        // ==========================================
-
-        // Firebase Initializer
-        async function setupDatabase() {
-            const statusBadge = document.getElementById('db-status-badge');
-            const statusText = document.getElementById('db-status-text');
-
-            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
-                try {
-                    // Initialize Firebase Instance
-                    const app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-
-                    // Execute Anonymous Auth Priority (Rule 3)
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-
-                    // Setup Auth listener callback
-                    onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            if (!user.isAnonymous) {
-                                activeUser = user;
-                                isBypassMode = false;
-                            }
-                        } else {
-                            activeUser = null;
-                        }
-                        updateNavigationControls();
-                    });
-
-                    isFirebaseOnline = true;
-                    statusText.textContent = "Trực tuyến";
-                    statusBadge.className = "flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100";
-
-                } catch (err) {
-                    console.warn("Lỗi cấu hình Firebase, kích hoạt In-Memory Mode", err);
-                    setupInMemoryFallback(statusText, statusBadge);
-                }
-            } else {
-                setupInMemoryFallback(statusText, statusBadge);
-            }
-
-            // Load data once driver has been resolved
-            loadAppData();
-        }
-
-        function setupInMemoryFallback(statusText, statusBadge) {
-            isFirebaseOnline = false;
-            statusText.textContent = "Ngoại tuyến";
-            statusBadge.className = "flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-750 border border-indigo-200";
-            
-            // Populate arrays in-memory directly
-            categories = [...defaultCategories];
-            resources = [...defaultResources];
-
-            // Set dynamic ticker defaults
-            updateMarqueeUI(activeAnnouncementText, activeAnnouncementSpeed);
-        }
-
-        // FETCH ALL DATA (Reactive listener or safe in-memory updating)
-        async function loadAppData() {
-            if (isFirebaseOnline) {
-                // Rule 1 & Rule 2: Strict Paths & Simple query
-                // Categories loading
-                const catRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
-                onSnapshot(catRef, (snapshot) => {
-                    categories = [];
-                    snapshot.forEach(doc => {
-                        categories.push({ id: doc.id, ...doc.data() });
-                    });
-                    
-                    // Always execute these updates to keep form selects and navigation filters synchronized
-                    renderCategoriesList();
-                    renderCategoryFormOptions();
-                    
-                    if (categories.length === 0) {
-                        seedDefaultFirestoreCategories();
-                    }
-                }, (error) => {
-                    console.error("Lỗi đồng bộ Categories:", error);
-                    showToast("Đồng bộ danh mục lỗi: " + error.message, "error");
-                });
-
-                // Resources loading
-                const resRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
-                onSnapshot(resRef, (snapshot) => {
-                    resources = [];
-                    snapshot.forEach(doc => {
-                        resources.push({ id: doc.id, ...doc.data() });
-                    });
-                    renderUserResourcesGrid();
-                    renderAdminResourcesTable();
-                    updateMetadataStats();
-                    
-                    // Re-render categories list to dynamically recalculate and instantly display correct counts
-                    renderCategoriesList();
-                }, (error) => {
-                    console.error("Lỗi đồng bộ Resources:", error);
-                    showToast("Đồng bộ tài nguyên lỗi: " + error.message, "error");
-                });
-
-                // Announcement Real-time syncing (Strict Paths - Rule 1)
-                const announcementRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'announcement');
-                onSnapshot(announcementRef, (snapshot) => {
-                    if (snapshot.exists()) {
-                        const data = snapshot.data();
-                        activeAnnouncementText = data.text || activeAnnouncementText;
-                        activeAnnouncementSpeed = data.speed || activeAnnouncementSpeed;
-                        updateMarqueeUI(activeAnnouncementText, activeAnnouncementSpeed);
-                    } else {
-                        // Seed default dynamic announcement on cloud
-                        setDoc(announcementRef, { text: activeAnnouncementText, speed: activeAnnouncementSpeed });
-                        updateMarqueeUI(activeAnnouncementText, activeAnnouncementSpeed);
-                    }
-                }, (error) => {
-                    console.error("Lỗi đồng bộ thông báo chạy chữ:", error);
-                });
-
-            } else {
-                // In-Memory Fallback rendering
-                renderCategoriesList();
-                renderCategoryFormOptions();
-                renderUserResourcesGrid();
-                renderAdminResourcesTable();
-                updateMetadataStats();
-                updateMarqueeUI(activeAnnouncementText, activeAnnouncementSpeed);
-            }
-        }
-
-        // PRE-POPULATE DATA SYSTEM (Khởi tạo dữ liệu mẫu nếu DB trống)
-        async function seedDefaultFirestoreCategories() {
-            if (!isFirebaseOnline) return;
+        // Rule 3: Auth Before Queries - Anonymous Auth initialization
+        const initAuthAndSystem = async () => {
             try {
-                for (const cat of defaultCategories) {
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'categories', cat.id), {
-                        name: cat.name
-                    });
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
                 }
-            } catch (e) {
-                console.error("Lỗi tạo mẫu Categories Firestore:", e);
+            } catch (err) {
+                console.error("Auth Engine failure:", err);
+                showToast("Lỗi kết nối cơ sở dữ liệu Firebase!", "error");
+            }
+        };
+
+        // Handle Admin Credentials checking locally
+        function handleAdminVerification(e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById("login-username").value.trim();
+            const passwordInput = document.getElementById("login-password").value.trim();
+
+            if (usernameInput === "admin" && passwordInput === "admin@123") {
+                isAdmin = true;
+                loginModal.classList.add("hidden");
+                loginForm.reset();
+                loginErrorContainer.classList.add("hidden");
+                updateAdminViewUI();
+                showToast("Xác thực thành công với quyền quản trị viên!");
+            } else {
+                // Show error directly inside login modal
+                loginErrorContainer.classList.remove("hidden");
+                lucide.createIcons();
             }
         }
 
-        window.seedInitialData = async function() {
-            if (isFirebaseOnline) {
-                try {
-                    showToast("Đang đồng bộ dữ liệu mẫu lên Firestore...", "warning");
-                    for (const res of defaultResources) {
-                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'resources', res.id), {
-                            title: res.title,
-                            category: res.category,
-                            version: res.version,
-                            description: res.description,
-                            downloadUrl: res.downloadUrl,
-                            image: res.image,
-                            downloadsCount: res.downloadsCount,
-                            status: res.status,
-                            createdAt: res.createdAt,
-                            updatedAt: res.updatedAt
-                        });
-                    }
-                    showToast("Đã khởi tạo dữ liệu mẫu lên đám mây!", "success");
-                } catch (e) {
-                    showToast("Lỗi đẩy dữ liệu mẫu Firestore: " + e.message, "error");
-                }
-            } else {
-                categories = [...defaultCategories];
-                resources = [...defaultResources];
-                currentPage = 1; // Reset user pagination page
-                adminCurrentPage = 1; // Reset admin pagination page
-                renderCategoriesList();
-                renderCategoryFormOptions();
-                renderUserResourcesGrid();
-                renderAdminResourcesTable();
-                updateMetadataStats();
-                showToast("Khởi tạo lại dữ liệu mẫu trong bộ nhớ đệm!", "success");
-            }
-        };
-
-
-        // ==========================================
-        //         ADMIN AUTHENTICATION FLOW        
-        // ==========================================
-
-        window.handleEmailLogin = async function(event) {
-            event.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value.trim();
-
-            if (isFirebaseOnline) {
-                try {
-                    showToast("Đang xác thực thông tin đăng nhập...", "warning");
-                    const userCredential = await signInWithEmailAndPassword(auth, email.includes('@') ? email : `${email}@example.com`, password);
-                    activeUser = userCredential.user;
-                    isBypassMode = false;
-                    
-                    showToast(`Đăng nhập thành công! Chào mừng Quản trị viên.`, 'success');
-                    navigateTo('admin-dashboard');
-                } catch (err) {
-                    if ((email === "admin" || email === "admin@example.com") && password === "admin@123") {
-                        isBypassMode = true;
-                        showToast("Đăng nhập bằng tài khoản Admin (Demo mode) thành công!", "success");
-                        navigateTo('admin-dashboard');
-                    } else {
-                        showToast(`Đăng nhập thất bại: Thông tin tài khoản không chính xác.`, 'error');
-                    }
-                }
-            } else {
-                // In-Memory Credential Checks
-                if ((email === "admin" || email === "admin@example.com") && password === "admin@123") {
-                    isBypassMode = true;
-                    showToast("Đăng nhập bằng tài khoản Admin (Demo mode) thành công!", "success");
-                    navigateTo('admin-dashboard');
-                } else {
-                    showToast("Sai mật khẩu hoặc tài khoản. Hãy điền tài khoản: admin, mật khẩu: admin@123", "error");
-                }
-            }
-        };
-
-        function performLogout() {
-            if (isFirebaseOnline && auth) {
-                signOut(auth).then(() => {
-                    activeUser = null;
-                    isBypassMode = false;
-                    isAdminViewingAsUser = false;
-                    showToast("Đã đăng xuất khỏi tài khoản Quản trị.", "success");
-                    navigateTo('home');
+        // Update Administrator Interface & Session panels
+        function updateAdminViewUI() {
+            if (isAdmin) {
+                adminHeaderStatus.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 px-3 py-1 text-xs font-semibold rounded-xl border border-emerald-200 dark:border-emerald-800/40 flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            Admin
+                        </span>
+                        <button id="btn-admin-logout" class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-xl transition-colors border border-rose-200 dark:border-rose-900/30">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Thoát
+                        </button>
+                    </div>
+                `;
+                adminBoard.classList.remove("hidden");
+                
+                // Add click listener to Logout button
+                document.getElementById("btn-admin-logout").addEventListener("click", () => {
+                    isAdmin = false;
+                    updateAdminViewUI();
+                    showToast("Đã thoát chế độ quản trị!");
                 });
             } else {
-                activeUser = null;
-                isBypassMode = false;
-                isAdminViewingAsUser = false;
-                showToast("Đã thoát chế độ Quản trị.", "success");
-                navigateTo('home');
-            }
-        }
-
-
-        // ==========================================
-        //  UI RENDERING LOGIC & INTERACTIONS (HOME) 
-        // ==========================================
-
-        // DYNAMIC MARQUEE UI RENDERER
-        window.updateMarqueeUI = function(text, speed) {
-            const marqueeTextEl = document.getElementById('marquee-text');
-            if (!marqueeTextEl) return;
-
-            // Map speeds to standard CSS animation durations
-            let seconds = '18s';
-            if (speed === 'x1') seconds = '30s';       // Slow
-            else if (speed === 'x2') seconds = '18s';  // Normal
-            else if (speed === 'x3') seconds = '9s';   // Fast
-
-            marqueeTextEl.textContent = text;
-            marqueeTextEl.style.setProperty('--marquee-speed', seconds);
-
-            // Populate settings inputs in Admin dashboard with current values
-            const adminInput = document.getElementById('announcement-text-input');
-            const adminSelect = document.getElementById('announcement-speed-select');
-            if (adminInput) adminInput.value = text;
-            if (adminSelect) adminSelect.value = speed;
-        };
-
-        // ADMIN ANNOUNCEMENT WRITER (Strict Paths compliant - Rule 1)
-        window.saveAnnouncementSettings = async function(event) {
-            event.preventDefault();
-            const text = document.getElementById('announcement-text-input').value.trim();
-            const speed = document.getElementById('announcement-speed-select').value;
-
-            if (!text) {
-                showToast("Nội dung thông báo không được để trống!", "warning");
-                return;
-            }
-
-            if (isFirebaseOnline && db) {
-                try {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'announcement');
-                    await setDoc(docRef, { text, speed });
-                    showToast("Đã cập nhật thông báo chạy chữ thời gian thực!", "success");
-                } catch (e) {
-                    console.error("Lỗi cập nhật Firestore:", e);
-                    showToast("Không thể cập nhật cấu hình: " + e.message, "error");
-                }
-            } else {
-                // In-Memory Update
-                activeAnnouncementText = text;
-                activeAnnouncementSpeed = speed;
-                updateMarqueeUI(text, speed);
-                showToast("Đã cập nhật thông báo chạy chữ cục bộ!", "success");
-            }
-        };
-
-        // RENDER SIDEBAR CATEGORIES
-        function renderCategoriesList() {
-            const container = document.getElementById('categories-filter-list');
-            const countBadge = document.getElementById('category-count');
-            if (!container) return;
-
-            countBadge.textContent = categories.length;
-
-            let html = `
-                <button onclick="filterByCategory('all')" class="w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center justify-between transition-all ${currentCategoryFilter === 'all' ? 'bg-primary-600 text-white shadow-md shadow-primary-500/15' : 'text-slate-600 hover:bg-slate-50'}">
-                    <span class="flex items-center space-x-2.5">
-                        <i class="fa-solid fa-layer-group text-xs"></i>
-                        <span>Tất cả danh mục</span>
-                    </span>
-                    <span class="${currentCategoryFilter === 'all' ? 'bg-primary-700/60 text-white' : 'bg-slate-100 text-slate-500'} px-2.5 py-0.5 rounded-full text-[10px] font-extrabold">${resources.filter(r => r.status).length}</span>
-                </button>
-            `;
-
-            categories.forEach(cat => {
-                const countOfCat = resources.filter(r => r.category === cat.name && r.status).length;
-                html += `
-                    <button onclick="filterByCategory('${cat.name}')" class="w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center justify-between transition-all ${currentCategoryFilter === cat.name ? 'bg-primary-600 text-white shadow-md shadow-primary-500/15' : 'text-slate-600 hover:bg-slate-50'}">
-                        <span class="flex items-center space-x-2.5 truncate">
-                            <i class="fa-solid fa-folder text-xs text-amber-500"></i>
-                            <span class="truncate">${cat.name}</span>
-                        </span>
-                        <span class="${currentCategoryFilter === cat.name ? 'bg-primary-700/60 text-white' : 'bg-slate-100 text-slate-500'} px-2.5 py-0.5 rounded-full text-[10px] font-extrabold">${countOfCat}</span>
+                adminHeaderStatus.innerHTML = `
+                    <button id="btn-open-login" class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-xl transition-all border border-indigo-200 dark:border-indigo-900/30">
+                        <i data-lucide="lock" class="w-4 h-4"></i> Admin quản trị
                     </button>
                 `;
-            });
-
-            container.innerHTML = html;
+                adminBoard.classList.add("hidden");
+                document.getElementById("btn-open-login").addEventListener("click", () => {
+                    loginErrorContainer.classList.add("hidden");
+                    loginModal.classList.remove("hidden");
+                });
+            }
+            lucide.createIcons();
+            renderResourcesAdminList();
+            renderCategoriesAdminList();
         }
 
-        // RENDER SELECT OPTIONS IN FORMS
-        function renderCategoryFormOptions() {
-            const select = document.getElementById('form-category');
-            if (!select) return;
-
-            let html = '<option value="" disabled selected>-- Chọn danh mục tài nguyên --</option>';
-            categories.forEach(cat => {
-                html += `<option value="${cat.name}">${cat.name}</option>`;
-            });
-            select.innerHTML = html;
-        }
-
-        // RENDER MAIN CARDS GRID WITH INTEGRATED PAGINATION (Prevents Layout Jumps)
-        function renderUserResourcesGrid() {
-            const grid = document.getElementById('resources-grid');
-            const countBadge = document.getElementById('resource-count-badge');
-            const emptyState = document.getElementById('empty-state-container');
-            const gridTitle = document.getElementById('resource-grid-title');
+        // Real-time listener for Categories (Comply with Rule 1 path structure)
+        function listenToCategories() {
+            if (!user) return;
+            const categoryCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
             
-            if (!grid) return;
+            onSnapshot(categoryCollectionRef, (snapshot) => {
+                categories = [];
+                snapshot.forEach((doc) => {
+                    categories.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // If brand-new database is empty, write seed values
+                if (categories.length === 0) {
+                    const defaultCats = [
+                        { name: "Phần mềm & Ứng dụng" },
+                        { name: "Ký số & Thuế điện tử" },
+                        { name: "Tài liệu chuyên ngành" },
+                        { name: "Tài nguyên đồ họa" }
+                    ];
+                    defaultCats.forEach(async (cat) => {
+                        await addDoc(categoryCollectionRef, cat);
+                    });
+                }
 
-            // Apply filters
-            let filtered = resources.filter(res => res.status === true);
+                updateCategorySelectorsUI();
+                renderCategoryFilterTagsUI();
+                renderCategoriesAdminList();
+                updateSystemStatistics();
+                renderResourcesUI();
+            }, (error) => {
+                console.error("Fetch categories error:", error);
+                showToast("Lỗi đồng bộ danh mục!", "error");
+            });
+        }
 
-            if (currentCategoryFilter !== 'all') {
-                filtered = filtered.filter(res => res.category === currentCategoryFilter);
-                gridTitle.textContent = currentCategoryFilter;
-            } else {
-                gridTitle.textContent = "Tất cả tài nguyên";
-            }
+        // Real-time listener for Resources (Rule 1 path structure)
+        function listenToResources() {
+            if (!user) return;
+            const resourceCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
 
-            if (searchKeyword.trim() !== '') {
-                const kw = searchKeyword.toLowerCase();
-                filtered = filtered.filter(res => 
-                    res.title.toLowerCase().includes(kw) || 
-                    res.description.toLowerCase().includes(kw) ||
-                    res.category.toLowerCase().includes(kw)
-                );
-            }
+            onSnapshot(resourceCollectionRef, (snapshot) => {
+                resources = [];
+                snapshot.forEach((doc) => {
+                    resources.push({ id: doc.id, ...doc.data() });
+                });
 
-            // Sort
-            if (sortBy === 'newest') {
-                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            } else if (sortBy === 'oldest') {
-                filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            } else if (sortBy === 'downloads') {
-                filtered.sort((a, b) => (b.downloadsCount || 0) - (a.downloadsCount || 0));
-            } else if (sortBy === 'alphabet') {
-                filtered.sort((a, b) => a.title.localeCompare(b.title));
-            }
+                renderResourcesUI();
+                renderResourcesAdminList();
+                updateSystemStatistics();
+            }, (error) => {
+                console.error("Fetch resources error:", error);
+                showToast("Lỗi tải cơ sở dữ liệu tài nguyên!", "error");
+            });
+        }
 
-            countBadge.textContent = `${filtered.length} kết quả`;
+        // Compute system statistics
+        function updateSystemStatistics() {
+            document.getElementById("stat-resources-count").textContent = resources.length;
+            document.getElementById("stat-categories-count").textContent = categories.length;
+        }
+
+        // Dropdown option builder in Add/Edit resources form
+        function updateCategorySelectorsUI() {
+            const selectElement = document.getElementById("res-category");
+            selectElement.innerHTML = `<option value="">-- Chọn danh mục --</option>`;
+            categories.forEach(cat => {
+                const opt = document.createElement("option");
+                opt.value = cat.id;
+                opt.textContent = cat.name;
+                selectElement.appendChild(opt);
+            });
+        }
+
+        // Build Horizontal Filter tags for users
+        function renderCategoryFilterTagsUI() {
+            const container = document.getElementById("category-filter-tags");
+            container.innerHTML = "";
+
+            // 'All' Tag
+            const allBtn = document.createElement("button");
+            allBtn.className = `px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap transition-all ${
+                selectedCategoryFilter === 'all'
+                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/15'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+            }`;
+            allBtn.textContent = "Tất cả tài nguyên";
+            allBtn.addEventListener("click", () => {
+                selectedCategoryFilter = "all";
+                renderCategoryFilterTagsUI();
+                renderResourcesUI();
+            });
+            container.appendChild(allBtn);
+
+            // Dynamic Categories Tags
+            categories.forEach(cat => {
+                const btn = document.createElement("button");
+                btn.className = `px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap transition-all ${
+                    selectedCategoryFilter === cat.id
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/15'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`;
+                btn.textContent = cat.name;
+                btn.addEventListener("click", () => {
+                    selectedCategoryFilter = cat.id;
+                    renderCategoryFilterTagsUI();
+                    renderResourcesUI();
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        // Render main grid display of resources card (User Interface view)
+        function renderResourcesUI() {
+            const container = document.getElementById("resources-grid-display");
+            const resultsCountElem = document.getElementById("results-count");
+            container.innerHTML = "";
+
+            // In-Memory filtering to comply with Rule 2 (No Complex queries)
+            const filtered = resources.filter(res => {
+                const matchesCategory = selectedCategoryFilter === "all" || res.categoryId === selectedCategoryFilter;
+                const matchesSearch = res.title.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+
+            resultsCountElem.textContent = filtered.length;
+
+            filtered.forEach(res => {
+                const catObj = categories.find(c => c.id === res.categoryId);
+                const categoryName = catObj ? catObj.name : "Chưa phân loại";
+
+                const card = document.createElement("div");
+                card.className = "flex flex-col bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group";
+                
+                // Fallback default placeholder icon if none provided
+                const displayIcon = res.iconContent || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=60";
+                
+                // Generate optimized Direct Download Link directly for <a> tag
+                const finalDownloadUrl = parseDriveUrl(res.downloadUrl);
+
+                card.innerHTML = `
+                    <div class="p-5 flex-1 space-y-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="relative">
+                                <img src="${displayIcon}" alt="${res.title}" class="w-14 h-14 rounded-xl object-cover border border-slate-100 dark:border-slate-700 shadow-sm animate-fade-in" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=60'">
+                                <span class="absolute -bottom-1.5 -right-1.5 bg-indigo-50 dark:bg-indigo-950 p-1.5 rounded-lg border border-indigo-100 dark:border-indigo-900 text-indigo-600 dark:text-indigo-400">
+                                    <i data-lucide="folder" class="w-3.5 h-3.5"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide">
+                                ${categoryName}
+                            </span>
+                            <h4 class="text-base font-bold text-slate-800 dark:text-slate-100 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                ${res.title}
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-1.5 text-xs text-slate-400">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                            <span>Sẵn sàng tải xuống</span>
+                        </div>
+                        <a href="${finalDownloadUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-semibold px-4 py-2 rounded-xl text-xs shadow-md shadow-indigo-600/10 transition-all group-hover:-translate-y-0.5">
+                            Tải ngay
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                        </a>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
 
             if (filtered.length === 0) {
-                grid.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-                document.getElementById('pagination-panel').classList.add('hidden');
-                return;
-            }
-
-            grid.classList.remove('hidden');
-            emptyState.classList.add('hidden');
-            document.getElementById('pagination-panel').classList.remove('hidden');
-
-            // PAGINATION MATHEMATICS
-            const totalPages = Math.ceil(filtered.length / itemsPerPage);
-            if (currentPage > totalPages) {
-                currentPage = Math.max(1, totalPages);
-            }
-
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const paginatedItems = filtered.slice(startIndex, startIndex + itemsPerPage);
-
-            // Render resources cards
-            let html = '';
-            paginatedItems.forEach(res => {
-                const hasValidImg = res.image && res.image.startsWith('http');
-                const imgPlaceholder = `
-                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 text-white flex items-center justify-center text-sm shadow-md font-bold shrink-0">
-                        ${res.title.charAt(0).toUpperCase()}
+                container.innerHTML = `
+                    <div class="col-span-full py-16 bg-white dark:bg-slate-800 border border-dashed border-slate-200 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center text-center p-6">
+                        <i data-lucide="file-text" class="w-12 h-12 text-slate-300 dark:text-slate-600 mb-3"></i>
+                        <h4 class="text-sm font-bold text-slate-600 dark:text-slate-300">Không tìm thấy tài nguyên</h4>
+                        <p class="text-xs text-slate-400 mt-1 max-w-xs">Thử tìm kiếm với từ khóa khác hoặc chuyển sang thẻ danh mục khác.</p>
                     </div>
                 `;
-                
-                const imageTag = hasValidImg ? 
-                    `<img src="${res.image}" onerror="window.handleImageError(this, '${res.title.charAt(0)}')" alt="${res.title}" class="w-11 h-11 rounded-2xl object-cover shrink-0 shadow-sm border border-slate-100/50">` : 
-                    imgPlaceholder;
+            }
 
-                html += `
-                    <div class="bg-white border border-slate-200/60 rounded-3xl p-5 flex flex-col justify-between hover:shadow-hover-premium hover:border-primary-400 transition-all duration-300 h-[195px] shadow-premium group">
-                        <div class="space-y-3">
-                            <!-- Header Info -->
-                            <div class="flex items-start space-x-3">
-                                <div class="w-11 h-11 shrink-0 flex items-center justify-center transform group-hover:scale-105 transition-transform duration-200">
-                                    ${imageTag}
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <span class="inline-block text-[9px] font-extrabold text-slate-400 tracking-wider uppercase">${res.category}</span>
-                                    
-                                    <!-- Clickable Resource Title to inspect detail modal -->
-                                    <h3 onclick="openResourceDetail('${res.id}')" class="text-xs font-bold text-slate-800 hover:text-primary-600 hover:underline cursor-pointer transition-colors truncate leading-snug tracking-tight" title="Bấm vào để xem chi tiết ${res.title}">${res.title}</h3>
-                                    
-                                    <span class="inline-flex items-center text-[9px] bg-slate-50 border border-slate-100 text-slate-500 rounded px-1.5 py-0.5 mt-0.5 font-bold">
-                                        v${res.version}
-                                    </span>
-                                </div>
+            lucide.createIcons();
+        }
+
+        // Admin interface - Render interactive list of resources (Edit/Delete)
+        function renderResourcesAdminList() {
+            if (!isAdmin) return;
+            const container = document.getElementById("admin-resources-list");
+            container.innerHTML = "";
+
+            resources.forEach(res => {
+                const catObj = categories.find(c => c.id === res.categoryId);
+                const categoryName = catObj ? catObj.name : "Chưa phân loại";
+
+                const item = document.createElement("div");
+                item.className = "p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4";
+                item.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0">
+                        <img src="${res.iconContent || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=60'}" class="w-10 h-10 rounded-lg object-cover flex-shrink-0 border dark:border-slate-800" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=60'">
+                        <div class="min-w-0">
+                            <h5 class="text-sm font-semibold truncate text-slate-800 dark:text-slate-100">${res.title}</h5>
+                            <div class="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+                                <span class="bg-indigo-100/50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[10px] font-medium">${categoryName}</span>
                             </div>
-
-                            <!-- Description -->
-                            <p class="text-[11px] text-slate-500 leading-relaxed line-clamp-2 font-medium">
-                                ${res.description || "Chưa có mô tả chi tiết cho phần mềm."}
-                            </p>
-                        </div>
-
-                        <!-- Card Actions (Downloads Counter Indicator) -->
-                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                            <span class="inline-flex items-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider space-x-1">
-                                <i class="fa-solid fa-circle-down text-primary-500"></i>
-                                <span>${res.downloadsCount || 0} lượt tải</span>
-                            </span>
-
-                            <a href="${res.downloadUrl}" target="_blank" onclick="incrementDownloadCounter('${res.id}')" class="inline-flex items-center space-x-1.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-primary-600 to-indigo-700 hover:from-primary-700 hover:to-indigo-800 text-white text-[10px] font-extrabold transition-all uppercase shadow-md shadow-primary-500/10 hover:shadow-primary-500/20 hover:scale-[1.02] tracking-wider">
-                                <i class="fa-solid fa-cloud-arrow-down"></i>
-                                <span>Tải về</span>
-                            </a>
                         </div>
                     </div>
-                `;
-            });
-
-            // Pad with empty transparent elements to maintain perfect layout height
-            const paddedDifference = itemsPerPage - paginatedItems.length;
-            if (paddedDifference > 0 && paginatedItems.length > 0) {
-                for (let i = 0; i < paddedDifference; i++) {
-                    html += `<div class="hidden lg:block border border-transparent rounded-3xl p-5 h-[195px] pointer-events-none opacity-0"></div>`;
-                }
-            }
-
-            grid.innerHTML = html;
-
-            // RENDER PAGINATION CONTROLS
-            const infoSpan = document.getElementById('pagination-info');
-            const buttonsContainer = document.getElementById('pagination-buttons');
-            
-            infoSpan.textContent = `Trang ${currentPage} / ${totalPages}`;
-
-            let buttonsHtml = `
-                <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all">
-                    <i class="fa-solid fa-angle-left"></i>
-                </button>
-            `;
-
-            for (let i = 1; i <= totalPages; i++) {
-                buttonsHtml += `
-                    <button onclick="changePage(${i})" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${currentPage === i ? 'bg-primary-600 text-white shadow-md shadow-primary-500/10' : 'border border-slate-200 text-slate-700 hover:bg-slate-50' }">
-                        ${i}
-                    </button>
-                `;
-            }
-
-            buttonsHtml += `
-                <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all">
-                    <i class="fa-solid fa-angle-right"></i>
-                </button>
-            `;
-
-            buttonsContainer.innerHTML = buttonsHtml;
-        }
-
-        window.changePage = function(pageNumber) {
-            currentPage = pageNumber;
-            renderUserResourcesGrid();
-        };
-
-        // TRIGGER FILTERS
-        window.filterByCategory = function(category) {
-            currentCategoryFilter = category;
-            currentPage = 1; // Reset to page 1 on filter
-            renderCategoriesList();
-            renderUserResourcesGrid();
-        };
-
-        // Header Search - redirect to home page and process instant searching
-        window.handleSearch = function(keyword) {
-            searchKeyword = keyword;
-            document.getElementById('header-search').value = keyword;
-            
-            const mobileSearch = document.getElementById('mobile-hero-search');
-            if (mobileSearch) mobileSearch.value = keyword;
-            
-            // Unlocked redirect: Always switch tabs to home so results can be evaluated
-            if (window.location.hash !== '#home' && window.location.hash !== '') {
-                navigateTo('home');
-            }
-            
-            currentPage = 1;
-            renderUserResourcesGrid();
-        };
-
-        window.handleSortChange = function(value) {
-            sortBy = value;
-            currentPage = 1;
-            renderUserResourcesGrid();
-        };
-
-        window.resetFilters = function() {
-            searchKeyword = '';
-            currentCategoryFilter = 'all';
-            currentPage = 1;
-            document.getElementById('header-search').value = '';
-            const mobileSearch = document.getElementById('mobile-hero-search');
-            if (mobileSearch) mobileSearch.value = '';
-            renderCategoriesList();
-            renderUserResourcesGrid();
-        };
-
-        function updateMetadataStats() {
-            const statTotalRes = document.getElementById('stat-total-resources');
-            const statTotalDownloads = document.getElementById('stat-total-downloads');
-            const adminResBadge = document.getElementById('admin-res-badge');
-
-            const visibleCount = resources.filter(r => r.status).length;
-            const totalDownloads = resources.reduce((acc, res) => acc + (res.downloadsCount || 0), 0);
-
-            if (statTotalRes) statTotalRes.textContent = visibleCount;
-            if (statTotalDownloads) statTotalDownloads.textContent = totalDownloads;
-            if (adminResBadge) adminResBadge.textContent = resources.length;
-        }
-
-
-        // ==========================================
-        //        RESOURCE DETAIL PANEL WINDOW       
-        // ==========================================
-
-        window.openResourceDetail = function(id) {
-            const res = resources.find(r => r.id === id);
-            if (!res) return;
-
-            document.getElementById('modal-res-title').textContent = res.title;
-            document.getElementById('modal-res-category').textContent = res.category;
-            document.getElementById('modal-res-version').textContent = `Phiên bản: ${res.version}`;
-            document.getElementById('modal-res-description').textContent = res.description;
-            document.getElementById('modal-res-downloads').textContent = res.downloadsCount || 0;
-            document.getElementById('modal-res-updated').textContent = res.updatedAt || res.createdAt || "30/05/2026";
-            document.getElementById('modal-res-created').textContent = res.createdAt || "30/05/2026";
-
-            const downloadLink = document.getElementById('modal-download-link');
-            downloadLink.href = res.downloadUrl;
-            downloadLink.setAttribute('data-target-id', res.id);
-
-            // Thumbnail inside Detail window
-            const imgContainer = document.getElementById('modal-res-image-container');
-            const hasValidImg = res.image && res.image.startsWith('http');
-            if (hasValidImg) {
-                imgContainer.innerHTML = `<img src="${res.image}" alt="${res.title}" class="w-full h-full object-cover rounded-2xl shadow-inner">`;
-            } else {
-                imgContainer.innerHTML = `
-                    <div class="w-full h-full bg-gradient-to-br from-primary-500 to-secondary-500 text-white flex items-center justify-center font-bold text-lg">
-                        ${res.title.charAt(0).toUpperCase()}
+                    <div class="flex items-center gap-1">
+                        <button class="btn-edit-res p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 text-indigo-500 rounded-lg transition-colors" title="Sửa">
+                            <i data-lucide="edit-2" class="w-4 h-4"></i>
+                        </button>
+                        <button class="btn-delete-res p-1.5 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-500 rounded-lg transition-colors" title="Xóa">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 `;
-            }
 
-            document.getElementById('modal-detail').classList.remove('hidden');
-        };
+                // Add handlers
+                item.querySelector(".btn-edit-res").addEventListener("click", () => startEditResource(res));
+                item.querySelector(".btn-delete-res").addEventListener("click", () => deleteResource(res.id));
 
-        window.closeDetailModal = function() {
-            document.getElementById('modal-detail').classList.add('hidden');
-        };
-
-        // TRACK DOWNLOAD COUNT
-        window.incrementDownloadCounter = async function(id) {
-            const index = resources.findIndex(r => r.id === id);
-            if (index === -1) return;
-
-            const updatedDownloads = (resources[index].downloadsCount || 0) + 1;
-
-            if (isFirebaseOnline && db) {
-                try {
-                    const resDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
-                    await updateDoc(resDocRef, {
-                        downloadsCount: updatedDownloads
-                    });
-                } catch (e) {
-                    console.error("Lỗi cập nhật lượt tải Firebase:", e);
-                }
-            } else {
-                resources[index].downloadsCount = updatedDownloads;
-                renderUserResourcesGrid();
-                renderAdminResourcesTable();
-                updateMetadataStats();
-            }
-        };
-
-        window.incrementDownloadCounterFromModal = function() {
-            const downloadLink = document.getElementById('modal-download-link');
-            const id = downloadLink.getAttribute('data-target-id');
-            if (id) {
-                incrementDownloadCounter(id);
-                const counterSpan = document.getElementById('modal-res-downloads');
-                if (counterSpan) {
-                    const currentVal = parseInt(counterSpan.textContent) || 0;
-                    counterSpan.textContent = currentVal + 1;
-                }
-            }
-        };
-
-
-        // ==========================================
-        //      ADMIN CONTROL ACTIONS & FORMS        
-        // ==========================================
-
-        window.switchAdminTab = function(tabName) {
-            activeAdminTab = tabName;
-            renderAdminResourcesTable();
-        };
-
-        window.handleAdminSearch = function(keyword) {
-            adminSearchKeyword = keyword;
-            adminCurrentPage = 1; // Reset to first page of results on search
-            renderAdminResourcesTable();
-        };
-
-        window.handleAdminPerPageChange = function(value) {
-            adminItemsPerPage = parseInt(value);
-            adminCurrentPage = 1;
-            renderAdminResourcesTable();
-        };
-
-        window.changeAdminPage = function(pageNumber) {
-            adminCurrentPage = pageNumber;
-            renderAdminResourcesTable();
-        };
-
-        // RENDER ADMIN TABLE OF CONTENT (With Integrated Professional Pagination & Scroll Lock)
-        function renderAdminResourcesTable() {
-            const tbody = document.getElementById('admin-resources-tbody');
-            const paginationPanel = document.getElementById('admin-pagination-panel');
-            if (!tbody) return;
-
-            let filtered = [...resources];
-
-            if (adminSearchKeyword.trim() !== '') {
-                const kw = adminSearchKeyword.toLowerCase();
-                filtered = filtered.filter(res => 
-                    res.title.toLowerCase().includes(kw) || 
-                    res.category.toLowerCase().includes(kw) ||
-                    res.version.toLowerCase().includes(kw)
-                );
-            }
-
-            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-            // Paginate filtered elements on Admin side
-            const totalAdminPages = Math.ceil(filtered.length / adminItemsPerPage);
-            if (adminCurrentPage > totalAdminPages) {
-                adminCurrentPage = Math.max(1, totalAdminPages);
-            }
-
-            const startIdx = (adminCurrentPage - 1) * adminItemsPerPage;
-            const paginatedAdminItems = filtered.slice(startIdx, startIdx + adminItemsPerPage);
-
-            if (paginatedAdminItems.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
-                            Không có tài nguyên khớp với từ khóa tìm kiếm.
-                        </td>
-                    </tr>
-                `;
-                if (paginationPanel) paginationPanel.innerHTML = '';
-                return;
-            }
-
-            let html = '';
-            paginatedAdminItems.forEach(res => {
-                const badgeStatus = res.status ? 
-                    `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-100 uppercase tracking-wider">Hiển thị</span>` :
-                    `<span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-slate-100 text-slate-500 border border-slate-200 uppercase tracking-wider">Ẩn</span>`;
-
-                html += `
-                    <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="py-3 px-5 font-bold text-slate-800 text-xs">${res.title}</td>
-                        <td class="py-3 px-5 text-xs text-slate-500">${res.category}</td>
-                        <td class="py-3 px-5 text-xs font-semibold text-slate-600">v${res.version}</td>
-                        <td class="py-3 px-5 text-xs font-bold text-slate-600">${res.downloadsCount || 0}</td>
-                        <td class="py-3 px-5">${badgeStatus}</td>
-                        <td class="py-3 px-5 text-right space-x-1.5">
-                            <button onclick="toggleResourceStatus('${res.id}')" title="Ẩn/Hiện" class="p-1.5 text-xs text-slate-500 hover:text-slate-800 rounded-lg border border-slate-200 hover:bg-white transition-all">
-                                <i class="fa-solid ${res.status ? 'fa-eye-slash' : 'fa-eye'}"></i>
-                            </button>
-                            <button onclick="editResource('${res.id}')" class="p-1.5 text-xs text-blue-500 hover:text-blue-700 rounded-lg border border-blue-100 hover:bg-white transition-all">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </button>
-                            <button onclick="deleteResource('${res.id}')" class="p-1.5 text-xs text-rose-500 hover:text-rose-700 rounded-lg border border-rose-100 hover:bg-white transition-all">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                container.appendChild(item);
             });
 
-            tbody.innerHTML = html;
+            if (resources.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">Chưa có tài nguyên nào được tải lên hệ thống.</div>`;
+            }
+            lucide.createIcons();
+        }
 
-            // Render Admin Table Pagination Controls dynamically inside the stable footer block
-            if (paginationPanel) {
-                if (totalAdminPages <= 1) {
-                    paginationPanel.innerHTML = `<span class="text-xs text-slate-400 font-bold uppercase">Hiển thị ${filtered.length} tài nguyên</span>`;
-                } else {
-                    let buttonsHtml = `
-                        <button onclick="changeAdminPage(${adminCurrentPage - 1})" ${adminCurrentPage === 1 ? 'disabled' : ''} class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all">
-                            Trước
-                        </button>
-                    `;
-                    for (let i = 1; i <= totalAdminPages; i++) {
-                        buttonsHtml += `
-                            <button onclick="changeAdminPage(${i})" class="px-2.5 py-1 rounded text-xs font-bold transition-all ${adminCurrentPage === i ? 'bg-primary-600 text-white shadow-md' : 'border border-slate-200 text-slate-700 hover:bg-slate-50'}">
-                                ${i}
-                            </button>
-                        `;
-                    }
-                    buttonsHtml += `
-                        <button onclick="changeAdminPage(${adminCurrentPage + 1})" ${adminCurrentPage === totalAdminPages ? 'disabled' : ''} class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:pointer-events-none transition-all">
-                            Sau
-                        </button>
-                    `;
+        // Fill Form fields to modify resource
+        function startEditResource(res) {
+            editingResourceId = res.id;
+            document.getElementById("res-title").value = res.title;
+            document.getElementById("res-category").value = res.categoryId || "";
+            document.getElementById("res-url").value = res.downloadUrl;
 
-                    paginationPanel.innerHTML = `
-                        <span class="text-xs text-slate-400 font-bold uppercase">Hiển thị ${startIdx + 1} - ${Math.min(startIdx + adminItemsPerPage, filtered.length)} / ${filtered.length}</span>
-                        <div class="flex items-center space-x-1">${buttonsHtml}</div>
-                    `;
-                }
+            // Icon values mapping
+            const iconType = res.iconType || "url";
+            document.querySelector(`input[name="icon-type-group"][value="${iconType}"]`).checked = true;
+            
+            toggleIconFieldUI(iconType);
+
+            if (iconType === "url") {
+                document.getElementById("res-icon-url").value = res.iconContent || "";
+                base64IconContent = "";
+            } else {
+                base64IconContent = res.iconContent || "";
+                const previewImg = document.getElementById("uploaded-image-preview");
+                previewImg.src = base64IconContent;
+                document.getElementById("preview-image-container").classList.remove("hidden");
+                document.getElementById("preview-image-container").classList.add("flex");
+            }
+
+            document.getElementById("resource-form-title").innerHTML = `<i data-lucide="edit-3" class="w-4 h-4"></i> Hiệu Chỉnh Tài Nguyên`;
+            document.getElementById("res-submit-text").textContent = "Cập Nhật Thay Đổi";
+            document.getElementById("btn-cancel-res-edit").classList.remove("hidden");
+            
+            lucide.createIcons();
+            // Scroll smoothly to form view
+            document.getElementById("admin-board").scrollIntoView({ behavior: "smooth" });
+        }
+
+        // Delete Resource Action
+        async function deleteResource(id) {
+            const confirmed = confirm("Bạn có chắc chắn muốn xóa tài nguyên này không?");
+            if (!confirmed) return;
+
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
+                await deleteDoc(docRef);
+                showToast("Đã xóa tài nguyên thành công!");
+                if (editingResourceId === id) cancelResourceEdit();
+            } catch (err) {
+                showToast("Lỗi khi thực thi xóa tài nguyên!", "error");
             }
         }
 
-        // TOGGLE HIDE/SHOW ON MAIN PAGE
-        window.toggleResourceStatus = async function(id) {
-            const index = resources.findIndex(r => r.id === id);
-            if (index === -1) return;
+        // Reset & Cancel editing resource form
+        function cancelResourceEdit() {
+            editingResourceId = null;
+            document.getElementById("resource-form").reset();
+            base64IconContent = "";
+            document.getElementById("preview-image-container").classList.add("hidden");
+            document.getElementById("resource-form-title").innerHTML = `<i data-lucide="plus" class="w-4 h-4"></i> Thêm Tài Nguyên Mới`;
+            document.getElementById("res-submit-text").textContent = "Đăng Tải Tài Nguyên";
+            document.getElementById("btn-cancel-res-edit").classList.add("hidden");
+            toggleIconFieldUI("url");
+            lucide.createIcons();
+        }
 
-            const newStatus = !resources[index].status;
+        // Upload / Create Resource Form Submission logic
+        async function handleResourceFormSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById("res-title").value.trim();
+            const categoryId = document.getElementById("res-category").value;
+            const downloadUrl = document.getElementById("res-url").value.trim();
+            
+            const selectedIconType = document.querySelector('input[name="icon-type-group"]:checked').value;
+            let iconContent = "";
 
-            if (isFirebaseOnline && db) {
-                try {
-                    const resDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
-                    await updateDoc(resDocRef, {
-                        status: newStatus,
-                        updatedAt: "2026-05-30"
-                    });
-                    showToast("Đã cập nhật trạng thái hiển thị của tài nguyên!", "success");
-                } catch (e) {
-                    showToast("Không thể thay đổi trạng thái: " + e.message, "error");
-                }
+            if (selectedIconType === "url") {
+                iconContent = document.getElementById("res-icon-url").value.trim();
             } else {
-                resources[index].status = newStatus;
-                resources[index].updatedAt = "2026-05-30";
-                renderUserResourcesGrid();
-                renderAdminResourcesTable();
-                updateMetadataStats();
-                showToast("Đã cập nhật trạng thái hiển thị thành công!", "success");
-            }
-        };
-
-        // DELETE RESOURCE
-        window.deleteResource = async function(id) {
-            const res = resources.find(r => r.id === id);
-            if (!res) return;
-
-            const result = confirm(`Xác nhận xóa tài nguyên: "${res.title}"?`);
-            if (!result) return;
-
-            if (isFirebaseOnline && db) {
-                try {
-                    const resDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
-                    await deleteDoc(resDocRef);
-                    showToast(`Đã xóa tài nguyên "${res.title}" khỏi đám mây.`, "success");
-                } catch (e) {
-                    showToast("Không thể xóa tài nguyên: " + e.message, "error");
-                }
-            } else {
-                resources = resources.filter(r => r.id !== id);
-                renderUserResourcesGrid();
-                renderAdminResourcesTable();
-                updateMetadataStats();
-                showToast(`Đã xóa vĩnh viễn tài nguyên "${res.title}".`, "success");
-            }
-        };
-
-        // SUBMIT ADD/EDIT RESOURCE FORM
-        window.handleResourceSubmit = async function(event) {
-            event.preventDefault();
-
-            const id = document.getElementById('form-resource-id').value;
-            const title = document.getElementById('form-title').value.trim();
-            const category = document.getElementById('form-category').value;
-            const version = document.getElementById('form-version').value.trim();
-            const downloadUrl = document.getElementById('form-downloadUrl').value.trim();
-            const image = document.getElementById('form-image').value.trim();
-            const description = document.getElementById('form-description').value.trim();
-            const status = document.getElementById('form-status').checked;
-
-            if (!title || !category || !version || !downloadUrl || !description) {
-                showToast("Vui lòng điền đầy đủ các thông tin bắt buộc (*)", "warning");
-                return;
+                iconContent = base64IconContent;
             }
 
             const payload = {
                 title,
-                category,
-                version,
+                categoryId,
                 downloadUrl,
-                image: image || "",
-                description,
-                status,
-                updatedAt: "2026-05-30"
+                iconType: selectedIconType,
+                iconContent: iconContent || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=60"
             };
 
-            if (isFirebaseOnline && db) {
-                try {
-                    if (id) {
-                        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
-                        await updateDoc(docRef, payload);
-                        showToast(`Cập nhật tài nguyên "${title}" thành công!`, "success");
-                    } else {
-                        const newPayload = {
-                            ...payload,
-                            downloadsCount: 0,
-                            createdAt: "2026-05-30"
-                        };
-                        const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
-                        await addDoc(colRef, newPayload);
-                        showToast(`Lưu và tải lên tài nguyên "${title}" thành công!`, "success");
-                    }
-                    closeResourceModal();
-                } catch (err) {
-                    showToast("Lỗi lưu dữ liệu: " + err.message, "error");
-                }
-            } else {
-                if (id) {
-                    const idx = resources.findIndex(r => r.id === id);
-                    if (idx !== -1) {
-                        resources[idx] = { ...resources[idx], ...payload };
-                        showToast(`Cập nhật tài nguyên "${title}" thành công!`, "success");
-                    }
+            try {
+                if (editingResourceId) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', editingResourceId);
+                    await updateDoc(docRef, payload);
+                    showToast("Cập nhật thông tin tài nguyên thành công!");
+                    cancelResourceEdit();
                 } else {
-                    const newLocalId = 'local-res-' + Math.random().toString(36).substr(2, 9);
-                    const newLocalRes = {
-                        id: newLocalId,
-                        ...payload,
-                        downloadsCount: 0,
-                        createdAt: "2026-05-30"
-                    };
-                    resources.push(newLocalRes);
-                    showToast(`Thêm tài nguyên "${title}" thành công!`, "success");
+                    payload.downloads = 0;
+                    const collRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
+                    await addDoc(collRef, payload);
+                    showToast("Đăng tải tài nguyên mới thành công!");
+                    cancelResourceEdit();
                 }
-                currentPage = 1;
-                renderUserResourcesGrid();
-                renderAdminResourcesTable();
-                updateMetadataStats();
-                closeResourceModal();
+            } catch (err) {
+                console.error("Database update error:", err);
+                showToast("Lỗi khi cập nhật cơ sở dữ liệu!", "error");
             }
-        };
+        }
 
-        // OPEN FOR ADD
-        window.openResourceModal = function() {
-            document.getElementById('form-resource-id').value = "";
-            document.getElementById('resource-form').reset();
-            document.getElementById('form-modal-title').textContent = "Thêm tài nguyên mới";
-            document.getElementById('form-status').checked = true;
+        // Render interactive list of active categories in Admin Tab
+        function renderCategoriesAdminList() {
+            if (!isAdmin) return;
+            const container = document.getElementById("admin-categories-list");
+            container.innerHTML = "";
 
-            document.getElementById('modal-resource-form').classList.remove('hidden');
-        };
-
-        // OPEN FOR EDIT
-        window.editResource = function(id) {
-            const res = resources.find(r => r.id === id);
-            if (!res) return;
-
-            document.getElementById('form-resource-id').value = res.id;
-            document.getElementById('form-title').value = res.title;
-            document.getElementById('form-category').value = res.category;
-            document.getElementById('form-version').value = res.version;
-            document.getElementById('form-downloadUrl').value = res.downloadUrl;
-            document.getElementById('form-image').value = res.image || "";
-            document.getElementById('form-description').value = res.description;
-            document.getElementById('form-status').checked = res.status;
-
-            document.getElementById('form-modal-title').textContent = `Chỉnh sửa tài nguyên: ${res.title}`;
-            document.getElementById('modal-resource-form').classList.remove('hidden');
-        };
-
-        window.closeResourceModal = function() {
-            document.getElementById('modal-resource-form').classList.add('hidden');
-        };
-
-
-        // ==========================================
-        //         CATEGORY MANAGEMENT ACTIONS       
-        // ==========================================
-
-        window.openCategoryManager = function() {
-            renderModalCategoryList();
-            document.getElementById('modal-category-manager').classList.remove('hidden');
-        };
-
-        window.closeCategoryManager = function() {
-            document.getElementById('modal-category-manager').classList.add('hidden');
-        };
-
-        function renderModalCategoryList() {
-            const list = document.getElementById('modal-category-list');
-            if (!list) return;
-
-            if (categories.length === 0) {
-                list.innerHTML = `<div class="text-slate-400 text-xs text-center py-4">Chưa có danh mục nào.</div>`;
-                return;
-            }
-
-            let html = '';
             categories.forEach(cat => {
-                const count = resources.filter(r => r.category === cat.name).length;
-                html += `
-                    <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-white text-xs transition-colors">
-                        <span class="font-semibold text-slate-700 flex items-center space-x-1.5">
-                            <i class="fa-solid fa-folder text-amber-500"></i>
-                            <span>${cat.name}</span>
-                            <span class="text-[9px] text-slate-400 font-normal">(${count} tài nguyên)</span>
-                        </span>
-                        <button onclick="deleteCategory('${cat.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Xóa danh mục">
-                            <i class="fa-solid fa-trash-can"></i>
+                const itemCount = resources.filter(r => r.categoryId === cat.id).length;
+
+                const item = document.createElement("div");
+                item.className = "p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between";
+                item.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <i data-lucide="folder-open" class="w-4 h-4 text-indigo-500"></i>
+                        <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">${cat.name}</span>
+                        <span class="text-[10px] text-slate-400 bg-slate-200/50 dark:bg-slate-800 px-2 py-0.5 rounded-full font-bold">${itemCount} tệp</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button class="btn-edit-cat p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded text-indigo-500 transition-colors" title="Sửa tên">
+                            <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button class="btn-delete-cat p-1 hover:bg-slate-200 dark:hover:bg-slate-800 rounded text-rose-500 transition-colors" title="Xóa">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
                 `;
+
+                item.querySelector(".btn-edit-cat").addEventListener("click", () => startEditCategory(cat));
+                item.querySelector(".btn-delete-cat").addEventListener("click", () => deleteCategory(cat));
+
+                container.appendChild(item);
             });
-            list.innerHTML = html;
+
+            if (categories.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">Không có danh mục nào tồn tại.</div>`;
+            }
+            lucide.createIcons();
         }
 
-        window.handleCategoryAdd = async function(event) {
-            event.preventDefault();
-            const input = document.getElementById('form-new-cat-name');
-            const newCatName = input.value.trim();
+        // Setup modify category name
+        function startEditCategory(cat) {
+            editingCategoryId = cat.id;
+            document.getElementById("cat-name").value = cat.name;
+            document.getElementById("category-form-title").innerHTML = `<i data-lucide="edit-3" class="w-4 h-4"></i> Sửa Tên Danh Mục`;
+            document.getElementById("cat-submit-text").textContent = "Cập Nhật Danh Mục";
+            document.getElementById("btn-cancel-cat-edit").classList.remove("hidden");
+            lucide.createIcons();
+        }
 
-            if (!newCatName) return;
-
-            // Check if duplicate
-            const exists = categories.some(c => c.name.toLowerCase() === newCatName.toLowerCase());
-            if (exists) {
-                showToast("Danh mục này đã tồn tại!", "warning");
+        // Delete active category checks
+        async function deleteCategory(cat) {
+            const usageCount = resources.filter(r => r.categoryId === cat.id).length;
+            if (usageCount > 0) {
+                showToast("Không thể xóa danh mục này vì còn tài nguyên liên kết!", "error");
                 return;
             }
 
-            const newId = 'cat-' + Math.random().toString(36).substr(2, 9);
+            const confirmed = confirm(`Bạn muốn xóa danh mục "${cat.name}"?`);
+            if (!confirmed) return;
 
-            if (isFirebaseOnline && db) {
-                try {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', newId);
-                    await setDoc(docRef, { name: newCatName });
-                    showToast(`Đã thêm danh mục "${newCatName}" lên Firestore!`, "success");
-                } catch (e) {
-                    showToast("Không thể lưu danh mục: " + e.message, "error");
-                }
-            } else {
-                categories.push({ id: newId, name: newCatName });
-                renderCategoriesList();
-                renderCategoryFormOptions();
-                renderUserResourcesGrid();
-                showToast(`Đã thêm danh mục "${newCatName}"!`, "success");
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', cat.id);
+                await deleteDoc(docRef);
+                showToast("Đã xóa danh mục thành công!");
+                if (editingCategoryId === cat.id) cancelCategoryEdit();
+            } catch (err) {
+                showToast("Có lỗi xảy ra khi thực thi xóa!", "error");
             }
+        }
 
-            input.value = '';
-            renderModalCategoryList();
-        };
+        // Reset Category Modification fields
+        function cancelCategoryEdit() {
+            editingCategoryId = null;
+            document.getElementById("category-form").reset();
+            document.getElementById("category-form-title").innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4"></i> Thêm Danh Mục Mới`;
+            document.getElementById("cat-submit-text").textContent = "Tạo Danh Mục";
+            document.getElementById("btn-cancel-cat-edit").classList.add("hidden");
+            lucide.createIcons();
+        }
 
-        window.deleteCategory = async function(id) {
-            const cat = categories.find(c => c.id === id);
-            if (!cat) return;
+        // Create / Modify category submission logic
+        async function handleCategoryFormSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById("cat-name").value.trim();
 
-            // Check if category currently contains active resources
-            const resourcesInCat = resources.filter(r => r.category === cat.name);
-            if (resourcesInCat.length > 0) {
-                showToast(`Không thể xóa! Danh mục "${cat.name}" đang chứa ${resourcesInCat.length} tài nguyên. Bạn cần xóa các tài nguyên này trước.`, "warning");
+            try {
+                if (editingCategoryId) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', editingCategoryId);
+                    await updateDoc(docRef, { name });
+                    showToast("Đã cập nhật tên danh mục!");
+                    cancelCategoryEdit();
+                } else {
+                    const collRef = collection(db, 'artifacts', appId, 'public', 'data', 'categories');
+                    await addDoc(collRef, { name });
+                    showToast("Đã tạo danh mục thành công!");
+                    cancelCategoryEdit();
+                }
+            } catch (err) {
+                showToast("Có lỗi xảy ra khi cập nhật cơ sở dữ liệu!", "error");
+            }
+        }
+
+        // Image to Base64 encoder helper
+        function handleImageUploadConversion(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Enforce limit of 200KB for Base64 storage payload efficiency
+            if (file.size > 200 * 1024) {
+                showToast("Ảnh quá nặng! Hãy chọn ảnh dung lượng dưới 200KB.", "error");
+                e.target.value = "";
                 return;
             }
 
-            const result = confirm(`Xác nhận xóa danh mục "${cat.name}"?`);
-            if (!result) return;
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                base64IconContent = reader.result;
+                const previewImg = document.getElementById("uploaded-image-preview");
+                previewImg.src = base64IconContent;
+                document.getElementById("preview-image-container").classList.remove("hidden");
+                document.getElementById("preview-image-container").classList.add("flex");
+            };
+            reader.readAsDataURL(file);
+        }
 
-            if (isFirebaseOnline && db) {
-                try {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'categories', id);
-                    await deleteDoc(docRef);
-                    showToast(`Đã xóa danh mục "${cat.name}" khỏi đám mây.`, "success");
-                } catch (e) {
-                    showToast("Lỗi xóa danh mục: " + e.message, "error");
+        // Toggle Icon Fields view based on Radio Buttons (URL/File Device)
+        function toggleIconFieldUI(type) {
+            const urlField = document.getElementById("icon-url-field");
+            const uploadField = document.getElementById("icon-upload-field");
+
+            if (type === "url") {
+                urlField.classList.remove("hidden");
+                uploadField.classList.add("hidden");
+            } else {
+                urlField.classList.add("hidden");
+                uploadField.classList.remove("hidden");
+            }
+        }
+
+        // App Initial Launch Sequence on page ready
+        window.addEventListener("DOMContentLoaded", async () => {
+            // Setup default darkmode check based on system preferences
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            // Darkmode Switch click listener
+            document.getElementById("theme-toggle").addEventListener("click", () => {
+                if (document.documentElement.classList.contains("dark")) {
+                    document.documentElement.classList.remove("dark");
+                    localStorage.theme = 'light';
+                } else {
+                    document.documentElement.classList.add("dark");
+                    localStorage.theme = 'dark';
                 }
-            } else {
-                categories = categories.filter(c => c.id !== id);
-                renderCategoriesList();
-                renderCategoryFormOptions();
-                renderUserResourcesGrid();
-                showToast(`Đã xóa danh mục "${cat.name}".`, "success");
-            }
+            });
 
-            renderModalCategoryList();
-        };
+            // Fast refresh list event trigger
+            document.getElementById("btn-refresh").addEventListener("click", () => {
+                showToast("Đã tải lại danh sách tài nguyên mới nhất");
+                renderResourcesUI();
+            });
 
+            // Real-time search filter action
+            const searchInput = document.getElementById("search-input");
+            const btnClearSearch = document.getElementById("btn-clear-search");
 
-        // ==========================================
-        //        BOOTSTRAP LIFE CYCLE MANAGER       
-        // ==========================================
+            searchInput.addEventListener("input", (e) => {
+                searchTerm = e.target.value;
+                if (searchTerm.length > 0) {
+                    btnClearSearch.classList.remove("hidden");
+                } else {
+                    btnClearSearch.classList.add("hidden");
+                }
+                renderResourcesUI();
+            });
 
-        window.onload = function() {
-            // Setup dynamic Favicon using inline SVG data
-            const linkFav = document.createElement('link');
-            linkFav.rel = 'icon';
-            linkFav.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>';
-            document.head.appendChild(linkFav);
+            btnClearSearch.addEventListener("click", () => {
+                searchInput.value = "";
+                searchTerm = "";
+                btnClearSearch.classList.add("hidden");
+                renderResourcesUI();
+            });
 
-            setupDatabase();
+            // Initialize Authentication and Session variables
+            await initAuthAndSystem();
 
-            const hash = window.location.hash;
-            if (hash === '#login') {
-                navigateTo('admin-login');
-            } else if (hash === '#dashboard') {
-                navigateTo('admin-dashboard');
-            } else {
-                navigateTo('home');
-            }
-        };
+            // Track Anonymous user login state
+            onAuthStateChanged(auth, (usr) => {
+                user = usr;
+                if (user) {
+                    listenToCategories();
+                    listenToResources();
+                }
+            });
 
+            // Form Submit and Interaction Listeners
+            document.getElementById("resource-form").addEventListener("submit", handleResourceFormSubmit);
+            document.getElementById("btn-cancel-res-edit").addEventListener("click", cancelResourceEdit);
+            document.getElementById("category-form").addEventListener("submit", handleCategoryFormSubmit);
+            document.getElementById("btn-cancel-cat-edit").addEventListener("click", cancelCategoryEdit);
+            document.getElementById("res-icon-file").addEventListener("change", handleImageUploadConversion);
+
+            // Icon select type radio trigger
+            const iconRadioBtns = document.querySelectorAll('input[name="icon-type-group"]');
+            iconRadioBtns.forEach(btn => {
+                btn.addEventListener("change", (e) => {
+                    toggleIconFieldUI(e.target.value);
+                });
+            });
+
+            // System Modal trigger & authentication actions
+            document.getElementById("btn-open-login").addEventListener("click", () => {
+                loginErrorContainer.classList.add("hidden");
+                loginModal.classList.remove("hidden");
+            });
+            footerAdminTrigger.addEventListener("click", () => {
+                loginErrorContainer.classList.add("hidden");
+                loginModal.classList.remove("hidden");
+            });
+            
+            const closeModals = () => {
+                loginModal.classList.add("hidden");
+                loginForm.reset();
+                loginErrorContainer.classList.add("hidden");
+            };
+            btnCloseLogin.addEventListener("click", closeModals);
+            btnCloseLoginCancel.addEventListener("click", closeModals);
+            loginForm.addEventListener("submit", handleAdminVerification);
+
+            // Admin Dashboard Section Tab switcher
+            tabBtnResources.addEventListener("click", () => {
+                activeAdminTab = "resources";
+                tabBtnResources.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm";
+                tabBtnCategories.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                
+                adminTabResourcesContent.classList.remove("hidden");
+                adminTabCategoriesContent.classList.add("hidden");
+            });
+
+            tabBtnCategories.addEventListener("click", () => {
+                activeAdminTab = "categories";
+                tabBtnCategories.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm";
+                tabBtnResources.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                
+                adminTabCategoriesContent.classList.remove("hidden");
+                adminTabResourcesContent.classList.add("hidden");
+            });
+
+            // Load icons
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
