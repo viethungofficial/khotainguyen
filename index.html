@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShareTech Premium - Kho Tài Nguyên Tốc Độ Cao</title>
+    <title>Kho Tài Nguyên - Tải Trực Tiếp Tốc Độ Cao</title>
+    
+    <!-- Favicon Mũi tên Lên Xuống SVG -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>⇅</text></svg>">
+    
     <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -22,10 +27,12 @@
             }
         }
     </script>
+    
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
     <style>
-        /* Custom scrollbar for better visual experience */
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -40,6 +47,17 @@
         .dark ::-webkit-scrollbar-thumb {
             background: #334155;
         }
+
+        /* Seamless Infinite Marquee Animation (Without Stopping on Hover) */
+        @keyframes scroll-marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: inline-flex;
+            animation: scroll-marquee var(--marquee-speed, 25s) linear infinite;
+        }
+
         /* Custom Animations */
         .animate-fade-in {
             animation: fadeIn 0.2s ease-out forwards;
@@ -56,7 +74,7 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5"></div>
 
     <!-- HEADER SECTION -->
-    <header class="sticky top-0 z-40 border-b backdrop-blur-md bg-white/90 border-slate-200 dark:bg-slate-900/90 dark:border-slate-800 transition-colors">
+    <header class="sticky top-0 z-40 border-b backdrop-blur-md bg-white/90 border-slate-200 dark:bg-slate-900/90 dark:border-slate-800 transition-colors shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 
@@ -66,16 +84,16 @@
                         <i data-lucide="file-down" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <h1 class="text-lg font-bold bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent dark:from-indigo-400 dark:to-cyan-300">
-                            ShareTech Free
+                        <h1 class="text-lg font-extrabold bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent dark:from-indigo-400 dark:to-cyan-300">
+                            Kho Tài Nguyên
                         </h1>
-                        <p class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase">Tải trực tiếp bằng File ID</p>
+                        <p class="text-[9px] text-slate-400 font-bold tracking-widest uppercase">Direct download engine</p>
                     </div>
                 </div>
 
                 <!-- Navigation Controls -->
                 <div class="flex items-center gap-4">
-                    <a href="#resource-section" class="hidden sm:inline-block text-sm font-medium hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Kho Tài Nguyên</a>
+                    <a href="#resource-section" class="hidden sm:inline-block text-sm font-semibold hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Tất Cả Tài Nguyên</a>
                     
                     <!-- Dark mode toggle -->
                     <button id="theme-toggle" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-500 dark:text-slate-400" title="Chuyển chế độ giao diện">
@@ -85,7 +103,7 @@
 
                     <!-- Admin Session Control -->
                     <div id="admin-header-status" class="flex items-center gap-2">
-                        <button id="btn-open-login" class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-xl transition-all border border-indigo-200 dark:border-indigo-900/30">
+                        <button id="btn-open-login" class="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-xl transition-all border border-indigo-200 dark:border-indigo-900/30">
                             <i data-lucide="lock" class="w-4 h-4"></i> Admin quản trị
                         </button>
                     </div>
@@ -94,35 +112,29 @@
         </div>
     </header>
 
+    <!-- HORIZONTAL NEWS TICKER (Chữ chạy ngang bên dưới header) -->
+    <div class="relative w-full bg-indigo-50 dark:bg-slate-950/40 border-b border-indigo-100/50 dark:border-slate-800/80 py-3 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+            <!-- Fixed Notice Badge -->
+            <div class="z-10 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-lg shadow-sm mr-4 flex-shrink-0 flex items-center gap-1">
+                <i data-lucide="megaphone" class="w-3 h-3"></i>
+                Bản tin
+            </div>
+            <!-- Seamless scrolling text -->
+            <div class="overflow-hidden relative w-full flex items-center">
+                <div id="marquee-wrapper" class="animate-marquee flex gap-16 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300">
+                    <span id="marquee-text-1" class="whitespace-nowrap pr-8">Đang tải cấu hình thông báo hệ thống...</span>
+                    <span id="marquee-text-2" class="whitespace-nowrap pr-8">Đang tải cấu hình thông báo hệ thống...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN WRAPPER CONTAINER -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- INTRO & STATS MINI BOARD (MINIMALIST) -->
-        <section class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200 dark:border-slate-800">
-            <div>
-                <h2 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                    Hệ Thống Tải Tài Nguyên Trực Tiếp
-                </h2>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                    Hỗ trợ trích xuất liên kết Google Drive nhanh chóng, ổn định và an toàn bảo mật.
-                </p>
-            </div>
-            
-            <!-- Compact horizontal counter system -->
-            <div class="flex gap-6 text-sm">
-                <div class="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-800 px-4 py-2 rounded-2xl shadow-sm">
-                    <span class="text-xs text-slate-400 font-semibold uppercase block">Tài nguyên</span>
-                    <span id="stat-resources-count" class="text-lg font-bold text-indigo-600 dark:text-indigo-400">0</span>
-                </div>
-                <div class="bg-white dark:bg-slate-800 border border-slate-200/60 dark:border-slate-800 px-4 py-2 rounded-2xl shadow-sm">
-                    <span class="text-xs text-slate-400 font-semibold uppercase block">Danh mục</span>
-                    <span id="stat-categories-count" class="text-lg font-bold text-cyan-500">0</span>
-                </div>
-            </div>
-        </section>
-
         <!-- ======================= ADMIN CONTROL BOARD (HIDDEN BY DEFAULT) ======================= -->
-        <section id="admin-board" class="hidden mb-10 p-6 rounded-2xl border bg-white dark:bg-slate-800 border-indigo-100 dark:border-indigo-950/50 shadow-xl transition-all duration-300">
+        <section id="admin-board" class="hidden mb-10 p-6 rounded-3xl border bg-white dark:bg-slate-800 border-indigo-100 dark:border-indigo-950/50 shadow-xl transition-all duration-300">
             
             <!-- Admin Header Tabs -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100 dark:border-slate-700">
@@ -132,7 +144,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-bold">Bảng Điều Khiển Admin</h3>
-                        <p class="text-xs text-slate-400">Đăng tải tài nguyên, cấu hình danh mục dữ liệu</p>
+                        <p class="text-xs text-slate-400">Đăng tải tài nguyên, cấu hình danh mục dữ liệu & thông báo chạy</p>
                     </div>
                 </div>
 
@@ -143,6 +155,9 @@
                     </button>
                     <button id="tab-btn-categories" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700">
                         Danh Mục
+                    </button>
+                    <button id="tab-btn-config" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700">
+                        Cấu Hình Hệ Thống
                     </button>
                 </div>
             </div>
@@ -217,10 +232,10 @@
 
                     <!-- Action buttons -->
                     <div class="flex gap-2.5 pt-2">
-                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-4 rounded-xl text-sm transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/15">
+                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-xl text-sm transition-colors flex items-center justify-center gap-1.5 shadow-lg shadow-indigo-600/15">
                             <i data-lucide="upload" class="w-4 h-4"></i> <span id="res-submit-text">Đăng Tải Tài Nguyên</span>
                         </button>
-                        <button type="button" id="btn-cancel-res-edit" class="hidden px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+                        <button type="button" id="btn-cancel-res-edit" class="hidden px-4 py-2 text-sm font-semibold border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
                             Hủy
                         </button>
                     </div>
@@ -250,10 +265,10 @@
                             class="w-full px-3.5 py-2 text-sm rounded-xl border bg-transparent border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white">
                     </div>
                     <div class="flex gap-2">
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 px-5 rounded-xl text-sm transition-colors shadow-lg shadow-indigo-600/10">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-5 rounded-xl text-sm transition-colors shadow-lg shadow-indigo-600/10">
                             <span id="cat-submit-text">Tạo Danh Mục</span>
                         </button>
-                        <button type="button" id="btn-cancel-cat-edit" class="hidden px-4 py-2 text-sm font-medium border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+                        <button type="button" id="btn-cancel-cat-edit" class="hidden px-4 py-2 text-sm font-semibold border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
                             Hủy
                         </button>
                     </div>
@@ -269,6 +284,47 @@
 
             </div>
 
+            <!-- TAB CONTENT 3: SYSTEM CONFIGURATION (NEW) -->
+            <div id="admin-tab-config-content" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8 hidden">
+                <form id="config-form" class="space-y-4">
+                    <h4 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 uppercase tracking-wide">
+                        <i data-lucide="sliders" class="w-4 h-4"></i> Thiết Lập Bản Tin Chạy Ngang
+                    </h4>
+                    
+                    <!-- Announcement text -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Nội dung dòng chữ chạy <span class="text-rose-500">*</span></label>
+                        <textarea id="config-ticker-text" required placeholder="Nhập thông báo quan trọng..." rows="3"
+                            class="w-full px-3.5 py-2 text-sm rounded-xl border bg-transparent border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"></textarea>
+                    </div>
+
+                    <!-- Announcement speed -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1">Tốc độ chạy chữ <span class="text-rose-500">*</span></label>
+                        <select id="config-ticker-speed" required class="w-full px-3.5 py-2 text-sm rounded-xl border bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white">
+                            <option value="40s">Chậm rãi (An toàn / Dễ đọc)</option>
+                            <option value="25s" selected>Bình thường (Tiêu chuẩn)</option>
+                            <option value="12s">Nhanh chóng (Năng động)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-6 rounded-xl text-sm transition-colors shadow-lg shadow-indigo-600/10 flex items-center gap-1.5">
+                        <i data-lucide="save" class="w-4 h-4"></i> Lưu cấu hình
+                    </button>
+                </form>
+
+                <div class="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-3xl border border-slate-200/50 dark:border-slate-800 space-y-4">
+                    <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="info" class="w-4 h-4"></i> Hướng dẫn kỹ thuật
+                    </h5>
+                    <ul class="text-xs text-slate-500 dark:text-slate-400 space-y-2 list-disc list-inside">
+                        <li>Dòng thông báo chữ chạy bên dưới header sẽ được cập nhật tức thì theo thời gian thực tới tất cả người truy cập mà không cần tải lại trang.</li>
+                        <li>Tốc độ chạy chữ được quản lý theo chu kỳ thời gian (giây), số giây càng nhỏ chữ chạy càng nhanh.</li>
+                        <li>Hiệu ứng chữ chạy sử dụng công nghệ kết xuất phần cứng tối ưu, đảm bảo không bị giật lag trên cả các dòng điện thoại thông minh cấu hình thấp.</li>
+                    </ul>
+                </div>
+            </div>
+
         </section>
 
         <!-- ======================= USER VIEW INTERFACE ======================= -->
@@ -277,19 +333,19 @@
         <section id="resource-section" class="mb-8 space-y-6">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm transition-colors">
                 
-                <!-- Search Input Field -->
+                <!-- Search & Advanced Filter Box -->
                 <div class="relative flex-1">
-                    <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
-                    <input type="text" id="search-input" placeholder="Tìm kiếm tên tài nguyên số cần tải..." 
-                        class="w-full pl-11 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all">
+                    <i data-lucide="search" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-indigo-500 w-5 h-5"></i>
+                    <input type="text" id="search-input" placeholder="Nhập từ khóa tìm kiếm tài nguyên hệ thống..." 
+                        class="w-full pl-11 pr-10 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition-all shadow-inner">
                     <button id="btn-clear-search" class="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hidden">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
 
-                <!-- Fast update indicator -->
+                <!-- Synchronize Button -->
                 <div class="flex gap-2">
-                    <button id="btn-refresh" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-slate-500 dark:text-slate-400" title="Đồng bộ lại">
+                    <button id="btn-refresh" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-slate-500 dark:text-slate-400" title="Tải lại cơ sở dữ liệu">
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -306,34 +362,39 @@
         <section class="space-y-6">
             <div class="flex justify-between items-center">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <i data-lucide="layers" class="w-4 h-4"></i> Danh Sách Tài Nguyên Đang Hiển Thị (<span id="results-count">0</span>)
+                    <i data-lucide="layers" class="w-4 h-4"></i> Kho Tài Nguyên (<span id="results-count">0</span>)
                 </h3>
             </div>
 
             <!-- Cards Container -->
-            <div id="resources-grid-display" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="resources-grid-display" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300">
                 <!-- Rendering cards from JS -->
+            </div>
+
+            <!-- PAGINATION CONTROLS -->
+            <div id="pagination-container" class="flex justify-center items-center gap-2 pt-8">
+                <!-- Will render dynamically -->
             </div>
         </section>
 
     </main>
 
     <!-- FOOTER -->
-    <footer class="mt-20 border-t border-slate-200 dark:border-slate-800 py-8 bg-white dark:bg-slate-900 text-slate-400 transition-colors">
+    <footer class="mt-24 border-t border-slate-200 dark:border-slate-800 py-8 bg-white dark:bg-slate-900 text-slate-400 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
             <div class="flex items-center gap-2">
                 <div class="bg-indigo-600 text-white p-1.5 rounded-lg">
                     <i data-lucide="file-down" class="w-4 h-4"></i>
                 </div>
-                <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">ShareTech Premium</span>
+                <span class="text-sm font-semibold text-slate-800 dark:text-slate-100">Kho Tài Nguyên</span>
             </div>
             <p class="text-xs">
-                © 2026 ShareTech Resources. Trực tiếp - Tối giản - Bảo mật.
+                © 2026 ShareTech Resources. Phát triển tối ưu hóa trên nền tảng lưu trữ Google Drive.
             </p>
             <div class="text-xs flex gap-4">
                 <button id="footer-admin-trigger" class="hover:text-indigo-500 transition-colors">Cấu hình hệ thống</button>
                 <span>•</span>
-                <span>Tốc độ tải Google Drive trực tiếp</span>
+                <span>Tải tệp tin tốc độ cao</span>
             </div>
         </div>
     </footer>
@@ -358,10 +419,10 @@
 
             <!-- Login Input Form -->
             <form id="login-form" class="space-y-4">
-                <!-- Alert error directly in form -->
+                <!-- Alert error directly inside the login form modal -->
                 <div id="login-error-container" class="hidden p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-100 dark:border-rose-900/30 text-rose-600 dark:text-rose-400 text-xs font-semibold text-center flex items-center justify-center gap-1.5">
                     <i data-lucide="alert-circle" class="w-4 h-4"></i>
-                    <span>Tài khoản hoặc mật khẩu không chính xác!</span>
+                    <span>Tài khoản hoặc mật khẩu quản trị không chính xác!</span>
                 </div>
 
                 <div>
@@ -423,9 +484,14 @@
         let editingCategoryId = null;
         let base64IconContent = "";
 
-        let activeAdminTab = "resources"; // "resources" | "categories"
+        // UI State Variables
+        let activeAdminTab = "resources"; // "resources" | "categories" | "config"
         let selectedCategoryFilter = "all";
         let searchTerm = "";
+        
+        // Pagination state variables
+        let currentPage = 1;
+        const itemsPerPage = 6; // 6 items per page for visual balance
 
         // UI Selectors
         const toastContainer = document.getElementById("toast-container");
@@ -442,8 +508,10 @@
         // Admin Tab contents
         const tabBtnResources = document.getElementById("tab-btn-resources");
         const tabBtnCategories = document.getElementById("tab-btn-categories");
+        const tabBtnConfig = document.getElementById("tab-btn-config");
         const adminTabResourcesContent = document.getElementById("admin-tab-resources-content");
         const adminTabCategoriesContent = document.getElementById("admin-tab-categories-content");
+        const adminTabConfigContent = document.getElementById("admin-tab-config-content");
 
         // Helper: Parse Google Drive URLs to generate direct download links
         function parseDriveUrl(url) {
@@ -520,7 +588,6 @@
                 updateAdminViewUI();
                 showToast("Xác thực thành công với quyền quản trị viên!");
             } else {
-                // Show error directly inside login modal
                 loginErrorContainer.classList.remove("hidden");
                 lucide.createIcons();
             }
@@ -530,7 +597,7 @@
         function updateAdminViewUI() {
             if (isAdmin) {
                 adminHeaderStatus.innerHTML = `
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 animate-fade-in">
                         <span class="bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 px-3 py-1 text-xs font-semibold rounded-xl border border-emerald-200 dark:border-emerald-800/40 flex items-center gap-1.5">
                             <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                             Admin
@@ -550,7 +617,7 @@
                 });
             } else {
                 adminHeaderStatus.innerHTML = `
-                    <button id="btn-open-login" class="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-xl transition-all border border-indigo-200 dark:border-indigo-900/30">
+                    <button id="btn-open-login" class="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 rounded-xl transition-all border border-indigo-200 dark:border-indigo-900/30">
                         <i data-lucide="lock" class="w-4 h-4"></i> Admin quản trị
                     </button>
                 `;
@@ -620,6 +687,57 @@
             });
         }
 
+        // Real-time listener for Marquee news ticker settings (Rule 1 path structure)
+        function listenToMarqueeSettings() {
+            if (!user) return;
+            const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'tickerConfig');
+            
+            onSnapshot(configDocRef, (docSnap) => {
+                let text = "Chào mừng quý khách đến với Kho Tài Nguyên - Hệ thống tự động phân tách liên kết tải Google Drive tốc độ cao không qua quảng cáo trung gian.";
+                let speed = "25s";
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    text = data.text || text;
+                    speed = data.speed || speed;
+                    
+                    // Populate configuration inputs inside admin form
+                    document.getElementById("config-ticker-text").value = text;
+                    document.getElementById("config-ticker-speed").value = speed;
+                } else {
+                    // Set default settings in Firestore
+                    setDoc(configDocRef, { text, speed });
+                }
+
+                // Apply settings to marquee container
+                const textContainer1 = document.getElementById("marquee-text-1");
+                const textContainer2 = document.getElementById("marquee-text-2");
+                
+                textContainer1.textContent = text;
+                textContainer2.textContent = text;
+
+                // Adjust the animation duration variables
+                document.getElementById("marquee-wrapper").style.setProperty('--marquee-speed', speed);
+            }, (error) => {
+                console.error("Fetch marquee settings error:", error);
+            });
+        }
+
+        // Handle Save Marquee Config
+        async function handleConfigSubmit(e) {
+            e.preventDefault();
+            const text = document.getElementById("config-ticker-text").value.trim();
+            const speed = document.getElementById("config-ticker-speed").value;
+
+            try {
+                const configDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'tickerConfig');
+                await setDoc(configDocRef, { text, speed });
+                showToast("Đã cập nhật cấu hình thông báo chữ chạy!");
+            } catch (err) {
+                showToast("Lỗi khi lưu cấu hình!", "error");
+            }
+        }
+
         // Compute system statistics
         function updateSystemStatistics() {
             document.getElementById("stat-resources-count").textContent = resources.length;
@@ -653,6 +771,7 @@
             allBtn.textContent = "Tất cả tài nguyên";
             allBtn.addEventListener("click", () => {
                 selectedCategoryFilter = "all";
+                currentPage = 1; // reset page
                 renderCategoryFilterTagsUI();
                 renderResourcesUI();
             });
@@ -669,6 +788,7 @@
                 btn.textContent = cat.name;
                 btn.addEventListener("click", () => {
                     selectedCategoryFilter = cat.id;
+                    currentPage = 1; // reset page
                     renderCategoryFilterTagsUI();
                     renderResourcesUI();
                 });
@@ -676,7 +796,7 @@
             });
         }
 
-        // Render main grid display of resources card (User Interface view)
+        // Render main grid display of resources card (User Interface view) with Pagination
         function renderResourcesUI() {
             const container = document.getElementById("resources-grid-display");
             const resultsCountElem = document.getElementById("results-count");
@@ -691,7 +811,18 @@
 
             resultsCountElem.textContent = filtered.length;
 
-            filtered.forEach(res => {
+            // Calculate Pagination
+            const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedItems = filtered.slice(startIndex, endIndex);
+
+            // Render resources cards for the current page
+            paginatedItems.forEach(res => {
                 const catObj = categories.find(c => c.id === res.categoryId);
                 const categoryName = catObj ? catObj.name : "Chưa phân loại";
 
@@ -728,9 +859,9 @@
                     <div class="px-5 py-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
                         <div class="flex items-center gap-1.5 text-xs text-slate-400">
                             <i data-lucide="eye" class="w-4 h-4"></i>
-                            <span>Sẵn sàng tải xuống</span>
+                            <span>${res.downloads || 0} lượt tải</span>
                         </div>
-                        <a href="${finalDownloadUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-semibold px-4 py-2 rounded-xl text-xs shadow-md shadow-indigo-600/10 transition-all group-hover:-translate-y-0.5">
+                        <a href="${finalDownloadUrl}" target="_blank" rel="noopener noreferrer" onclick="incrementDownloadBackground('${res.id}')" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-semibold px-4 py-2 rounded-xl text-xs shadow-md shadow-indigo-600/10 transition-all group-hover:-translate-y-0.5">
                             Tải ngay
                             <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
                         </a>
@@ -742,7 +873,7 @@
 
             if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-full py-16 bg-white dark:bg-slate-800 border border-dashed border-slate-200 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center text-center p-6">
+                    <div class="col-span-full py-16 bg-white dark:bg-slate-800 border border-dashed border-slate-200 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center text-center p-6 animate-fade-in">
                         <i data-lucide="file-text" class="w-12 h-12 text-slate-300 dark:text-slate-600 mb-3"></i>
                         <h4 class="text-sm font-bold text-slate-600 dark:text-slate-300">Không tìm thấy tài nguyên</h4>
                         <p class="text-xs text-slate-400 mt-1 max-w-xs">Thử tìm kiếm với từ khóa khác hoặc chuyển sang thẻ danh mục khác.</p>
@@ -750,8 +881,78 @@
                 `;
             }
 
+            // Render Pagination Controller
+            renderPaginationControls(totalPages);
             lucide.createIcons();
         }
+
+        // Render Pagination navigation buttons dynamically
+        function renderPaginationControls(totalPages) {
+            const container = document.getElementById("pagination-container");
+            container.innerHTML = "";
+
+            if (totalPages <= 1) {
+                return; // Hide pagination if only 1 page is needed
+            }
+
+            // Back Page button
+            const prevBtn = document.createElement("button");
+            prevBtn.className = `p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all ${currentPage === 1 ? 'opacity-40 cursor-not-allowed' : ''}`;
+            prevBtn.innerHTML = `<i data-lucide="chevron-left" class="w-4 h-4"></i>`;
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener("click", () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderResourcesUI();
+                    document.getElementById("resource-section").scrollIntoView({ behavior: "smooth" });
+                }
+            });
+            container.appendChild(prevBtn);
+
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement("button");
+                pageBtn.className = `w-10 h-10 rounded-xl text-sm font-semibold transition-all border ${
+                    currentPage === i 
+                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-600/10' 
+                    : 'border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener("click", () => {
+                    currentPage = i;
+                    renderResourcesUI();
+                    document.getElementById("resource-section").scrollIntoView({ behavior: "smooth" });
+                });
+                container.appendChild(pageBtn);
+            }
+
+            // Next Page button
+            const nextBtn = document.createElement("button");
+            nextBtn.className = `p-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all ${currentPage === totalPages ? 'opacity-40 cursor-not-allowed' : ''}`;
+            nextBtn.innerHTML = `<i data-lucide="chevron-right" class="w-4 h-4"></i>`;
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.addEventListener("click", () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderResourcesUI();
+                    document.getElementById("resource-section").scrollIntoView({ behavior: "smooth" });
+                }
+            });
+            container.appendChild(nextBtn);
+        }
+
+        // Fire and forget incrementation inside background without blocking direct redirection
+        window.incrementDownloadBackground = function(id) {
+            try {
+                const res = resources.find(r => r.id === id);
+                if (res) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', id);
+                    updateDoc(docRef, { downloads: (res.downloads || 0) + 1 });
+                }
+            } catch (e) {
+                console.error("Increment downloads failed asynchronously in background:", e);
+            }
+        };
 
         // Admin interface - Render interactive list of resources (Edit/Delete)
         function renderResourcesAdminList() {
@@ -764,7 +965,7 @@
                 const categoryName = catObj ? catObj.name : "Chưa phân loại";
 
                 const item = document.createElement("div");
-                item.className = "p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4";
+                item.className = "p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4 animate-fade-in";
                 item.innerHTML = `
                     <div class="flex items-center gap-3 min-w-0">
                         <img src="${res.iconContent || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=60'}" class="w-10 h-10 rounded-lg object-cover flex-shrink-0 border dark:border-slate-800" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=60'">
@@ -772,6 +973,8 @@
                             <h5 class="text-sm font-semibold truncate text-slate-800 dark:text-slate-100">${res.title}</h5>
                             <div class="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
                                 <span class="bg-indigo-100/50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[10px] font-medium">${categoryName}</span>
+                                <span>•</span>
+                                <span>${res.downloads || 0} lượt tải</span>
                             </div>
                         </div>
                     </div>
@@ -913,7 +1116,7 @@
                 const itemCount = resources.filter(r => r.categoryId === cat.id).length;
 
                 const item = document.createElement("div");
-                item.className = "p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between";
+                item.className = "p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-between animate-fade-in";
                 item.innerHTML = `
                     <div class="flex items-center gap-2.5">
                         <i data-lucide="folder-open" class="w-4 h-4 text-indigo-500"></i>
@@ -1064,7 +1267,7 @@
 
             // Fast refresh list event trigger
             document.getElementById("btn-refresh").addEventListener("click", () => {
-                showToast("Đã tải lại danh sách tài nguyên mới nhất");
+                showToast("Đã làm mới cơ sở dữ liệu thời gian thực!");
                 renderResourcesUI();
             });
 
@@ -1074,6 +1277,7 @@
 
             searchInput.addEventListener("input", (e) => {
                 searchTerm = e.target.value;
+                currentPage = 1; // Reset to page 1 during keyword changes
                 if (searchTerm.length > 0) {
                     btnClearSearch.classList.remove("hidden");
                 } else {
@@ -1085,6 +1289,7 @@
             btnClearSearch.addEventListener("click", () => {
                 searchInput.value = "";
                 searchTerm = "";
+                currentPage = 1;
                 btnClearSearch.classList.add("hidden");
                 renderResourcesUI();
             });
@@ -1098,6 +1303,7 @@
                 if (user) {
                     listenToCategories();
                     listenToResources();
+                    listenToMarqueeSettings();
                 }
             });
 
@@ -1107,6 +1313,7 @@
             document.getElementById("category-form").addEventListener("submit", handleCategoryFormSubmit);
             document.getElementById("btn-cancel-cat-edit").addEventListener("click", cancelCategoryEdit);
             document.getElementById("res-icon-file").addEventListener("change", handleImageUploadConversion);
+            document.getElementById("config-form").addEventListener("submit", handleConfigSubmit);
 
             // Icon select type radio trigger
             const iconRadioBtns = document.querySelectorAll('input[name="icon-type-group"]');
@@ -1140,18 +1347,33 @@
                 activeAdminTab = "resources";
                 tabBtnResources.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm";
                 tabBtnCategories.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                tabBtnConfig.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700";
                 
                 adminTabResourcesContent.classList.remove("hidden");
                 adminTabCategoriesContent.classList.add("hidden");
+                adminTabConfigContent.classList.add("hidden");
             });
 
             tabBtnCategories.addEventListener("click", () => {
                 activeAdminTab = "categories";
                 tabBtnCategories.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm";
                 tabBtnResources.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                tabBtnConfig.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700";
                 
                 adminTabCategoriesContent.classList.remove("hidden");
                 adminTabResourcesContent.classList.add("hidden");
+                adminTabConfigContent.classList.add("hidden");
+            });
+
+            tabBtnConfig.addEventListener("click", () => {
+                activeAdminTab = "config";
+                tabBtnConfig.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm";
+                tabBtnResources.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                tabBtnCategories.className = "px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-500 dark:text-slate-400 hover:text-slate-700";
+                
+                adminTabConfigContent.classList.remove("hidden");
+                adminTabResourcesContent.classList.add("hidden");
+                adminTabCategoriesContent.classList.add("hidden");
             });
 
             // Load icons
