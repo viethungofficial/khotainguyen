@@ -518,24 +518,24 @@
         const adminTabCategoriesContent = document.getElementById("admin-tab-categories-content");
         const adminTabConfigContent = document.getElementById("admin-tab-config-content");
 
-        // Helper: Parse Google Drive URLs to generate direct download links (Safe-Redirect 100% No-Red Screen)
+        // Helper: Parse Google Drive URLs to generate direct download links (Safe-Redirect 100% No-Red Screen & Fast Load)
         function parseDriveUrl(url) {
             if (!url) return "#";
             
             // Try to match standard file ID from view/edit share link format
-            const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]{25,})/);
+            const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]{20,80})/);
             if (fileIdMatch && fileIdMatch[1]) {
-                return `https://docs.google.com/uc?export=download&id=${fileIdMatch[1]}`;
+                return `https://drive.google.com/uc?id=${fileIdMatch[1]}&export=download`;
             }
 
             // Try to match query parameter style (e.g., id=1A2B3C_4D5E6F)
-            const queryIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
+            const queryIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]{20,80})/);
             if (queryIdMatch && queryIdMatch[1]) {
-                return `https://docs.google.com/uc?export=download&id=${queryIdMatch[1]}`;
+                return `https://drive.google.com/uc?id=${queryIdMatch[1]}&export=download`;
             }
 
             // Folder link pattern (Keep original folder link because folders can't be downloaded directly)
-            const folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]{25,})/);
+            const folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]{20,80})/);
             if (folderMatch) {
                 return url;
             }
