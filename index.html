@@ -6,7 +6,7 @@
     <title>Kho Tài Nguyên - Tải Trực Tiếp Tốc Độ Cao</title>
     
     <!-- Favicon Mũi tên Lên Xuống SVG -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📁</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>⇅</text></svg>">
     
     <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -525,13 +525,13 @@
             // Try to match standard file ID from view/edit share link format
             const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]{25,})/);
             if (fileIdMatch && fileIdMatch[1]) {
-                return `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
+                return `https://drive.usercontent.com/download?id=${fileIdMatch[1]}&export=download&confirm=t`;
             }
 
             // Try to match query parameter style (e.g., id=1A2B3C_4D5E6F)
             const queryIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
             if (queryIdMatch && queryIdMatch[1]) {
-                return `https://drive.google.com/uc?export=download&id=${queryIdMatch[1]}`;
+                return `https://drive.usercontent.com/download?id=${queryIdMatch[1]}&export=download&confirm=t`;
             }
 
             // Folder link pattern (Keep original folder link because folders can't be downloaded directly)
