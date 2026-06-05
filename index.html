@@ -6,7 +6,7 @@
     <title>Kho Tài Nguyên - Tải Trực Tiếp Tốc Độ Cao</title>
     
     <!-- Favicon Mũi tên Lên Xuống SVG -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>⇅</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📁</text></svg>">
     
     <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -518,24 +518,24 @@
         const adminTabCategoriesContent = document.getElementById("admin-tab-categories-content");
         const adminTabConfigContent = document.getElementById("admin-tab-config-content");
 
-        // Helper: Parse Google Drive URLs to generate direct download links (Safe-Redirect 100% No-Red Screen & Fast Load)
+        // Helper: Parse Google Drive URLs to generate direct download links
         function parseDriveUrl(url) {
             if (!url) return "#";
             
             // Try to match standard file ID from view/edit share link format
-            const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]{20,80})/);
+            const fileIdMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]{25,})/);
             if (fileIdMatch && fileIdMatch[1]) {
-                return `https://drive.google.com/uc?id=${fileIdMatch[1]}&export=download`;
+                return `https://drive.google.com/uc?export=download&id=${fileIdMatch[1]}`;
             }
 
             // Try to match query parameter style (e.g., id=1A2B3C_4D5E6F)
-            const queryIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]{20,80})/);
+            const queryIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]{25,})/);
             if (queryIdMatch && queryIdMatch[1]) {
-                return `https://drive.google.com/uc?id=${queryIdMatch[1]}&export=download`;
+                return `https://drive.google.com/uc?export=download&id=${queryIdMatch[1]}`;
             }
 
             // Folder link pattern (Keep original folder link because folders can't be downloaded directly)
-            const folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]{20,80})/);
+            const folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]{25,})/);
             if (folderMatch) {
                 return url;
             }
@@ -1014,7 +1014,7 @@
                 } else {
                     item.querySelector(".btn-edit-res").addEventListener("click", () => startEditResource(res));
                     item.querySelector(".btn-delete-res").addEventListener("click", () => {
-                        // Enter confirm state for 4 seconds
+                        // Enter confirm state for 3 seconds
                         deletingTriggers.set(res.id, true);
                         renderResourcesAdminList();
                         
@@ -1046,6 +1046,96 @@
                 if (editingResourceId === id) cancelResourceEdit();
             } catch (err) {
                 showToast("Lỗi khi thực thi xóa tài nguyên!", "error");
+            }
+        }
+
+        // Fill Form fields to modify resource
+        function startEditResource(res) {
+            editingResourceId = res.id;
+            document.getElementById("res-title").value = res.title;
+            document.getElementById("res-category").value = res.categoryId || "";
+            document.getElementById("res-url").value = res.downloadUrl;
+
+            // Icon values mapping
+            const iconType = res.iconType || "url";
+            document.querySelector(`input[name="icon-type-group"][value="${iconType}"]`).checked = true;
+            
+            toggleIconFieldUI(iconType);
+
+            if (iconType === "url") {
+                document.getElementById("res-icon-url").value = res.iconContent || "";
+                base64IconContent = "";
+            } else {
+                base64IconContent = res.iconContent || "";
+                const previewImg = document.getElementById("uploaded-image-preview");
+                previewImg.src = base64IconContent;
+                document.getElementById("preview-image-container").classList.remove("hidden");
+                document.getElementById("preview-image-container").classList.add("flex");
+            }
+
+            document.getElementById("resource-form-title").innerHTML = `<i data-lucide="edit-3" class="w-4 h-4"></i> Hiệu Chỉnh Tài Nguyên`;
+            document.getElementById("res-submit-text").textContent = "Cập Nhật Thay Đổi";
+            document.getElementById("btn-cancel-res-edit").classList.remove("hidden");
+            
+            lucide.createIcons();
+            // Scroll smoothly to form view
+            document.getElementById("admin-board").scrollIntoView({ behavior: "smooth" });
+        }
+
+        // Reset & Cancel editing resource form
+        function cancelResourceEdit() {
+            editingResourceId = null;
+            document.getElementById("resource-form").reset();
+            base64IconContent = "";
+            document.getElementById("preview-image-container").classList.add("hidden");
+            document.getElementById("resource-form-title").innerHTML = `<i data-lucide="plus" class="w-4 h-4"></i> Thêm Tài Nguyên Mới`;
+            document.getElementById("res-submit-text").textContent = "Đăng Tải Tài Nguyên";
+            document.getElementById("btn-cancel-res-edit").classList.add("hidden");
+            toggleIconFieldUI("url");
+            lucide.createIcons();
+        }
+
+        // Upload / Create Resource Form Submission logic
+        async function handleResourceFormSubmit(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById("res-title").value.trim();
+            const categoryId = document.getElementById("res-category").value;
+            const downloadUrl = document.getElementById("res-url").value.trim();
+            
+            const selectedIconType = document.querySelector('input[name="icon-type-group"]:checked').value;
+            let iconContent = "";
+
+            if (selectedIconType === "url") {
+                iconContent = document.getElementById("res-icon-url").value.trim();
+            } else {
+                iconContent = base64IconContent;
+            }
+
+            const payload = {
+                title,
+                categoryId,
+                downloadUrl,
+                iconType: selectedIconType,
+                iconContent: iconContent || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=60"
+            };
+
+            try {
+                if (editingResourceId) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'resources', editingResourceId);
+                    await updateDoc(docRef, payload);
+                    showToast("Cập nhật thông tin tài nguyên thành công!");
+                    cancelResourceEdit();
+                } else {
+                    payload.downloads = 0;
+                    const collRef = collection(db, 'artifacts', appId, 'public', 'data', 'resources');
+                    await addDoc(collRef, payload);
+                    showToast("Đăng tải tài nguyên mới thành công!");
+                    cancelResourceEdit();
+                }
+            } catch (err) {
+                console.error("Database update error:", err);
+                showToast("Lỗi khi cập nhật cơ sở dữ liệu!", "error");
             }
         }
 
